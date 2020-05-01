@@ -1,0 +1,155 @@
+#include<iostream>
+using namespace std;
+
+int main()
+{
+	setlocale(0, "");
+
+	cout << "1. Составить программу вычисления значения функции y = 7x^2-3x+6 при любом значении x." << endl;
+	int y1, x1;
+	setlocale(0, "");
+	cout << "Enter number x..." << endl;
+	cin >> x1;
+	y1 = 7 * x1 * x1 - 3 * x1 + 6;
+	cout << "y = " << y1 << endl;
+
+	cout << "\n2. Составить программу вычисления значения функции x = 12a^2+7a-16 при любом значении a." << endl;
+	int x2, a2;
+	cout << "Enter number a..." << endl;
+	cin >> a2;
+	x2 = 12 * a2 * a2 + 7 * a2 - 16;
+	cout << "x = " << x2 << endl;
+
+	cout << "\n3. Составить программу, вычисляющую плотность тела по его массе и объему." << endl;
+	int p, m, v;
+	cout << "Enter M" << endl;
+	cin >> m;
+	cout << "Enter V" << endl;
+	cin >> v;
+	p = m / v;
+	cout << "P = " << p << endl;
+
+	cout << "\n4. Составить программу решения линейного уравнения ax+b=0." << endl;
+	int a4, b4, x4;
+	setlocale(0, "");
+	cout << "Enter number a..." << endl;
+	cin >> a4;
+	cout << "Enter number b..." << endl;
+	cin >> b4;
+	a4 != 0 ? cout << "x = " << (x4 = -b4 / a4) << endl : cout << "Уравнение не имеет решений" << endl;
+
+	cout << "\n5. Составить программу, которая по катетам прямоугольного треугольника находит квадрат его гипотенузы." << endl;
+	int a1, b1, c1;
+	cout << "Enter number of first leg..." << endl;
+	cin >> a1;
+	cout << "Enter number of second leg..." << endl;
+	cin >> b1;
+	c1 = a1 * a1 + b1 * b1;
+	cout << "Square of hypotenuse is " << c1 << endl;
+
+	cout << "\n6. Составить программу, которая запрашивает количество жителей в стране и площадь страны, после чего вычисляет и выводит плотность населения." << endl;
+	int n1, s1, p1;
+	cout << "Enter number of inhabitants in country..." << endl;
+	cin >> n1;
+	cout << "Enter area of the country..." << endl;
+	cin >> s1;
+	p1 = n1 / s1;
+	cout << "Country population density " << p1 << endl;
+
+	cout << "\n7. Написать программу, которая запрашивает вещественное число a и, пользуясь только опeрацией умножения, вычисляет a^4 за две операции." << endl;
+	int a7, aa2, aa4;
+	cout << "Enter number..." << endl;
+	cin >> a7;
+	aa2 = a7 * a7;
+	aa4 = aa2 * aa2;
+	cout << "a^4 = " << aa4 << endl;
+
+	cout << "\n8. Пользователь вводит номер года. Необходимо написать программу, которая выведет количество дней в этом году. При написании программы использовать линейный алгоритм." << endl;
+	int y8, a8;
+	cout << "Enter year..." << endl;
+	cin >> y8;
+	(y8 % 400 == 0) || (y8 % 100 != 0) && (y8 % 4 == 0) ? cout << "In " << y8 << " year = 366 days" << endl : cout << "In " << y8 << " year = 365 days" << endl;
+
+	cout << "\n9. Вычислите значение логического выражения для заданных переменных bool a=false, b=true, c=false, d=true;." << endl;
+	bool a9 = false, b9 = true, c9 = false, d9 = true;
+	cout << "Logical expression result:" << endl;
+	cout << "a || b && !a && d - " << ((a9 || b9 && !a9 && d9) ? "true" : "false");
+	cout << endl;
+	cout << "a && b || !c || d - " << ((a9 && b9 || !c9 || d9) ? "true" : "false");
+	cout << endl;
+	cout << "(b || c) && a - " << (((b9 || c9) && a9) ? "true" : "false");
+	cout << endl;
+
+	cout << "\n10. Дана последовательность из n чисел, подсчитать количество чисел кратных трем." << endl;
+	int a10, b10, sum10; //
+	cout << "Enter starting sequence number ..." << endl;
+	cin >> a10;
+	cout << "Enter ending sequence number..." << endl;
+	cin >> b10;
+	for (sum10 = 0; a10 <= b10; a10++)
+	{
+		if (a10 % 3 == 0) sum10++;
+	}
+
+	if
+		(sum10 != 0) cout << "Only " << sum10 << " numbers" << endl;
+	else
+		cout << "No numbers" << endl;
+
+	cout << "\n11. Задано натуральное число n выяснить есть ли цифра 0 в записи этого числа." << endl;
+	int n11, p11;
+	cout << "Enter number..." << endl;
+	cin >> n11;
+	for (p11 = 1; n11 != 0 & p11 != 0;)
+	{
+		p11 = n11 % 10;
+		n11 = n11 / 10;
+	}
+	p11 == 0 ? cout << "In number there is a digit zero" << endl : cout << "In number there is no digit zero" << endl;
+
+	cout << "\n12. Пользователь вводит три числа. Найти сумму тех чисел, которые делятся на 5. Если таких чисел нет, то вывести error (Можно использовать только тернарный оператор)." << endl;
+	int a12, b12, c12;
+	cout << "Enter first number..." << endl;
+	cin >> a12;
+	cout << "Enter second number..." << endl;
+	cin >> b12;
+	cout << "Enter third number..." << endl;
+	cin >> c12;
+	a12 % 5 == 0 ? a12 : a12 = 0;
+	b12 % 5 == 0 ? b12 : b12 = 0;
+	c12 % 5 == 0 ? c12 : c12 = 0;
+	a12 == 0 && b12 == 0 && c12 == 0 ? cout << "Error" << endl : cout << "Amount " << a12 + b12 + c12 << endl;
+
+	cout << "\n13. Выяснить является ли заданное число совершенным." << endl;
+	int n13, sum13 = 0;
+	cout << "Enter number..." << endl;
+	cin >> n13;
+	for (int i13 = 1; i13 < n13; i13++)
+	{
+		if (n13 % i13 == 0) sum13 += i13;
+	}
+
+	if
+		(n13 == sum13) cout << "The number is perfect" << endl;
+	else
+		cout << "The number is not perfect" << endl;
+
+	cout << "\n14. Выяснить является ли заданное число автоморфным." << endl;
+	int n14, n141, a14;
+	cout << "Enter number..." << endl;
+	cin >> n14;
+	n141 = n14;
+
+	for (a14 = 1; n141 != 0; a14 *= 10)
+	{
+		n141 /= 10;
+	}
+
+	if
+		(n14 == (n14 * n14) % a14) cout << "The number is automorphic" << endl;
+	else
+		cout << "The number is not automorphic" << endl;
+
+	system("pause");
+	return 0;
+}
