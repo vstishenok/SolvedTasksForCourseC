@@ -1,0 +1,511 @@
+
+###################################################### dlist.h
+
+#pragma once
+#include<iostream>
+#include<ctime>
+
+struct Node
+{
+	int data;
+	Node* prev;
+	Node* next;
+};
+
+struct List
+{
+	Node* head;
+	Node* tail;
+	size_t size;
+};
+
+struct ListMouse //отказался от (Node* tail), так как список зациклен
+{
+	Node* head;
+	size_t size;
+};
+
+
+void initList(List& list)
+{
+	list.head = nullptr;
+	list.tail = nullptr;
+	list.size = 0;
+}
+
+void initListMouse(ListMouse& list)
+{
+	list.head = nullptr;
+	list.size = 0;
+}
+
+void printList(List& list)
+{
+	for (Node* i = list.head; i != nullptr; i = i->next)
+	{
+		std::cout << i->data << " ";
+	}
+
+	std::cout << "\n";
+}
+
+void printListMouse(ListMouse& list)
+{
+	Node* i = list.head;
+
+	for (size_t j = 0; j < list.size; i = i->next, j++)
+	{
+		std::cout << static_cast<char>(i->data) << " ";
+	}
+
+	std::cout << "\n";
+}
+
+void pushFront(List& list, int key) //добавление в начало списка
+{
+	Node* temp = new Node;
+	temp->data = key;
+	temp->prev = nullptr;
+	temp->next = list.head;
+
+	if (list.size == 0)
+	{
+		list.tail = temp;
+	}
+	else
+	{
+		list.head->prev = temp;
+	}
+
+	list.head = temp;
+	list.size++;
+}
+
+void pushBack(List& list, int key) //добавление в конец списка
+{
+	Node* temp = new Node;
+	temp->data = key;
+	temp->prev = list.tail;
+	temp->next = nullptr;
+
+	if (list.size == 0)
+	{
+		list.head = temp;
+	}
+	else
+	{
+		list.tail->next = temp;
+	}
+
+	list.tail = temp;
+	list.size++;
+}
+
+void pushFrontMouse(ListMouse& list, int key) //добавление в начало списка мышки
+{
+	Node* temp = new Node;
+	temp->data = key;
+
+	if (list.size == 0)
+	{
+		temp->next = temp;
+		temp->prev = temp;
+	}
+	else
+	{
+		temp->next = list.head;
+		temp->prev = list.head->prev;
+		list.head->prev->next = temp;
+		list.head->prev = temp;
+	}
+
+	list.head = temp;
+	list.size++;
+}
+
+void pushPosition(List& list, size_t index, int key) //добавление в список по индексу
+{
+	if (list.size < index)
+	{
+		std::cout << "Нельзя выполнить добавление\n";
+		return;
+	}
+
+	if (index == 0)
+	{
+		pushFront(list, key);
+		return;
+	}
+
+	if (index == list.size)
+	{
+		pushBack(list, key);
+		return;
+	}
+
+	Node* temp = new Node;
+	temp->data = key;
+	Node* i = list.head;
+	size_t count = 0;
+
+	for (; count < index; count++, i = i->next);
+
+	temp->next = i;
+	temp->prev = i->prev;
+	(i->prev)->next = temp;
+	i->prev = temp;
+	list.size++;
+}
+
+void pushMousePosition(ListMouse& list, size_t index, int key) //добавление в список по индексу
+{
+	if (list.size == 0)
+	{
+		pushFrontMouse(list, key);
+		return;
+	}
+
+	Node* temp = new Node;
+	temp->data = key;
+
+	Node* i = list.head;
+	size_t count = 1
+		;
+
+	for (; count < index; count++, i = i->prev);
+
+	temp->next = i;
+	temp->prev = i->prev;
+	(i->prev)->next = temp;
+	i->prev = temp;
+	list.head = temp;
+	list.size++;
+}
+
+int popFront(List& list) //удаление из начала списка
+{
+	if (list.size == 0)
+	{
+		std::cout << "Лист пустой\n";
+		return -1;
+	}
+
+	int key = list.head->data;
+	Node* temp = list.head;
+
+	if (list.size == 1)
+	{
+		list.head = list.tail = nullptr;
+	}
+	else if (list.size > 1)
+	{
+		list.head = temp->next;
+		list.head->prev = nullptr;
+	}
+
+	delete temp;
+	list.size--;
+	return key;
+}
+
+int popBack(List& list) //удаление из конца списка
+{
+	if (list.size == 0)
+	{
+		std::cout << "Список пуст\n";
+		return -1;
+	}
+
+	int key = list.tail->data;
+	Node* temp = list.tail;
+
+	if (list.size == 1)
+	{
+		list.head = list.tail = nullptr;
+	}
+	else if (list.size > 1)
+	{
+		list.tail = temp->prev;
+		list.tail->next = nullptr;
+	}
+
+	delete temp;
+	list.size--;
+	return key;
+}
+
+int popPosition(List& list, size_t index) //удаление по индексу
+{
+	if (list.size < index)
+	{
+		std::cout << "Нельзя выполнить удаление\n";
+		return -1;
+	}
+
+	if (index == 0)
+	{
+		return popFront(list);
+	}
+
+	if (index == list.size - 1)
+	{
+		return popBack(list);
+	}
+
+	Node* i = list.head;
+	size_t count = 0;
+
+	for (; count < index; count++, i = i->next);
+
+	(i->prev)->next = i->next;
+	(i->next)->prev = i->prev;
+	int key = i->data;
+	delete i;
+	list.size--;
+	return key;
+}
+
+int printKey(List list, size_t index) //вывод ключа
+{
+	if (index >= list.size)
+	{
+		std::cout << "Нет элемента с данным индексом\n";
+		return -1;
+	}
+
+	Node* i = list.head;
+	size_t count = 0;
+
+	for (; count < index; count++, i = i->next);
+
+	return i->data;
+}
+
+void popKey(List& list, int key) //удаление по ключу
+{
+	for (size_t i = 0; i < list.size; i++)
+	{
+		if (printKey(list, i) == key)
+		{
+			popPosition(list, i);
+			return;
+		}
+	}
+
+	std::cout << "Элемент с данным ключом не найден\n";
+	return;
+}
+
+void insertSort(List& list, int key) //добавление в отсортированный список
+{
+	if (list.size == 0)
+	{
+		pushFront(list, key);
+		return;
+	}
+
+	Node* i = list.head;
+	size_t count = 0;
+
+	for (; i != nullptr && key > i->data; i = i->next, count++);
+
+	if (i == nullptr)
+	{
+		pushBack(list, key);
+		return;
+	}
+
+	pushPosition(list, count, key);
+
+	return;
+}
+
+int searchMax(List& list) //поиск максимального значения
+{
+	if (list.size == 0)
+	{
+		std::cout << "Список пуст\n";
+		return -1;
+	}
+
+	int tempdata = list.head->data;
+	int index = 0;
+	int count = 0;
+
+	for (Node* i = list.head; i != nullptr; i = i->next, count++)
+	{
+		if (i->data > tempdata)
+		{
+			tempdata = i->data;
+			index = count;
+		}
+	}
+
+	return index;
+}
+
+void printMatrix(List& list, size_t m)
+{
+	size_t count = 0;
+
+	for (Node* i = list.head; i != nullptr; i = i->next)
+	{
+		std::cout << i->data << " ";
+		count++;
+
+		if (count % m == 0)
+		{
+			std::cout << "\n";
+		}
+	}
+}
+
+void editMatrix(List& list)
+{
+	for (Node* i = list.head; i != nullptr; i = i->next)
+	{
+		if (i->next != nullptr && i->next->data > i->data)
+		{
+			i->data = i->next->data;
+		}
+		else
+		{
+			i->data = 0;
+		}
+	}
+}
+
+###################################################### Source.cpp
+
+#include "dlist.h"
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	{
+		std::cout << "Задание 1\nСортировка двусвязного списка выбором\nВо входном списке выбирается элемент с максимальным значением,\nисключается и включается в начало выходного списка\n\n";
+		List list1, list2;
+		initList(list1); //исходный список
+		initList(list2); //новый список
+		size_t size = 10; //размер списка
+
+		for (size_t i = 0; i < size; i++) //заполнение списка
+		{
+			pushBack(list1, rand() % 100 + 1);
+		}
+
+		std::cout << "Список имеет вид:\n";
+		printList(list1);
+
+		for (size_t i = 0; i < size; i++)
+		{
+			size_t index = searchMax(list1);
+			int key = printKey(list1, index);
+			popPosition(list1, index);
+			pushBack(list2, key);
+		}
+
+		std::cout << "\nОтсортированный список имеет вид:\n";
+		printList(list2);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 2\nN серых и M белых мышей сидят по кругу.\nКошка ходит по кругу по часовой стрелке и съедает каждую s-ую мышку.\nВ первый раз счет начинается с серой мышки.\nСоставьте алгоритм, определяющий порядок, в котором сидели мышки,\nесли через некоторое время осталось K серых и L белых мышей.\nВ решении использовать структуру данных «список»\n\n";
+		size_t g1, g2, w1, w2, s;
+		std::cout << "Укажите начальное количество мышей:\n";
+		std::cout << " - серых: ";
+		std::cin >> g1;
+		std::cout << " - белых: ";
+		std::cin >> w1;
+		std::cout << "\nУкажите конечное количество мышей:\n";
+		std::cout << " - серых: ";
+		std::cin >> g2;
+		std::cout << " - белых: ";
+		std::cin >> w2;
+		std::cout << "\n";
+
+		if ((g1 > g2) && (w1 >= w2)) //проверяем правильность введенных данных (счет всегда должен начинаться с серой мышки)
+		{
+			ListMouse list;
+			initListMouse(list);
+
+			for (size_t i = 0; i < g2; i++) //заполнение списка оставшимися серыми мышками
+			{
+				pushFrontMouse(list, 71);
+			}
+
+			for (size_t i = 0; i < w2; i++) //заполнение списка оставшимися белыми мышками
+			{
+				pushFrontMouse(list, 87);
+			}
+
+			size_t g_temp = g1 - g2; //количество съеденных серых мышек
+			size_t w_temp = w1 - w2; //количество съеденных белых мышек
+			std::cout << "Кошка съедает каждую s-ую мышку\nВведите s-ую мышку (1 - каждую мышку): ";
+			std::cin >> s;
+
+			for (size_t i = 0; i < w_temp; i++)
+			{
+				pushMousePosition(list, s, 119);
+			}
+
+			for (size_t i = 0; i < g_temp; i++)
+			{
+				pushMousePosition(list, s, 103);
+			}
+
+			std::cout << "\nПорядок, в котором сидели мышки:\n - заглавными обозначены несъеденные мышки\n - прописными обозначены съеденные мышки\n\n";
+			printListMouse(list);
+
+		}
+		else if ((g1 == g2) && (w1 == w2))
+		{
+			std::cout << "Ответ: Не была съедена ни одна из мышек\n";
+		}
+		else
+		{
+			std::cout << "Ответ: Исходные данные введены неверно\n";
+		}
+
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 3\nНапишите программу, которая в таблице n*m за один просмотр каждый элемент\nзаменит ближайшим следующим за ним элементом, который больше его.\nЕсли такого элемента нет, то заменит его нулем\n\n";
+		size_t n, m, size;
+		std::cout << "Размеры таблицы n*m\n";
+		std::cout << "Введите число строк (n): ";
+		std::cin >> n;
+		std::cout << "Введите число столбцов (m): ";
+		std::cin >> m;
+
+		if ((n > 1) && (m > 1))
+		{
+			List list;
+			initList(list);
+			size = n * m; //размер списка
+
+			for (size_t i = 0; i < size; i++) //заполнение списка
+			{
+				pushBack(list, rand() % 10 + 1);
+			}
+
+			std::cout << "\nИсходная таблица имеет вид:\n\n";
+			printMatrix(list, m);
+			editMatrix(list);
+			std::cout << "Измененная таблица имеет вид:\n\n";
+			printMatrix(list, m);
+			std::cout << "\n\n";
+		}
+		else
+		{
+			std::cout << "Ответ: Исходные данные введены неверно\n";
+		}
+	}
+
+	system("pause");
+	return 0;
+}
