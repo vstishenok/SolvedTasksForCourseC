@@ -1,0 +1,433 @@
+#include<iostream>
+#include <cmath> 
+#include<ctime>
+
+double inputNumber();
+double sum(double, double);
+double sub(double, double);
+double mul(double, double);
+double div(double, double);
+double squareRoot(double);
+double cubeRoot(double);
+double (*menu1())(double, double);
+double (*menu2())(double);
+int* (*menu3())(int*, size_t&);
+double (*menuArray1())(double, double);
+double (*menuArray2())(double);
+int* (*menuArray3())(int*, size_t&);
+double answer1(double, double, double(*)(double, double));
+double answer2(double, double(*)(double));
+int* answer3(int*, size_t&, int* (*)(int*, size_t&));
+void initArray(int*, size_t, int, int);
+void printArray(int*, size_t&);
+int* isPrime(int*, size_t&);
+int* isMul3(int*, size_t&);
+int* isEven(int*, size_t&);
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	///////////////// Задание 1
+	std::cout << "Задание 1\nРеализовать 4 функции на простейшие арифметические операции.\nКаждая функция должна принимать два вещественных числа и возвращать результат операции в виде вещественного числа.\nНапишите функцию, которая принимает указатель на функцию в качестве параметра.\nДобавьте меню, в котором пользователь может выбрать желаемую операцию.\nМеню реализовать двумя способами.\n\n";
+
+	//Реализация через Switch
+	{
+		std::cout << "1.1 Реализация через Switch\n";
+		double a = inputNumber();
+		double b = inputNumber();
+		std::cout << "Ответ: " << answer1(a, b, menu1()) << "\n\n\n";
+	}
+
+	//Реализация через массив
+	{
+		std::cout << "1.2 Реализация через массив\n";
+		double a = inputNumber();
+		double b = inputNumber();
+		std::cout << "Ответ: " << answer1(a, b, menuArray1()) << "\n\n\n";
+	}
+
+
+
+	///////////////// Задание 2
+	std::cout << "Задание 2\nРеализовать 3 функции, каждая из которых принимает вещественное число и возвращает вещественное число.\nПервая функция вычисляет квадратный корень числа, вторая – куб числа, третья – синус числа.\nНапишите функцию, которая принимает указатель на функцию в качестве параметра.\nДобавьте меню, в котором пользователь может выбрать желаемую операцию.\nМеню реализовать двумя способами.\n\n";
+
+	//Реализация через Switch
+	{
+		std::cout << "2.1 Реализация через Switch\n";
+		double a = inputNumber();
+		std::cout << "Ответ: " << answer2(a, menu2()) << "\n\n\n";
+	}
+
+	//Реализация через массив
+	{
+		std::cout << "2.2 Реализация через массив\n";
+		double a = inputNumber();
+		std::cout << "Ответ: " << answer2(a, menuArray2()) << "\n\n\n";
+	}
+
+
+
+	///////////////// Задание 3
+	std::cout << "Задание 3\nРеализовать 3 функции, каждая из которых принимает указатель на массив и количество элементов и возвращает указатель на новый массив.\nПервая функция ищет простые числа и заносит их в новый массив,\nвторая – все числа кратные трем, третья – все четные числа.\nНапишите функцию, которая принимает указатель на функцию в качестве параметра.\nДобавьте меню, в котором пользователь может выбрать желаемую операцию.\nМеню реализовать двумя способами.\n\n";
+
+	//Реализация через Switch
+	{
+		std::cout << "3.1 Реализация через Switch\n";
+		std::cout << "Введите количество элементов массива: ";
+		size_t SIZE;
+		std::cin >> SIZE;
+		int* str = new int[SIZE];
+		std::cout << "\nМассив будет заполнен числами последовательности от a до b\n";
+		int a, b;
+		std::cout << "Введите число a: ";
+		std::cin >> a;
+		std::cout << "Введите число b: ";
+		std::cin >> b;
+		initArray(str, SIZE, a, b);
+		std::cout << "\nЗаполненный массив имеет вид: ";
+		printArray(str, SIZE);
+		printArray(answer3(str, SIZE, menu3()), SIZE);
+		std::cout << "\n";
+		delete[]str;
+	}
+
+	//Реализация через массив
+	{
+		std::cout << "3.1 Реализация через массив\n";
+		std::cout << "Введите количество элементов массива: ";
+		size_t SIZE;
+		std::cin >> SIZE;
+		int* str = new int[SIZE];
+		std::cout << "\nМассив будет заполнен числами последовательности от a до b\n";
+		int a, b;
+		std::cout << "Введите число a: ";
+		std::cin >> a;
+		std::cout << "Введите число b: ";
+		std::cin >> b;
+		initArray(str, SIZE, a, b);
+		std::cout << "\nЗаполненный массив имеет вид: ";
+		printArray(str, SIZE);
+		printArray(answer3(str, SIZE, menuArray3()), SIZE);
+		std::cout << "\n";
+		delete[]str;
+	}
+	system("pause");
+	return 0;
+}
+
+double inputNumber()
+{
+	std::cout << "Введите вещественное число: ";
+	double number;
+	std::cin >> number;
+	return number;
+}
+
+double sum(double a, double b)
+{
+	return a + b;
+}
+
+double sub(double a, double b)
+{
+	return a - b;
+}
+
+double mul(double a, double b)
+{
+	return a * b;
+}
+
+double div(double a, double b)
+{
+	return a / b;
+}
+
+double squareRoot(double a)
+{
+	return sqrt(a);
+}
+
+double cubeRoot(double a)
+{
+	return pow(a, 1.0 / 3.0);
+}
+
+double sinus(double a)
+{
+	return sin(a * 3.141592 / 180);
+}
+
+double (*menu1())(double, double)
+{
+	double(*ptr)(double, double) = nullptr;
+
+	while (ptr == nullptr)
+	{
+		std::cout << "\nНомера возможных операций:\n1. Сложение\n2. Вычитание\n3. Умножение \n4. Деление\n\nВыберите операцию: ";
+		int choise;
+		std::cin >> choise;
+
+		switch (choise)
+		{
+		case 1: ptr = sum; break;
+		case 2: ptr = sub; break;
+		case 3: ptr = mul; break;
+		case 4: ptr = div; break;
+		default: std::cout << "\nОшибка! Номер операции отсутствует.\n"; break;
+		}
+	}
+
+	std::cout << "\n";
+	return ptr;
+}
+
+double (*menu2())(double)
+{
+	double(*ptr)(double) = nullptr;
+
+	while (ptr == nullptr)
+	{
+		std::cout << "\nНомера возможных операций:\n1. Корень квадратный\n2. Корень кубический\n3. Синус\n\nВыберите операцию: ";
+		int choise;
+		std::cin >> choise;
+
+		switch (choise)
+		{
+		case 1: ptr = squareRoot; break;
+		case 2: ptr = cubeRoot; break;
+		case 3: ptr = sinus; break;
+		default: std::cout << "\nОшибка! Номер операции отсутствует.\n"; break;
+		}
+	}
+
+	std::cout << "\n";
+	return ptr;
+}
+
+int* (*menu3())(int*, size_t&)
+{
+	int* (*ptr)(int*, size_t&) = nullptr;
+
+	while (ptr == nullptr)
+	{
+		std::cout << "\nВывести на консоль:\n1. Простые числа\n2. Числа кратные трем\n3. Четные числа\n\nВыберите операцию: ";
+		int choise;
+		std::cin >> choise;
+
+		switch (choise)
+		{
+		case 1: ptr = isPrime; break;
+		case 2: ptr = isMul3; break;
+		case 3: ptr = isEven; break;
+		default: std::cout << "\nОшибка! Номер операции отсутствует.\n"; break;
+		}
+	}
+
+	std::cout << "\n";
+	return ptr;
+}
+
+
+double (*menuArray1())(double, double)
+{
+	double(*ptr[])(double, double) = { sum,sub,mul,div };
+	std::cout << "\nНомера возможных операций:\n1. Сложение\n2. Вычитание\n3. Умножение \n4. Деление\n\nВыберите операцию: ";
+	int choise;
+	std::cin >> choise;
+	std::cout << "\n";
+	return ptr[choise - 1];
+}
+
+double (*menuArray2())(double)
+{
+	double(*ptr[])(double) = { squareRoot,cubeRoot,sinus };
+	std::cout << "\nНомера возможных операций:\n1. Корень квадратный\n2. Корень кубический\n3. Синус\n\nВыберите операцию: ";
+	int choise;
+	std::cin >> choise;
+	std::cout << "\n";
+	return ptr[choise - 1];
+}
+
+int* (*menuArray3())(int*, size_t&)
+{
+	int* (*ptr[])(int*, size_t&) = { isPrime,isMul3,isEven };
+	std::cout << "\nВывести на консоль:\n1. Простые числа\n2. Числа кратные трем\n3. Четные числа\n\nВыберите операцию: ";
+	int choise;
+	std::cin >> choise;
+	std::cout << "\n";
+	return ptr[choise - 1];
+}
+
+double answer1(double a, double b, double(*menu)(double, double))
+{
+	return menu(a, b);
+}
+
+double answer2(double a, double(*menu)(double))
+{
+	return menu(a);
+}
+
+int* answer3(int* arr, size_t& SIZE, int* (*menu)(int*, size_t&))
+{
+	return menu(arr, SIZE);
+}
+
+void initArray(int* arr, size_t size, int a, int b)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		arr[i] = rand() % (b - a + 1) + a;
+	}
+}
+
+void printArray(int* arr, size_t& SIZE)
+{
+	if (arr != nullptr)
+	{
+		for (size_t i = 0; i < SIZE; i++)
+		{
+			std::cout << arr[i] << " ";
+		}
+		std::cout << "\n";
+	}
+	else
+	{
+		std::cout << "Числа отсутствуют\n";
+	}
+
+}
+
+int* isPrime(int* arr, size_t& SIZE)
+{
+	size_t count = 0;
+
+	for (size_t i = 0; i < SIZE; i++) //считаем количество простых чисел
+	{
+		bool flag = true;
+
+		for (size_t j = 2; j < abs(arr[i]); j++)
+		{
+			if (arr[i] % j == 0)
+			{
+				flag = false;
+				break;
+			}
+		}
+
+		if (flag == true)
+		{
+			count++;
+		}
+	}
+
+	if (count)
+	{
+		int* temp = new int[count];
+		size_t numTemp = 0;
+
+		for (size_t i = 0; i < SIZE; i++) // переносим числа в новый массив
+		{
+			bool flag = true;
+
+			for (size_t j = 2; j < abs(arr[i]); j++)
+			{
+				if (arr[i] % j == 0)
+				{
+					flag = false;
+					break;
+				}
+			}
+
+			if (flag == true)
+			{
+				temp[numTemp] = arr[i];
+				numTemp++;
+			}
+		}
+
+		SIZE = count;
+
+		return temp;
+	}
+	else
+	{
+		return nullptr;
+	}
+
+}
+
+int* isMul3(int* arr, size_t& SIZE)
+{
+	size_t count = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (arr[i] % 3 == 0)
+		{
+			count++;
+		}
+	}
+
+	if (count)
+	{
+		int* temp = new int[count];
+		size_t numTemp = 0;
+
+		for (size_t i = 0; i < SIZE; i++) // переносим числа в новый массив
+		{
+			if (arr[i] % 3 == 0)
+			{
+				temp[numTemp] = arr[i];
+				numTemp++;
+			}
+		}
+
+		SIZE = count;
+
+		return temp;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+int* isEven(int* arr, size_t& SIZE)
+{
+	size_t count = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (arr[i] % 2 == 0)
+		{
+			count++;
+		}
+	}
+
+	if (count)
+	{
+		int* temp = new int[count];
+		size_t numTemp = 0;
+
+		for (size_t i = 0; i < SIZE; i++) // переносим числа в новый массив
+		{
+			if (arr[i] % 2 == 0)
+			{
+				temp[numTemp] = arr[i];
+				numTemp++;
+			}
+		}
+
+		SIZE = count;
+
+		return temp;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
