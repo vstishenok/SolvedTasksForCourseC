@@ -1,0 +1,181 @@
+########################################### main.cpp
+
+#include "Heap.h"
+
+
+int main()
+{
+    Heap heap;
+    init(heap);
+
+    for (size_t i = 0; i < 7; i++)
+    {
+     pushHeap(heap, rand()%100);
+    }
+
+    print(heap);
+
+    for (size_t i = 0; i < 10; i++)
+    {
+     std::cout << popHeap(heap) << " ";
+    }
+
+    int* array = new int[10];
+
+    for (size_t i = 0; i < 10; i++)
+    {
+        array[i] = rand() % 10;
+        std::cout << array[i] << " ";
+    }
+
+    array = heapSort(array, 10);
+
+    std::cout << "\n";
+
+    for (size_t i = 0; i < 10; i++)
+    {
+        std::cout << array[i] << " ";
+    }
+
+    std::cout << "\n";
+
+
+    system("pause");
+    return 0;
+}
+
+
+########################################### Heap.h
+
+#pragma once
+#include<iostream>
+
+struct Heap //структура кучи
+{
+    size_t size; //размер кучи
+    size_t num; //количество чисел в куче
+    int* data;
+};
+
+void init(Heap& heap)
+{
+    heap.size = 10;
+    heap.num = 0;
+    heap.data = new int[heap.size];
+}
+
+void pushHeap(Heap& heap, int key)
+{
+    if (heap.size == heap.num) //если массив полностью заполнен, то создаем новый массив с большим размером и переносим туда все данные
+    {
+        heap.size *= 2;
+        int* temp = new int[heap.size];
+
+        for (size_t i = 0; i < heap.num; i++)
+        {
+            temp[i] = heap.data[i];
+        }
+
+        delete[]heap.data;
+        heap.data = temp;
+    }
+
+    heap.data[heap.num] = key; // сохраняем ключ
+    size_t parent = (heap.num - 1) / 2; //находим родителя
+    size_t index = heap.num;
+
+    while (parent >= 0 && index > 0 && (heap.data[index] > heap.data[parent]))
+    {
+        std::swap(heap.data[index], heap.data[parent]);
+        index = parent;
+        parent = (index - 1) / 2;
+    }
+
+    heap.num++;
+}
+
+void print(const Heap& heap)
+{
+    size_t count = 1;
+
+    for (size_t i = 0; i < heap.num; i++)
+    {
+        if (i % 2 != 0) //если нечетное - выводим табуляцию
+        {
+            std::cout << "\t";
+        }
+
+        if (i == count) 
+        {
+            std::cout << "\n";
+            count = count * 2 + 1; //считаем следющий переход на новую строку
+        }
+
+        std::cout << heap.data[i] << " ";
+    }
+
+    std::cout << "\n";
+}
+
+
+void heapify(Heap& heap, size_t index)
+{
+    size_t left = 2 * index + 1, right = 2 * index + 2;
+
+    if (left >= heap.num) //проверка есть ли дети
+    {
+        return;
+    }
+    if (heap.data[left] > heap.data[index])
+    {
+        std::swap(heap.data[left], heap.data[index]);
+        heapify(heap, left);
+    }
+
+    if (right >= heap.num)
+    {
+        return;
+    }
+    if (heap.data[right] > heap.data[index])
+    {
+        std::swap(heap.data[right], heap.data[index]);
+        heapify(heap, right);
+    }
+}
+
+
+int popHeap(Heap& heap)
+{
+    if (heap.num > 0)
+    {
+        int key = heap.data[0];
+
+        heap.data[0] = heap.data[heap.num - 1];
+        heap.num--;
+        heapify(heap, 0);
+        return key;
+    }
+
+    std::cout << "Heap is empty\n";
+    exit(1);
+}
+
+int* heapSort(int* array, size_t size)
+{
+    Heap heap;
+    init(heap);
+    int* newArray = new int[size];
+
+    for (size_t i = 0; i < size; i++)
+    {
+        pushHeap(heap, array[i]);
+    }
+
+    for (size_t i = 0; i < size; i++)
+    {
+        newArray[i] = popHeap(heap);
+    }
+
+    delete[]array;
+    return newArray;
+}
