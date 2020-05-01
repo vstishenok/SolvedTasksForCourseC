@@ -1,0 +1,112 @@
+#include<iostream>
+#include<iomanip>
+using namespace std;
+
+int main()
+{
+	setlocale(0, "");
+
+	cout << "1. Написать программу вычисления расстояния между населенными пунктами, изображенными на карте" << endl;
+	float M, D;
+	cout << "Вычисление расстояния между населенными пунктами" << endl;
+	cout << "Масштаб карты (количество километров в одном сантиметре): ";
+	cin >> M;
+	cout << "Расстояние между точками, изображающими населенные пункты (см): ";
+	cin >> D;
+	cout << "Расстояние между населенными пунктами " << M * D << " км" << endl;
+	cout << endl;
+
+	cout << "2. Перевод метров в известные единицы измерения длины" << endl;
+	double  meter, kilometer, centimeter, decimeter, millimeter, inch, mile;
+	cout << "Введите число - значение в метрах: ";
+	cin >> meter;
+	cout << "_________________________________" << endl;
+	kilometer = meter / 1000;
+	cout << meter << " метра в километрах - " << kilometer << endl;
+	centimeter = meter * 100;
+	cout << meter << " метра в сантиметрах - " << centimeter << endl;
+	decimeter = meter * 10;
+	cout << meter << " метра в дециметрах - " << decimeter << endl;
+	millimeter = meter * 1000;
+	cout << meter << " метра в миллиметрах - " << millimeter << endl;
+	inch = meter * 100 / 2.54;
+	cout << meter << " метра в дюймах - " << fixed << setprecision(5) << inch << endl;
+	mile = meter / 1870;
+	cout << fixed << setprecision(0) << meter << " метра в милях - " << fixed << setprecision(5) << mile << endl;
+	cout << endl;
+
+	cout << "3. Вычислите значение арифметического выражения для заданных переменных" << endl;
+	int c = 5, d = 3, d1 = 3;
+	float f = 7;
+	double a = 2.5, b = 1.7;
+	cout << "a) a*b+c/f = " << a * b + c / f << endl;
+	cout << "b) b*f-d-- = " << b * f - d-- << endl;
+	cout << "c) ++c+d++*d = " << ++c + d1++ * d1 << endl;
+	cout << endl;
+
+	cout << "4. Написать программу, которая преобразует введенное дробное число в формат расстояния в километрах и метрах" << endl;
+	int KM;
+	double Distance, M1;
+	cout << "Введите дробное число: ";
+	cin >> Distance;
+	KM = Distance;
+	M1 = (Distance - KM) * 1000;
+	cout << fixed << setprecision(2) << Distance << " км - это " << KM << " км " << fixed << setprecision(0) << M1 << " метров" << endl;
+	cout << endl;
+
+	cout << "5. Написать программу, которая проверяет, заканчивается ли введенное пользователем целое число на ноль" << endl;
+	int n;
+	cout << "Введите целое число и нажмите Enter" << endl;
+	cin >> n;
+	n % 10 == 0 ? cout << "Число заканчивается на ноль" << endl : cout << "Число не заканчивается на ноль" << endl;
+	cout << endl;
+
+	cout << "6. Написать программу, которая проверяет, начинается ли введенное пользователем целое двузначное число с единицы" << endl;
+	int k;
+	cout << "Введите целое число и нажмите Enter" << endl;
+	cin >> k;
+	k / 10 == 1 ? cout << "Число начинается на единицу" << endl : cout << "Число не начинается на единицу" << endl;
+	cout << endl;
+
+	cout << "7. Написать программу, которая вычисляет оптимальный вес для пользователя, сравнивает его с реальным и выдает рекомендацию о необходимости поправиться или похудеть" << endl;
+	int mass, height, standart;
+	cout << "Введите в одной строке через пробел" << endl << "Рост (см) и Вес (кг), затем нажмите Enter" << endl;
+	cin >> height >> mass;
+	standart = height - 100;
+	if (mass < standart)
+		cout << "Вам нужно поправиться на " << standart - mass << " кг" << endl;
+	else if (mass > standart)
+		cout << "Вам нужно похудеть на " << mass - standart << " кг" << endl;
+	else
+		cout << "Вы в прекрасной форме" << endl;
+	cout << endl;
+
+	cout << "8. Написать программу, которая по заданному количеству секунд определяет количество часов, минут и секунд" << endl;
+	int hour, minute, second, allsecond;
+	cout << "Введите количество секунд: ";
+	cin >> allsecond;
+	hour = allsecond / 3600;
+	minute = (allsecond % 3600) / 60;
+	second = (allsecond % 3600) % 60;
+	cout << allsecond << " секунд это " << hour << " час " << minute << " минут " << second << " секунд " << endl;
+	cout << endl;
+
+	cout << "13. Пользователь вводит с клавиатуры объем флешки в гигабайтах. Посчитать, сколько на нее поместится фильмов размером 760 мб, музыкальных клипов объемом 95 мб, музыкальных композиций объемом 7 мб или текстовых документов объемом 350 кб" << endl;
+	int flash, film, clip, track, document;
+	cout << "Введите объем флешки в гигабайтах: ";
+	cin >> flash;
+	flash = flash * 1024 * 1024; // объем флешки в килобайтах
+	film = flash / (760 * 1024);
+	clip = flash / (95 * 1024);
+	track = flash / (7 * 1024);
+	document = flash / 350;
+	cout << "На флешку можно поместить " << film << " фильмов, или " << clip << " музыкальных клипов, или " << track << " музыкальных композиций, или " << document << " текстовых документов." << endl;
+	clip = (flash % (760 * 1024)) / (95 * 1024);
+	track = ((flash % (760 * 1024)) % (95 * 1024)) / (7 * 1024);
+	document = (((flash % (760 * 1024)) % (95 * 1024)) % (7 * 1024)) / 350;
+	cout << "Одновременно на флешку можно поместить " << film << " фильмов, " << clip << " музыкальных клипов, " << track << " музыкальных композиций и " << document << " текстовых документов." << endl;
+	cout << endl;
+
+	system("pause");
+	return 0;
+}
