@@ -1,0 +1,137 @@
+#include<iostream>
+
+struct Byte
+{
+	bool p1 : 1;
+	bool p2 : 1;
+	bool p3 : 1;
+	bool p4 : 1;
+	bool p5 : 1;
+	bool p6 : 1;
+	bool p7 : 1;
+	bool p8 : 1;
+};
+
+union MyUnion
+{
+	int value;
+	Byte bite[4];
+	unsigned char byte[4];
+};
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		std::cout << "Задание 1\n";
+		std::cout << "Даны 2 целых числа и операция. Вывести на консоль выбранный байт ответа.\n\n";
+		MyUnion number;
+		int a, b;
+		char oper;
+		std::cout << "Введите перое целое число: ";
+		std::cin >> a;
+		std::cout << "Введите второе целое число: ";
+		std::cin >> b;
+
+		while (true)
+		{
+			std::cout << "Введите операцию (+ - * /): ";
+			std::cin >> oper;
+
+			switch (oper)
+			{
+			case '+': number.value = a + b; break;
+			case '-': number.value = a - b; break;
+			case '*': number.value = a * b; break;
+			case '/': number.value = a / b; break;
+			default: std::cout << "Неверно выбрана операция\n\n"; continue;
+			}
+
+			break; //выход из цикла, если верно выбран оператор
+		}
+
+		int index;
+		std::cout << "\nВведите номер байта (1-4): ";
+		std::cin >> index;
+		index = 4 - index; //для чтения номера байта с лева направо, начиная с единицы
+		std::cout << "\n";
+
+		std::cout << "Вывод в двоичной системе счисления выбранного байта:\n";
+		std::cout << number.bite[index].p8 << number.bite[index].p7 << number.bite[index].p6 << number.bite[index].p5 << number.bite[index].p4 << number.bite[index].p3 << number.bite[index].p2 << number.bite[index].p1 << "  ";
+		std::cout << "\n\n";
+
+		std::cout << "Вывод в двоичной системе счисления каждого байта:\n";
+		for (int i = 3; i >= 0; i--)
+		{
+			std::cout << number.bite[i].p8 << number.bite[i].p7 << number.bite[i].p6 << number.bite[i].p5 << number.bite[i].p4 << number.bite[i].p3 << number.bite[i].p2 << number.bite[i].p1 << "  ";
+		}
+		std::cout << "\n\n";
+
+		std::cout << "Вывод в десятичной системе счисления каждого байта:\n";
+		for (int i = 3; i >= 0; i--)
+		{
+			std::cout << static_cast <int> (number.byte[i]) << " ";
+		}
+		std::cout << "\n\n";
+		
+		std::cout << "Вывод в шестнадцатиричной системе счисления каждого байта:\n";
+		for (int i = 3; i >= 0; i--)
+		{
+			std::cout << std::hex << static_cast <int> (number.byte[i]) << " ";
+		}
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 2\n";
+		std::cout << "Дано целое число, вывести его двоичное представление, используя только битовые операции\n\n";
+		MyUnion number;
+		std::cout << "Введите целое число: ";
+		std::cin >> number.value;
+		std::cout << "Вывод в двоичной системе счисления каждого байта:\n";
+		for (int i = 3; i >= 0; i--)
+		{
+			std::cout << number.bite[i].p8 << number.bite[i].p7 << number.bite[i].p6 << number.bite[i].p5 << number.bite[i].p4 << number.bite[i].p3 << number.bite[i].p2 << number.bite[i].p1 << "  ";
+		}
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 3\n";
+		std::cout << "Дан массив целых чисел, в котором все числа кроме одного встречаются четное количество раз.\nНайти это число. Решить задачу используя битовые операции\n\n";
+		const size_t size = 9;
+		int array[size] = { 9, 8, 3, 7, 2, 8, 7, 3, 9 };
+		unsigned char number = array[0];
+
+		for (size_t i = 1; i < size; i++)
+		{
+			number = number ^ static_cast<char>(array[i]);
+		}
+
+		std::cout << "Число, которое используется один раз: ";
+		std::cout << static_cast<int>(number);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 4\n";
+		std::cout << "Выяснить является ли число степенью двойки, используя битовые операции\n\n";
+		std::cout << "Введите целое число: ";
+		int number;
+		std::cin >> number;
+
+		if ((number && !(number & (number - 1))))
+		{
+			std::cout << "\nЧисло является степенью двойки\n";
+		}
+		else
+		{
+			std::cout << "\nЧисло не является степенью двойки\n";
+		}
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
