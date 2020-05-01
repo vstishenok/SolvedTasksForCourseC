@@ -1,0 +1,482 @@
+#include<iostream>
+#include <cmath>
+
+int sum(int);
+int invers(int);
+int GCD(int, int);
+void searchStepen(size_t);
+long long numberDegree(int, size_t);
+long long toBinary(size_t);
+bool isPrime(int);
+void kNumber(size_t);
+int fact(int);
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		std::cout << "Задание 1.\nНайти сумму цифр для заданного натурального числа.\nДиалог с пользователем реализовать при помощи меню.\n\n";
+		std::cout << "Введите натуральнео число: ";
+		int number;
+		std::cin >> number;
+		std::cout << "Сумма всех цифр составляет " << sum(number);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 2.\nВвести с клавиатуры натуральное число.\nПолучить другое натуральное число, состоящее из цифр, записанных в обратном порядке.\nДиалог с пользователем реализовать при помощи меню.\n\n";
+		std::cout << "Введите натуральнео число: ";
+		int number;
+		std::cin >> number;
+		std::cout << "Число в обратном порядке цифр: " << invers(number);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 3.\nНайти наибольший общий делитель двух натуральных чисел.\n\n";
+		std::cout << "Введите первое натуральнео число: ";
+		int number1, number2;
+		std::cin >> number1;
+		std::cout << "Введите второе натуральнео число: ";
+		std::cin >> number2;
+		std::cout << "Наибольший общий делитель: " << GCD(number1, number2);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 4.\nКогда Василисе Премудрой исполнилось 18 лет, Кощей Бессмертный предложил ей выйти за него замуж.\nВасилиса спросила, сколько у него есть сундуков с золотом.\nКощей сказал, что сейчас у него N ящиков, и каждый год добавляется по M ящиков.\nВасилиса пообещала, что выйдет за него замуж, когда у Кощея будет K полных ящиков с золотом.\nСколько лет тогда будет Василисе?\n\n";
+		std::cout << "Введите число ящиков, которое есть у Кощея: ";
+		int N, M, K, age = 18;
+		std::cin >> N;
+		std::cout << "Введите число ящиков, которое добавляется каждый год: ";
+		std::cin >> M;
+		std::cout << "Введите число ящиков, которое нужно Василисе чтобы выйти замуж: ";
+		std::cin >> K;
+
+		if (M == 0)
+		{
+			std::cout << "Василиса никогда не выйдет замуж";
+		}
+		else
+		{
+			while (N < K)
+			{
+				N += M;
+				age++;
+			}
+
+			std::cout << "Василисе будет " << age << " лет";
+		}
+
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 5.\nПользователь вводит любое целое число.\nНеобходимо из этого целого числа удалить все цифры 3 и 6 и вывести обратно на экран.\n\n";
+		std::cout << "Введите целое число: ";
+		int number, num = 1, temp = 0;
+		std::cin >> number;
+
+		while (number)
+		{
+			if (number % 10 != 3 && number % 10 != 6)
+			{
+				temp = (number % 10) * num + temp;
+				number /= 10;
+				num *= 10;
+			}
+			else
+			{
+				number /= 10;
+			}
+		}
+
+		if (temp)
+		{
+			std::cout << "Ответ: " << temp;
+		}
+		else
+		{
+			std::cout << "Ответ: Все цифры из числа были удалены";
+		}
+
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 6.\nОпределить, между какими двумя последующими степенями двойки расположено заданное число.\n\n";
+		std::cout << "Введите число натуральное число: ";
+		size_t number;
+		std::cin >> number;
+		searchStepen(number);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 7.\nВозвести число А в натуральную степень n\n\n";
+		std::cout << "Введите число A: ";
+		int A;
+		std::cin >> A;
+		std::cout << "Введите степень n: ";
+		size_t n;
+		std::cin >> n;
+		std::cout << "Число A в степени n: " << numberDegree(A, n);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 8.\n8.Перевести натуральное число из десятичной системы счисления в двоичную.\n\n";
+		std::cout << "Введите натуральное число: ";
+		size_t number;
+		std::cin >> number;
+		std::cout << "Число " << number << " в двоичной системе выглядит как " << toBinary(number);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 9.\nДля натуральных чисел Х и У найти такие простые P1 и P2, что X*X-Y*Y = P1*P2.\n\n";
+		std::cout << "Введите натуральное число X: ";
+		size_t x, y;
+		std::cin >> x;
+		std::cout << "Введите натуральное число Y: ";
+		std::cin >> y;
+		int mul = (x * x) - (y * y); //произведение P1 * P2
+		std::cout << "\nX*X-Y*Y = " << mul << "\n\n";
+		std::cout << "Простые числа P1 и P2: ";
+
+		if (mul > 1)
+		{
+			int num = mul; //произведение P1 * P2, которое будем далее изменять
+			bool flag = false;
+
+			while (num)
+			{
+				if ((isPrime(num)) && (mul % num == 0) && (isPrime(mul / num)))
+				{
+					flag = true;
+					std::cout << num << "*" << mul / num << " ";
+				}
+
+				num--;
+			}
+
+			if (flag == false)
+			{
+				std::cout << "отсутствуют";
+			}
+		}
+		else
+		{
+			std::cout << "отсутствуют";
+		}
+
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 10.\nЗаданы три целых числа, которые задают некоторую дату.\nОпределить номер дня недели по заданной дате.\n\n";
+		std::cout << "Введите число (от 1 до 31): ";
+		int date, month, year;
+		std::cin >> date;
+		std::cout << "Введите месяц: ";
+		std::cin >> month;
+		std::cout << "Введите год: ";
+		std::cin >> year;
+		int a, m, y, r;
+		a = (14 - month) / 12;
+		y = year - a;
+		m = month + 12 * a - 2;
+		r = 7000 + (date + y + y / 4 - y / 100 + y / 400 + (31 * m) / 12);
+		int day = r % 7;
+		std::cout << "\nДень недели: ";
+
+		switch (day)
+		{
+		case 1: std::cout << "Понедельник" << "\n"; break;
+		case 2: std::cout << "Вторник" << "\n"; break;
+		case 3: std::cout << "Среда" << "\n"; break;
+		case 4: std::cout << "Четверг" << "\n"; break;
+		case 5: std::cout << "Пятница" << "\n"; break;
+		case 6: std::cout << "Суббота" << "\n"; break;
+		case 0: std::cout << "Восскресенье" << "\n"; break;
+		}
+
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 11.\nВводится некоторое натуральное число N, состоящее не более чем из 10 различных цифр (первая цифра - не 0).\nОпределить, сколько существует различных чисел, больших N и составленных из тех же цифр (и в тех же количествах), что и N.\n\n";
+		std::cout << "Введите цифру N: ";
+
+		int N;
+		std::cin >> N;
+
+		const size_t SIZE = 10;
+		int A[SIZE] = { 0 }, B[SIZE] = { 0 }, indexB = 0;
+
+		while (N)
+		{
+			B[indexB] = N % 10;
+			A[N % 10] = 1;
+			N /= 10;
+			indexB++;
+		}
+
+		int count = 0;
+
+		for (int i = indexB - 1; i >= 0; i--)
+		{
+			for (int j = 9; j > B[i]; j--)
+			{
+				if (A[j])
+				{
+					count += fact(i);
+				}
+			}
+
+			A[(B[i])] = 0;
+		}
+
+		std::cout << "Всего чисел: " << count;
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 12.\nНайти k-ую цифру в ряду цифр, составленных из подряд идущих натуральных чисел, начиная с единицы.\n\n";
+		std::cout << "Введите цифру k: ";
+		size_t k, count = 0, number = 1;
+		std::cin >> k;
+		kNumber(k);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 13.\nДано натуральное число n.\nПодсчитать количество решений неравенства  x*x + y*y < n в натуральных (неотрицательных целых) числах\nНе использовать действий с вещественными числами.\n\n";
+		std::cout << "Введите число n: ";
+		size_t n, count = 0;
+		std::cin >> n;
+
+		for (size_t x = 1; x < sqrt(n); x++)
+		{
+			for (size_t y = 1; y < sqrt(n); y++)
+			{
+				if ((x * x + y * y) < n)
+				{
+					count++;
+				}
+			}
+		}
+
+		std::cout << "Всего решений: " << count;
+		std::cout << "\n\n\n";
+	}
+
+
+
+	system("pause");
+	return 0;
+}
+
+
+int sum(int number)
+{
+	int sum = 0;
+
+	while (number)
+	{
+		sum += number % 10;
+		number /= 10;
+	}
+
+	return sum;
+}
+
+int invers(int number)
+{
+	int newNumber = 0;
+
+	while (number)
+	{
+		newNumber = newNumber * 10 + (number % 10);
+		number /= 10;
+	}
+
+	return newNumber;
+}
+
+int GCD(int number1, int number2)
+{
+	if (number1 == number2)
+	{
+		return number1;
+	}
+	else if (number1 > number2)
+	{
+		int temp = number2;
+
+		while (temp != 0)
+		{
+			if (number1 % temp == 0 && number2 % temp == 0)
+			{
+				return temp;
+			}
+
+			temp--;
+		}
+	}
+	else
+	{
+		int temp = number1;
+
+		while (temp != 0)
+		{
+			if (number1 % temp == 0 && number2 % temp == 0)
+			{
+				return temp;
+			}
+
+			temp--;
+		}
+	}
+}
+
+void searchStepen(size_t number)
+{
+	size_t count = 0;
+	size_t temp = number;
+
+	if (temp == 0)
+	{
+		std::cout << "Число " << number << " не является натуральным\n";
+	}
+	else
+	{
+		bool flag = true;
+
+		while (temp > 1)
+		{
+
+			if (temp % 2)
+			{
+				flag = false;
+			}
+
+			temp /= 2;
+			count++;
+
+		}
+
+
+		if (flag == true)
+		{
+			std::cout << "Число " << number << " соответствует 2 в стемени " << count << "\n";
+		}
+		else
+		{
+			std::cout << "Число " << number << " находится между числами 2 в стемени " << count << " и 2 в степени " << count + 1 << "\n";
+		}
+
+	}
+}
+
+long long numberDegree(int A, size_t n)
+{
+
+	if (n == 0)
+	{
+		return 1;
+	}
+	else
+	{
+		long long number = 1;
+
+		while (n)
+		{
+			number *= A;
+			n--;
+		}
+
+		return number;
+	}
+}
+
+long long toBinary(size_t number)
+{
+	long long temp = 0;
+	long long num = 1;
+
+	while (number)
+	{
+		temp = (number % 2) * num + temp;
+		number /= 2;
+		num *= 10;
+	}
+
+	return temp;
+}
+
+bool isPrime(int num)
+{
+	if (num == 1)
+	{
+		return false;
+	}
+
+	for (size_t i = 2; i < num; i++)
+	{
+		if (num % i == 0)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+void kNumber(size_t k)
+{
+	size_t count = 0, countLine = 0, number = 0, countNumber, tempNumber;
+	unsigned long long line = 0;
+
+	while (count < k)
+	{
+		countNumber = 0;
+		number += 1;
+		tempNumber = number;
+
+		while (tempNumber)
+		{
+			countNumber++;
+			tempNumber /= 10;
+		}
+
+		count += countNumber;
+	}
+
+	if (count > k)
+	{
+		size_t dif = count - k;
+
+		while (dif)
+		{
+			number /= 10;
+			dif--;
+		}
+	}
+
+	std::cout << k << " цифрой в ряду является цифра " << number % 10;
+}
+
+int fact(int a)
+{
+	int y = 1;
+
+	for (int i = 1; i <= a; i++)
+	{
+		y *= i;
+	}
+
+	return y;
+}
