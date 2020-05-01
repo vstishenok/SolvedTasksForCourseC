@@ -1,0 +1,269 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<cstring>
+
+
+int main()
+{
+	setlocale(0, "");
+	const size_t SIZE = 1024;
+
+	//задание 1
+	{
+		std::cout << "Задание 1.\nНаписать функцию, которая вычисляет длину строки.\n\n";
+		char* ptr = new char[SIZE];
+		std::cout << "Введите строку: ";
+		std::cin.getline(ptr, SIZE - 1);
+		std::cout << "Строка содержит " << strlen(ptr) << " символов\n\n\n";
+		delete[]ptr;
+	}
+
+	//задание 2
+	{
+		std::cout << "Задание 2.\nНаписать программу, которая заменяет все символы точки в строке,\nвведенной пользователем, на символы восклицательного знака.\n\n";
+		char* ptr = new char[SIZE];
+		std::cout << "Введите строку: ";
+		std::cin.getline(ptr, SIZE - 1);
+
+		for (char* tempPtr = strchr(ptr, '.'); tempPtr != nullptr; tempPtr = strchr(tempPtr + 1, '.'))
+		{
+			*tempPtr = '!';
+		}
+
+		std::cout << "Измененная строка имеет вид: " << ptr << "\n\n\n";
+		delete[]ptr;
+	}
+
+	//задание 3
+	{
+		std::cout << "Задание 3.\nПользователь вводит строку символов и искомый символ.\nПосчитать сколько раз он встречается в строке.\n\n";
+		char* ptr = new char[SIZE];
+		std::cout << "Введите строку: ";
+		std::cin.getline(ptr, SIZE - 1);
+		std::cout << "Введите искомый символ: ";
+		char simbol;
+		std::cin >> simbol;
+		size_t count = 0;
+
+		for (char* tempPtr = strchr(ptr, simbol); tempPtr != nullptr; tempPtr = strchr(tempPtr + 1, simbol))
+		{
+			count++;
+		}
+
+		std::cout << "Символ \"" << simbol << "\" встречается в строке " << count << " раз.\n\n\n";
+		delete[]ptr;
+	}
+
+	//задание 4
+	{
+		std::cout << "Задание 4.\nВ строке найти частоты всех двухбуквенных сочетаний и вывести.\n\n";
+		char** words = new char* [50];//выделяем массив из 50 указателей типа char
+
+		for (size_t i = 0; i < 50; i++)
+		{
+			words[i] = new char[50]; // каждое слово не более 50 символов
+		}
+
+		char* ptr = new char[SIZE];
+		std::cout << "Введите строку: ";
+		std::cin.ignore();
+		std::cin.getline(ptr, 49);
+
+		//создание копии уже введенной строки в пустую строку
+		char* copyPtr = new char[SIZE];
+		strcpy(copyPtr, ptr);
+
+		//запись слов в массив и подсчет количества слов
+		size_t N = 0;
+		char* s = strtok(copyPtr, " ,.-!?");
+
+		while (s != NULL)
+		{
+			strcpy(words[N], s);
+			N++;
+			s = strtok(nullptr, " ,.-!?");
+		}
+
+		//сортировка пузырьком
+		for (size_t i = N - 1; i > 0; i--)
+		{
+			for (size_t j = 0; j < i; j++)
+			{
+				if (strcmp(words[j], words[j + 1]) > 0)
+				{
+					std::swap(words[j], words[j + 1]);
+				}
+			}
+		}
+
+		//вывод на консоль слов и частоты
+		std::cout << "Ответ: ";
+
+		for (size_t i = 0; i < N; i++)
+		{
+			size_t count = 1;
+			char* tempWord = words[i];
+
+			if (strlen(words[i]) == 2) //проверка слова на наличие только двух символов
+			{
+				while (i < N && strcmp(tempWord, words[i + 1]) == 0)
+				{
+					i++;
+					count++;
+				}
+			}
+			else
+			{
+				continue;
+			}
+
+			std::cout << tempWord << "-" << count << " ";
+		}
+
+		std::cout << "\n\n\n";
+		delete[]words;
+		delete[]ptr;
+		delete[]copyPtr;
+	}
+
+	//задание 5
+	{
+		std::cout << "Задание 5.\nСоздать копию строки и «перевернуть» в строке все слова.\n\n";
+		char** words = new char* [50];//выделяем массив из 50 указателей типа char
+
+		for (size_t i = 0; i < 50; i++)
+		{
+			words[i] = new char[50]; // каждое слово не более 50 символов
+		}
+
+		char* ptr = new char[SIZE];
+		std::cout << "Введите строку: ";
+		std::cin.getline(ptr, 49);
+
+		//создание копии уже введенной строки в пустую строку
+		char* copyPtr = new char[SIZE];
+		strcpy(copyPtr, ptr);
+
+		//запись слов в массив и подсчет количества слов
+		size_t N = 0;
+		char* s = strtok(copyPtr, " ,.-!?");
+
+		while (s != NULL)
+		{
+			strcpy(words[N], s);
+			N++;
+			s = strtok(nullptr, " ,.-!?");
+		}
+
+		//вывод на консоль "перевернутых" слов
+		std::cout << "Строка с перевернутыми словами: ";
+
+		for (size_t i = 0; i < N; i++)
+		{
+			std::cout << _strrev(words[i]) << " ";
+		}
+
+		std::cout << "\n\n\n";
+		delete[]words;
+		delete[]ptr;
+		delete[]copyPtr;
+	}
+
+	//задание 6
+	{
+		std::cout << "Задание 6.\nВ строке все вхождения подстроки str1 заменить подстрокой str2.\nStr2 вводится с клавиатуры.\n\n";
+		char* str = new char[SIZE];
+		std::cout << "Введите строку: ";
+		std::cin.getline(str, SIZE - 1); //str - строка, вводимая с консоли
+		char* str1 = new char[SIZE];
+		std::cout << "Введите подстроку str1: ";
+		std::cin.getline(str1, SIZE - 1); //str1 - строка, которую будем заменять
+		char* str2 = new char[SIZE];
+		std::cout << "Введите подстроку str2: "; //str2 - строка, которой будет заменять строку str1
+		std::cin.getline(str2, SIZE - 1);
+		size_t countStr1 = strlen(str1); // количество символов строки str1
+		char* answer = new char[SIZE];
+		*answer = NULL;
+		char* endline = NULL;
+
+		for (char* tempPtr = strstr(str, str1); tempPtr != nullptr; tempPtr = strstr(str, str1))
+		{
+			endline = tempPtr + countStr1;
+			size_t count = tempPtr - str;
+			strncat(answer, str, count); //копируем массив до указателя
+			strcat(answer, str2); //присоединие str1 к строке
+			str = tempPtr + countStr1;
+		}
+
+		if (str != nullptr)
+		{
+			size_t countLats = strlen(str);
+			strncat(answer, str, countLats);
+		}
+
+		std::cout << "Ответ: " << answer;
+		std::cout << "\n\n\n";
+		delete[]str1;
+		delete[]str2;
+		delete[]answer;
+	}
+
+	//задание 7
+	{
+		std::cout << "Задание 7.\nОтсортировать слова в строке пузырьковой сортировкой.\n\n";
+		char** words = new char* [50];//выделяем массив из 50 указателей типа char
+
+		for (size_t i = 0; i < 50; i++)
+		{
+			words[i] = new char[50]; // каждое слово не более 50 символов
+		}
+
+		char* ptr = new char[SIZE];
+		std::cout << "Введите строку: ";
+		std::cin.getline(ptr, 49);
+
+		//создание копии уже введенной строки в пустую строку
+		char* copyPtr = new char[SIZE];
+		strcpy(copyPtr, ptr);
+
+		//запись слов в массив и подсчет количества слов
+		size_t N = 0;
+		char* s = strtok(copyPtr, " ,.-!?");
+
+		while (s != NULL)
+		{
+			strcpy(words[N], s);
+			N++;
+			s = strtok(nullptr, " ,.-!?");
+		}
+
+		//сортировка пузырьком
+		for (size_t i = N - 1; i > 0; i--)
+		{
+			for (size_t j = 0; j < i; j++)
+			{
+				if (strcmp(words[j], words[j + 1]) > 0)
+				{
+					std::swap(words[j], words[j + 1]);
+				}
+			}
+		}
+
+		//вывод на консоль отсортированной строки
+		std::cout << "Отсортированная строка имеет вид: ";
+
+		for (size_t i = 0; i < N; i++)
+		{
+			std::cout << words[i] << " ";
+		}
+
+		std::cout << "\n\n\n";
+		delete[]words;
+		delete[]ptr;
+		delete[]copyPtr;
+	}
+
+	system("pause");
+	return 0;
+}
+
