@@ -1,0 +1,161 @@
+========================>>>> В файлы заголовков DinamicArray.h
+
+#pragma once
+#include <iostream>
+int* AllocateMem(int*, size_t);
+int* FreeMem(int*);
+void InitArray(int*, size_t, int, int);
+void PrintArray(int*, size_t);
+int* insertByIndex(int*, size_t&, size_t, int);
+int* pushBack(int*, size_t&, int);
+int* delByIndex(int* arr, size_t& size, size_t index);
+
+
+
+========================>>>> В исходные файлы DinanicArray.cpp
+
+#include "DinamicArray.h"
+
+int* AllocateMem(int* arr, size_t size)
+{
+	arr = new int[size];
+	return arr;
+}
+
+int* FreeMem(int* arr)
+{
+	delete[]arr;
+	arr = nullptr;
+	return arr;
+}
+
+void InitArray(int* arr, size_t size, int a, int b)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		arr[i] = rand() % (b - a + 1) + a;
+	}
+}
+
+void PrintArray(int* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		std::cout << arr[i] << " ";
+	}
+
+	std::cout << "\n";
+}
+
+int* insertByIndex(int* arr, size_t& size, size_t index, int key)
+{
+	int* newArr = nullptr;
+	newArr = AllocateMem(newArr, size + 1);
+
+	for (size_t i = 0; i < index; i++)
+	{
+		newArr[i] = arr[i];
+	}
+
+	newArr[index] = key;
+
+	for (size_t i = index; i < size; i++)
+	{
+		newArr[i + 1] = arr[i];
+	}
+
+	size++;
+	arr = FreeMem(arr);
+	return newArr;
+}
+
+int* pushBack(int* arr, size_t& size, int key)
+{
+	{
+		int* newArr = nullptr;
+		newArr = AllocateMem(newArr, size + 1);
+
+		for (size_t i = 0; i < size; i++)
+		{
+			newArr[i] = arr[i];
+		}
+
+		newArr[size] = key;
+		size++;
+		arr = FreeMem(arr);
+		return newArr;
+	}
+}
+
+int* delByIndex(int* arr, size_t& size, size_t index)
+{
+	int* newArr = nullptr;
+	newArr = AllocateMem(newArr, size - 1);
+
+	for (size_t i = 0; i < index; i++)
+	{
+		newArr[i] = arr[i];
+	}
+
+	for (size_t i = index + 1; i < size; i++)
+	{
+		newArr[i - 1] = arr[i];
+	}
+
+	size--;
+	arr = FreeMem(arr);
+	return newArr;
+}
+
+
+
+========================>>>> В исходные файлы Main.cpp
+
+#include"DinamicArray.h"
+
+int main()
+{
+	setlocale(0, "");
+
+	int* array = nullptr;
+	size_t size;
+	int index1, index2, key1, key2;
+	
+	std::cout << "Написать функции для работы с динамическим массивом.\n\nЗадание 1.\nФункция вставки элемента по указанному индексу.\n\n";
+	std::cout << "Введите размер массива: ";
+	std::cin >> size;
+	array = AllocateMem(array, size);
+	InitArray(array, size, -50, 50);
+	std::cout << "Исходный массив имеет вид: ";
+	PrintArray(array, size);
+	std::cout << "Введите индекс массива, куда хотите добавить ключ: ";
+	std::cin >> index1;
+	std::cout << "Введите ключ: ";
+	std::cin >> key1;
+	array = insertByIndex(array, size, index1, key1);
+	std::cout << "Измененный массив имеет вид: ";
+	PrintArray(array, size);
+
+	std::cout << "\n\nЗадание 2.\nФункция добавления элемента в конец массива.\n\n";
+	std::cout << "Исходный массив имеет вид: ";
+	PrintArray(array, size);
+	std::cout << "Введите ключ: ";
+	std::cin >> key2;
+	array = pushBack(array, size, key2);
+	std::cout << "Измененный массив имеет вид: ";
+	PrintArray(array, size);
+
+	std::cout << "\n\nЗадание 3.\nФункция удаления элемента по указанному индексу.\n\n";
+	std::cout << "Исходный массив имеет вид: ";
+	PrintArray(array, size);
+	std::cout << "Введите индекс элемента, который хотите удалить: ";
+	std::cin >> index2;
+	array = delByIndex(array, size, index2);
+	std::cout << "Измененный массив имеет вид: ";
+	PrintArray(array, size);
+	std::cout << "\n\n";
+	array = FreeMem(array);
+
+	system("pause");
+	return 0;
+}
