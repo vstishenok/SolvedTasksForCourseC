@@ -1,0 +1,469 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<fstream>
+#include<cstring>
+#include <iomanip>
+
+struct Student //объявление структуры
+{
+	char fio[50];
+	size_t group;
+	size_t zach;
+	size_t marks[3];
+};
+
+struct Operand
+{
+	char sym[3]{ '\0' };
+	size_t count = 0;
+};
+
+struct Word
+{
+	char* word;
+	size_t length;
+};
+
+bool   isExcellentStudent(const Student&);
+bool   isPoorStudent(const Student&);
+double EverageMark(const Student&);
+double EverageMarkAll(Student*, size_t);
+size_t countLiles(std::ifstream&);
+void   InitStruct(Student*, size_t, std::ifstream&);
+void   InitStructOper(Operand*, size_t, std::ifstream&);
+int    InitStructWord(Word*, size_t, std::ifstream&);
+void   PrintAll(const Student&, std::ostream&);
+void   PrintExcellentStudent(const Student&, std::ostream&);
+void   PrintPoorStudent(const Student&, std::ostream&);
+void   Read(Student&, std::ifstream&);
+void   ReadOper(Operand&, std::ifstream&);
+void   Sort(Student*, size_t);
+void   SortWord(Word*, size_t);
+void   SortCounSym(Operand*, size_t);
+void   PrintOutAllEverageMarkAll(Student*, size_t);
+void   PrintFile(std::ifstream&);
+void   PrintOperand(Operand*, size_t);
+void   checkOper(Operand&, char* temp);
+void   PrintCountOper(Operand&);
+
+
+int main()
+{
+	{
+		setlocale(0, "");
+
+		{
+			std::cout << "Задание 1.\nДан код программы на С++.\nВывести все операции и частоту их использования в программе.\n";
+			std::ifstream finoper("Task1_operand.txt");
+
+			if (finoper) //проверка открытия файла с операторами
+			{
+				size_t size = countLiles(finoper) - 1; //подсчитываем количество операндов в файле для дальнейшего использования в массиве
+				finoper.close();
+				finoper.open("Task1_operand.txt");
+				Operand* operand = new Operand[size]; //создаем массив структур
+				InitStructOper(operand, size, finoper); //в каждую структуру ложим оператор
+				finoper.close();
+				SortCounSym(operand, size);
+				char temp[300]; //будет хранится строка исходного кода
+				std::ifstream fin("Task1.txt");
+
+				if (fin) //проверка открытия исходного файла с кодом
+				{
+					fin.getline(temp, 300);
+
+					while (fin) //проверяем не закончился ли файл
+					{
+
+						for (size_t i = 0; i < size; i++) //перебираем по очереди операнды
+						{
+							checkOper(operand[i], temp);
+						}
+
+						fin.getline(temp, 300);
+					}
+
+					fin.close();
+					PrintOperand(operand, size);
+				}
+			}
+			else
+			{
+				std::cout << "Файл пуст или не существует\n";
+			}
+
+			std::cout << "\n\n\n";
+		}
+
+		{
+			std::cout << "Задание 2.\nДан текстовый файл. Отсортировать все слова в файле по длине слова и вывести в файл Output.txt.\n";
+			std::ifstream fin("Task2.txt");
+
+			if (fin)
+			{
+				size_t const size = 500;
+				Word words[size]; //объявляем массив структур
+				int i = InitStructWord(words, size, fin); //отвечает за количество структур в массиве
+				fin.close();
+				SortWord(words, i);
+				std::ofstream fout("Task2_Output.txt");
+
+				for (size_t j = 0; j < i; j++) // запись в файл
+				{
+					fout << words[j].word << ' ';
+				}
+
+				fout.close();
+
+				for (size_t j = 0; j < i; ++j)
+				{
+					delete[] words[j].word;
+				}
+
+				std::cout << "\nОтсортированный текст выведен в файл Task2_Output.txt\n";
+			}
+			else
+			{
+				std::cout << "Файл пуст или не существует\n";
+			}
+
+			std::cout << "\n\n\n";
+		}
+
+		{
+			std::cout << "Задание 3.\nЗадан текстовый файл, содержащий информацию о студентах.\n\nСоставить программу получения:\n- среднего балла каждого студента\n- общего среднего балла\n- общего списка, состоящего из фамилии, номера группы, номера зачетки, среднего балла\n- списка отличников, состоящего из фамилии, номера группы, номера зачетки\n- списка имеющих неудовлетворительные оценки, состоящего из фамилии, номера группы, номера зачетки\n\nДля проверки результатов информацию созданных списков вывести на экран.\n\nВсе полученные списки записать в текстовые файлы OutAll.txt, OutО.txt и OutN.txt,\nупорядочив списки по группам, каждую группу по фамилиям в алфавитном порядке и вывести на экран.\n\nОбщий средний балл записать первой строкой в файл OutAll.txt.\n\n\n";
+			std::ifstream fin("Task3.txt"); //поток только для чтения файла
+
+			if (fin)
+			{
+				size_t const size = 10;
+				Student students[size]; //объявляем массив структур
+				InitStruct(students, size, fin); //заполнение структуры данными из файла
+				fin.close();
+				Sort(students, size); //сортировка по группе и фамилии
+				std::ofstream fout1("OutAll.txt");
+
+				for (size_t i = 0; i < size; i++) //запись в файл  фамилии, номера группы, номера зачетки, среднего балла
+				{
+					PrintAll(students[i], fout1);
+				}
+
+				fout1.close();
+				std::ofstream fout2("OutО.txt");
+
+				for (size_t i = 0; i < size; i++)
+				{
+					if (isExcellentStudent(students[i]))
+					{
+						PrintExcellentStudent(students[i], fout2);
+					}
+				}
+
+				fout2.close();
+				std::ofstream fout3("OutN.txt");
+
+				for (size_t i = 0; i < size; i++)
+				{
+					if (isPoorStudent(students[i]))
+					{
+						PrintPoorStudent(students[i], fout3);
+					}
+				}
+
+				PrintOutAllEverageMarkAll(students, size);
+				fout3.close();
+				std::ifstream fin1("OutAll.txt");
+				std::cout << "\nList of all students:\n";
+				PrintFile(fin1);
+				fin1.close();
+				std::ifstream fin2("OutО.txt");
+				std::cout << "\nList of excellence students:\n";
+				PrintFile(fin2);
+				fin2.close();
+				std::ifstream fin3("OutО.txt");
+				std::cout << "\nList of poor students:\n";
+				PrintFile(fin3);
+				fin3.close();
+			}
+			else
+			{
+				std::cout << "Missing input file.\nCreate an input file and restart the debugger\n";
+			}
+
+			std::cout << "\n\n\n";
+		}
+	}
+
+	system("pause");
+	return 0;
+}
+
+bool isExcellentStudent(const Student& st)
+{
+	bool flag = true;
+
+	for (size_t i = 0; i < 3; i++)
+	{
+		if (st.marks[i] < 5)
+		{
+			flag = false;
+			return flag;
+		}
+	}
+
+	return flag;
+}
+
+double EverageMarkAll(Student* st, size_t size)
+
+{
+	double everageMarkAll = 0;
+
+	for (size_t i = 0; i < size; i++)
+	{
+		everageMarkAll += EverageMark(st[i]);
+	}
+
+	return everageMarkAll / size;
+}
+
+double EverageMark(const Student& st)
+{
+	double everageMark = 0;
+	size_t size = sizeof(st.marks) / sizeof(size_t);
+
+	for (size_t i = 0; i < size; i++)
+	{
+		everageMark += st.marks[i];
+	}
+
+	everageMark /= size;
+	return everageMark;
+}
+
+void Read(Student& st, std::ifstream& stream)
+{
+	stream >> st.fio >> st.group >> st.zach;
+	size_t  size = sizeof(st.marks) / sizeof(size_t);
+
+	for (size_t i = 0; i < size; i++)
+	{
+		stream >> st.marks[i];
+	}
+}
+
+
+void PrintAll(const Student& st, std::ostream& stream)
+{
+	stream << "Surname " << st.fio << "\t| Group " << st.group << "\t| Recordbook " << st.zach << "\t| EverageMark " << std::setprecision(2) << EverageMark(st) << "\n";
+}
+
+void PrintExcellentStudent(const Student& st, std::ostream& stream)
+{
+	stream << "Surname " << st.fio << "\t| Group " << st.group << "\t| Recordbook " << st.zach << "\n";
+}
+
+void Sort(Student* st, size_t size)
+{
+	for (size_t i = size - 1; i > 0; i--) //сортировка по группе
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (st[j].group > st[j + 1].group)
+			{
+				std::swap(st[j], st[j + 1]);
+			}
+		}
+	}
+
+
+	for (size_t i = size - 1; i > 0; i--) //сортировка в группе по фамилии
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (st[j].group == st[j + 1].group)
+			{
+				if (strcmp(st[j].fio, st[j + 1].fio) > 0)
+				{
+					std::swap(st[j], st[j + 1]);
+				}
+			}
+		}
+	}
+}
+
+void SortCounSym(Operand* oper, size_t size)
+{
+	for (size_t i = size - 1; i > 0; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (strlen(oper[j].sym) < strlen(oper[j + 1].sym))
+			{
+				std::swap(oper[j], oper[j + 1]);
+			}
+		}
+	}
+}
+
+void SortWord(Word* word, size_t size)
+{
+	for (size_t i = size - 1; i > 0; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (word[j].length > word[j + 1].length)
+			{
+				std::swap(word[j], word[j + 1]);
+			}
+		}
+	}
+}
+
+void InitStruct(Student* st, size_t size, std::ifstream& fin)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		Read(st[i], fin);
+	}
+}
+
+bool isPoorStudent(const Student& st)
+{
+	bool flag = false;
+
+	for (size_t i = 0; i < 3; i++)
+	{
+		if (st.marks[i] < 3)
+		{
+			flag = true;
+			return flag;
+		}
+	}
+
+	return false;
+}
+
+void PrintPoorStudent(const Student& st, std::ostream& stream)
+{
+	stream << "Surname " << st.fio << "\t| Group " << st.group << "\t| Recordbook " << st.zach << "\n";
+}
+
+void PrintOutAllEverageMarkAll(Student* st, size_t size)
+{
+	std::ofstream("Temp.txt") << std::ifstream("OutAll.txt").rdbuf();
+	std::ofstream fout("OutAll.txt");
+	fout << "Everage Mark All - " << std::setprecision(2) << EverageMarkAll(st, size) << "\n";
+	std::ifstream fin("Temp.txt");
+	char str[100];
+
+	while (fin)
+	{
+		fin.getline(str, 100);
+		fout << str << "\n";
+	}
+
+	fin.close();
+	fout.close();
+	std::remove("Temp.txt");
+}
+
+void PrintFile(std::ifstream& fin)
+{
+	char str[100];
+
+	if (fin)
+	{
+		while (fin)
+		{
+			fin.getline(str, 100);
+			std::cout << str << "\n";
+		}
+	}
+	else
+	{
+		std::cout << "List is missing.\n";
+	}
+
+}
+
+size_t countLiles(std::ifstream& fin)
+{
+	size_t count = 0;
+	char array[300];
+
+	while (fin)
+	{
+		fin.getline(array, 300);
+		count++;
+	}
+
+	return count;
+}
+
+void InitStructOper(Operand* oper, size_t size, std::ifstream& fin)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		ReadOper(oper[i], fin);
+	}
+}
+
+void   ReadOper(Operand& oper, std::ifstream& fin)
+{
+	fin >> oper.sym;
+}
+
+void checkOper(Operand& oper, char* temp)
+{
+
+	size_t count = strlen(oper.sym);
+
+	for (char* str = strstr(temp, oper.sym); str != nullptr; str = strstr(temp, oper.sym))
+	{
+		oper.count++;
+
+		for (size_t i = 0; i < count; i++)
+		{
+			str[i] = ' ';
+		}
+	}
+}
+
+void PrintOperand(Operand* oper, size_t size)
+{
+	std::cout << "\nВсе операции и частота их использования в коде:\n";
+
+	for (size_t i = 0; i < size; i++)
+	{
+		PrintCountOper(oper[i]);
+	}
+}
+
+void PrintCountOper(Operand& oper)
+{
+	std::cout << "[" << oper.sym << "]: " << oper.count << "\n";
+}
+
+int InitStructWord(Word* words, size_t size, std::ifstream& fin)
+{
+	int i = 0;
+
+	while (fin)
+	{
+		char* str = new char[500]{ '\0' };
+		fin.getline(str, 500);
+
+		for (char* pos = strtok(str, " –\t\n,.:;?!"); pos && i < size; pos = strtok(NULL, " –\t\n,.:;?!"))
+		{
+			words[i].word = new char[strlen(pos) + 1];
+			strcpy(words[i].word, pos);
+			words[i].length = strlen(pos);
+			i++;
+		}
+
+		delete[]str;
+	}
+
+	return i;
+}
