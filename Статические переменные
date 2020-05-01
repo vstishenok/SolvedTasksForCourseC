@@ -1,0 +1,344 @@
+#include <iostream>
+#include <ctime>
+#include <math.h>
+
+void moduloDivision(int, int, int);
+void initArrayAuto(int A[], size_t);
+void printArray(int A[], size_t);
+void chooseSort(int A[], size_t);
+void newInsertSort(int A[], size_t);
+void printArray(int A[], size_t);
+void bubbleSort(int A[], size_t SIZE);
+int searchMin(int A[], size_t, size_t);
+int searchMinNumber(int A[], size_t);
+int bubbleSortDescendAndAscend(int A[], size_t);
+int bubbleSortDescendAndDescend(int A[], size_t);
+int meanValue(int A[], size_t);
+int lastDigit(int A[], size_t SIZE, int);
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+	{
+		std::cout << "Задание 1.\nНаписать функцию с параметрами по умолчанию, которая принимает три числа и показывает на экран все числа от 0 до 1000, которые одновременно кратны всем трем параметрам.\n\n";
+		int a, b, c;
+		std::cout << "Введите первое число: ";
+		std::cin >> a;
+		std::cout << "Введите второе число: ";
+		std::cin >> b;
+		std::cout << "Введите третье число: ";
+		std::cin >> c;
+		moduloDivision(a, b, c);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 2.\nНаписать функцию, которая находит минимальный элемент массива. С использованием этой функции реализовать сортировку выбором.\n\n";
+		const size_t SIZE = 15;
+		int A[SIZE];
+		initArrayAuto(A, SIZE);
+		std::cout << "Начальный массив имеет вид: \n";
+		printArray(A, SIZE);
+		std::cout << "\n";
+		chooseSort(A, SIZE);
+		std::cout << "Отсортированный массив имеет вид: \n";
+		printArray(A, SIZE);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 3.\nНаписать функцию, которая производит двоичный поиск места размещения нового элемента в упорядоченном массиве и возвращает место включения нового элемента. С помощью данной функции реализовать сортировку вставками.\n\n";
+		const size_t SIZE = 15;
+		int A[SIZE];
+		initArrayAuto(A, SIZE);
+		std::cout << "Начальный массив имеет вид: \n";
+		printArray(A, SIZE);
+		newInsertSort(A, SIZE);
+		std::cout << "\n";
+		std::cout << "Отсортированный массив имеет вид: \n";
+		printArray(A, SIZE);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 4.\nФункция находит минимальный элемент массива и сортирует все элементы левее его по убыванию, а правее его – по возрастанию. Функция возвращает индекс минимального элемента.\n\n";
+		const size_t SIZE = 15;
+		int A[SIZE];
+		initArrayAuto(A, SIZE);
+		std::cout << "Начальный массив имеет вид: \n";
+		printArray(A, SIZE);
+		std::cout << "\n";
+		std::cout << "Индекс минимального элемента в массиве: " << bubbleSortDescendAndAscend(A, SIZE);
+		std::cout << "\n\n";
+		std::cout << "Отсортированный массив имеет вид: \n";
+		printArray(A, SIZE);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 5.\nФункция находит элемент массива, минимально удаленный от арифметического среднего значения всех элементов массива и сортирует все элементы левее его по убыванию и правее его – по убыванию. Функция возвращает индекс разделяющего элемента.\n\n";
+		const size_t SIZE = 20;
+		int A[SIZE];
+		initArrayAuto(A, SIZE);
+		std::cout << "Начальный массив имеет вид: \n";
+		printArray(A, SIZE);
+		std::cout << "Индекс разделяющего элемента: " << bubbleSortDescendAndDescend(A, SIZE);
+		std::cout << "\n\n";
+		std::cout << "Отсортированный массив имеет вид: \n";
+		printArray(A, SIZE);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 6.\nФункция сортирует массив по возрастанию последней цифры каждого элемента массива.\n\n";
+		const size_t SIZE = 20;
+		int A[SIZE];
+		initArrayAuto(A, SIZE);
+		std::cout << "Начальный массив имеет вид: \n";
+		printArray(A, SIZE);
+		bubbleSort(A, SIZE);
+		std::cout << "\n";
+		std::cout << "Отсортированный массив имеет вид: \n";
+		printArray(A, SIZE);
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
+
+
+void moduloDivision(int a, int b, int c)
+{
+	{
+		std::cout << "Числа, которые одновременно кратны всем трем параметрам: ";
+		for (size_t i = 0; i < 1001; i++)
+		{
+			if (i % abs(a) == 0 && i % abs(b) == 0 && i % abs(c) == 0)
+			{
+				std::cout << i << " ";
+			}
+		}
+	}
+}
+
+void initArrayAuto(int A[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		A[i] = rand() % 101;
+	}
+}
+
+void printArray(int A[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		std::cout << A[i] << " ";
+	}
+	std::cout << "\n";
+}
+
+int searchMin(int A[], size_t SIZE, size_t kolMin)
+{
+	int index = kolMin;
+	int min = A[kolMin];
+
+	for (size_t i = kolMin + 1; i < SIZE; i++)
+	{
+		if (A[i] < min)
+		{
+			min = A[i];
+			index = i;
+		}
+	}
+
+	return index;
+}
+
+void chooseSort(int A[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		int index = searchMin(A, SIZE, i);
+		int temp = A[i];
+		A[i] = A[index];
+		A[index] = temp;
+	}
+}
+
+int binSearch(int A[], size_t SIZE, int key)
+{
+	int left = 0, right = SIZE, middle;
+
+	while (left < right)
+	{
+		middle = (left + right) / 2;
+
+		if (A[middle] > key)
+		{
+			right = middle;
+		}
+		else
+		{
+			left = middle + 1;
+		}
+	}
+
+	return left;
+}
+
+void newInsertSort(int A[], size_t SIZE)
+{
+	int temp;
+
+	for (size_t i = 1; i < SIZE; i++) //делит массив на отсортированный и не отсортированный
+	{
+		temp = A[i]; //берем первый элемент из неотсортированного массива
+		int pos = binSearch(A, i, temp); //находим позицию куда вставить
+		int j;
+
+		for (j = i - 1; j >= pos; j--) //сдвиг всех элементов, до позиции вправо до позиции pos
+		{
+			A[j + 1] = A[j];
+		}
+
+		A[j + 1] = temp;
+	}
+}
+
+int searchMinNumber(int A[], size_t SIZE)
+{
+	int min = A[0];
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (A[i] < min)
+		{
+			min = i;
+		}
+	}
+	return min;
+}
+
+int bubbleSortDescendAndAscend(int A[], size_t SIZE)
+{
+
+	int min = searchMin(A, SIZE, 0);
+
+	for (size_t i = SIZE - 1; i > min; i--) //цикл отвечает за перестановку маркера
+	{
+		for (size_t j = min; j < i; j++) //цикл перебирает элементы от 0-го до маркера
+		{
+			if (A[j] > A[j + 1])
+			{
+				int temp = A[j];
+				A[j] = A[j + 1];
+				A[j + 1] = temp;
+			}
+		}
+	}
+
+	if (min != 0)
+	{
+		for (size_t i = min - 1; i > 0; i--) //цикл отвечает за перестановку маркера
+		{
+			for (size_t j = 0; j < i; j++) //цикл перебирает элементы от 0-го до маркера
+			{
+				if (A[j] < A[j + 1])
+				{
+					int temp = A[j];
+					A[j] = A[j + 1];
+					A[j + 1] = temp;
+				}
+			}
+		}
+	}
+
+	return min;
+}
+
+int bubbleSortDescendAndDescend(int A[], size_t SIZE)
+{
+
+	int min = meanValue(A, SIZE);
+
+	for (size_t i = SIZE - 1; i > min; i--) //цикл отвечает за перестановку маркера
+	{
+		for (size_t j = min + 1; j < i; j++) //цикл перебирает элементы от 0-го до маркера
+		{
+			if (A[j] < A[j + 1])
+			{
+				int temp = A[j];
+				A[j] = A[j + 1];
+				A[j + 1] = temp;
+			}
+		}
+	}
+
+	if (min != 0)
+	{
+		for (size_t i = min - 1; i > 0; i--) //цикл отвечает за перестановку маркера
+		{
+			for (size_t j = 0; j < i; j++) //цикл перебирает элементы от 0-го до маркера
+			{
+				if (A[j] < A[j + 1])
+				{
+					int temp = A[j];
+					A[j] = A[j + 1];
+					A[j + 1] = temp;
+				}
+			}
+		}
+	}
+
+	return min;
+}
+
+int meanValue(int A[], size_t SIZE)
+{
+	int sum = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		sum += A[i];
+	}
+
+	int meanNumber = sum / SIZE - 1;
+	int index = 0;
+	int min = abs(meanNumber - A[0]);
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if ((abs(meanNumber - A[i])) < min)
+		{
+			min = (abs(meanNumber - A[i]));
+			index = i;
+		}
+	}
+
+	std::cout << "\nАрифметическое среднее значение: " << meanNumber << "\n";
+	return index;
+}
+
+int lastDigit(int A[], size_t SIZE, int i)
+{
+	int digit = A[i] % 10;
+	return digit;
+}
+
+void bubbleSort(int A[], size_t SIZE)
+{
+	for (size_t i = SIZE - 1; i > 0; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (lastDigit(A, SIZE, j) > lastDigit(A, SIZE, j + 1))
+			{
+				int temp = A[j];
+				A[j] = A[j + 1];
+				A[j + 1] = temp;
+			}
+		}
+	}
+}
