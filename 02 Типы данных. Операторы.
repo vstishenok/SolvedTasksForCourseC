@@ -1,0 +1,129 @@
+Типы данных. Операторы.
+
+Составить алгоритмы используя метод блок-схем. 
+Линейный алгоритм и алгоритм с ветвлением.
+Составить алгоритм решения линейного уравнения, предусмотрев проверку корректности введенных с клавиатуры значений.
+Составить алгоритм вычисления отношения суммы квадратов двух чисел к квадрату их разности
+Составить алгоритм проверки числа на четность.
+Составить алгоритм вычисления площади и периметра прямоугольного треугольника, если заданы его катеты.
+Составить алгоритм нахождения новой цены товара, если известно старую цену и процент, на который изменилась цена. Рассмотреть вариант роста и падения цены.
+Составить алгоритм нахождения площади круглой цветочной клумбы, если известно ее диаметр. Установить, сколько можно на этом клумбе высадить рассады, если на 1 кв. м высаживают четыре растения.
+Составить алгоритм определения стоимости телефонных разговоров, совершенных абонентом, который общался с друзьями из трех разных городов. Время разговоров и стоимость одной минуты для каждого звонка разная вводится с клавиатуры.
+Написать программу:
+Используя оператор sizeof вывести на экран размеры типов char, short,int, long, signed, unsigned,float, double,  в байтах.
+Вывести на экран диапазоны минимальных и максимальных для разных типов данных используя константы библиотеки  <climits>.                                                                                                             
+Вычислите значение выражения (a+4b)(a−3b)+a² при a=2 и b=3 . Ответ:  -94
+Пользователь вводит число. Выведите на экран квадрат этого числа, куб этого числа.
+Пользователь вводит три числа. Увеличьте первое число в два раза, второе числа уменьшите на 3, третье число возведите в квадрат и затем найдите сумму новых трех чисел. 
+Пользователь вводит три числа. Найдите среднее арифметическое этих чисел, а также разность удвоенной суммы первого и третьего чисел и утроенного второго числа. 
+Пользователь вводит сторону квадрата. Найдите периметр и площадь квадрата.
+Пользователь вводит время в минутах и расстояние в километрах. Найдите скорость в м/c.
+Даны три переменные a , b и c . Изменить значения этих переменных так, чтобы в a хранилось значение a+b , в b хранилась разность старых значений c−a , а в c хранилось сумма старых значений a+b+c . Например, a=0 , b=2 , c=5 , тогда новые значения a=2 , b=5 и c=7 .
+
+
+######################
+
+#include<iostream>
+#include<climits>
+
+
+int main() {
+
+	setlocale(0, "");
+
+
+	std::cout << "\nЗадание 1. Размеры типов в байтах" << std::endl;
+	std::cout << "char size = " << sizeof(char) << std::endl;
+	std::cout << "short size = " << sizeof(short) << std::endl;
+	std::cout << "int size = " << sizeof(int) << std::endl;
+	std::cout << "long size = " << sizeof(long) << std::endl;
+	std::cout << "signed size = " << sizeof(signed) << std::endl;
+	std::cout << "unsigned size = " << sizeof(unsigned) << std::endl;
+	std::cout << "float size = " << sizeof(float) << std::endl;
+	std::cout << "unsigned double = " << sizeof(double) << std::endl;
+
+
+	std::cout << "\nЗадание 2. Диапазоны минимальных и максимальных для разных типов данных" << std::endl;
+	std::cout << "number of bits in char = " << CHAR_BIT << std::endl;
+	std::cout << "MIN signed char range = " << SCHAR_MIN << std::endl;
+	std::cout << "MAX signed char range = " << SCHAR_MAX << std::endl;
+	std::cout << "MAX unsigned char range = " << UCHAR_MAX << std::endl;
+	std::cout << "MAX char range = " << CHAR_MAX << std::endl;
+	std::cout << "MIN char range = " << CHAR_MIN << std::endl;
+	std::cout << "MAX bite number for multibite symbol = " << MB_LEN_MAX << std::endl;
+	std::cout << "MIN short int range = " << SHRT_MIN << std::endl;
+	std::cout << "MAX short int range = " << SHRT_MAX << std::endl;
+	std::cout << "MAX unsigned short int range = " << USHRT_MAX << std::endl;
+	std::cout << "MIN int range = " << INT_MIN << std::endl;
+	std::cout << "MAX int range = " << INT_MAX << std::endl;
+	std::cout << "MAX unsigned int range = " << UINT_MAX << std::endl;
+	std::cout << "MIN long int range = " << LONG_MIN << std::endl;
+	std::cout << "MAX long int range = " << LONG_MAX << std::endl;
+	std::cout << "MAX unsigned long int range = " << ULONG_MAX << std::endl;
+	std::cout << "MAX unsigned long long int range = " << ULLONG_MAX << std::endl;
+	std::cout << "MAX long long int range = " << LLONG_MAX << std::endl;
+	std::cout << "MIN lomg long int range = " << LLONG_MIN << std::endl;
+
+
+	std::cout << "\nЗадание 3. Вычислить значение выражения (a + 4b)(a - 3b) + a ^ 2 при a = 2, b = 3" << std::endl;
+	int a = 2;
+	int b = 3;
+	std::cout << "Ответ " << ((a + 4 * b) * (a - 3 * b) + a * a) << std::endl;
+
+
+	std::cout << "\nЗадание 4. Пользователь вводит число. Выведите на экран квадрат этого числа, куб этого числа" << std::endl;
+	int number;
+	std::cout << "Введите число..." << std::endl;
+	std::cin >> number;
+	std::cout << "Квадрат числа " << number << " равен " << (number * number) << std::endl;
+	std::cout << "Куб числа " << number << " равен " << (number * number * number) << std::endl;
+
+
+	std::cout << "\nЗадание 5. Пользователь вводит три числа. Увеличьте первое число в два раза, второе числа уменьшите на 3, третье число возведите в квадрат и затем найдите сумму новых трех чисел" << std::endl;
+	int A, B, C;
+	std::cout << "Введите три числа..." << std::endl;
+	std::cin >> A >> B >> C;
+	std::cout << "Ответ " << (A * 2 + (B - 3) + C * C) << std::endl;
+
+
+	std::cout << "\nЗадание 6. Пользователь вводит три числа. Найдите среднее арифметическое этих чисел, а также разность удвоенной суммы первого и третьего чисел и утроенного второго числа" << std::endl;
+	int E, F, G;
+	std::cout << "Введите три числа..." << std::endl;
+	std::cin >> E >> F >> G;
+	std::cout << "Среднее арифметическое чисел равно " << ((E + F + G) / 3) << std::endl;
+	std::cout << "Разность удвоенной суммы первого и третьего чисел и утроенного второго числа равна " << ((E + G) * 2 - F * 3) << std::endl;
+
+
+	std::cout << "\nЗадание 7. Пользователь вводит сторону квадрата. Найдите периметр и площадь квадрата" << std::endl;
+	int side;
+	std::cout << "Введите сторону квадрата" << std::endl;
+	std::cin >> side;
+	std::cout << "Площадь квадрата равна " << side * side << "\nПериметр квадрата равен " << side * 4 << std::endl;
+
+
+	std::cout << "\nЗадание 8. Пользователь вводит время в минутах и расстояние в километрах. Найдите скорость в м/c" << std::endl;
+	int time;
+	int distance;
+	std::cout << "Введите время в минутах и дbстанцию в километрах" << std::endl;
+	std::cin >> time >> distance;
+	std::cout << "Скорость " << (distance * 1000) / (time * 60) << " м/с" << std::endl;
+
+
+	std::cout << "\nЗадание 9. Даны три переменные a, b и c. Изменить значения этих переменных так, чтобы в a хранилось значение a+b, в b хранилась разность старых значений c и a, а в c хранилось сумма старых значений a+b+c" << std::endl;
+	int a1, b1, c1;
+	std::cout << "Введите три числа..." << std::endl;
+	std::cin >> a1 >> b1 >> c1;
+	a1 = a1 + b1;
+	c1 = a1 + c1;
+	b1 = c1 - 2 * a1 + b1;
+	std::cout << "Значение а равно " << a1 << std::endl;
+	std::cout << "Значение b равно " << b1 << std::endl;
+	std::cout << "Значение c равно " << c1 << std::endl;
+
+
+	system("pause");
+	return 0;
+}
+
+
+
