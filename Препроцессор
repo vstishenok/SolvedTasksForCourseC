@@ -1,0 +1,460 @@
+############################################################## prog.cpp
+
+#include "function.h"
+
+#define _USE_MATH_DEFINES
+#define Min(a,b) ((a)<(b)?(a):(b))
+#define Max(a,b) ((a)>(b)?(a):(b))
+#define Squar(a) ((a)*(a))
+#define Exponen(a, b) (pow((a),(b)))
+#define IsEven(a) ((a)%2==0?1:0)
+#define IsUneven(a) ((a)%2!=0?1:0)
+
+#define INT 0
+#define DUB 0
+#define CHAR 0
+
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	std::cout << "Задание 1\n";
+	std::cout << "С помощью директивы #define написать следующие макросы:\n - Нахождение меньшего из двух чисел\n - Нахождение большего из двух чисел\n - Возведение числа в квадрат\n - Возведение числа в степень\n - Проверка числа на четность\n - Проверка числа на нечетность\n\n";
+
+	int a, b;
+
+	std::cout << "Нахождение меньшего из двух чисел\nВведите первое число: ";
+	std::cin >> a;
+	std::cout << "Введите второе число: ";
+	std::cin >> b;
+	std::cout << "Ответ: " << Min(a, b) << "\n\n";
+
+	std::cout << "Нахождение большего из двух чисел\nВведите первое число: ";
+	std::cin >> a;
+	std::cout << "Введите второе число: ";
+	std::cin >> b;
+	std::cout << "Ответ: " << Max(a, b) << "\n\n";
+
+	std::cout << "Возведение числа в квадрат\nВведите число: ";
+	std::cin >> a;
+	std::cout << "Ответ: " << Squar(a) << "\n\n";
+
+	std::cout << "Возведение числа в степень\nВведите число: ";
+	std::cin >> a;
+	std::cout << "Введите степень: ";
+	std::cin >> b;
+	std::cout << "Ответ: " << Exponen(a, b) << "\n\n";
+
+	std::cout << "Проверка числа на четность\nВведите число: ";
+	std::cin >> a;
+	std::cout << "Ответ: ";
+	IsEven(a) == 1 ? std::cout << "Да" : std::cout << "Нет";
+	std::cout << "\n\n";
+
+	std::cout << "Проверка числа на нечетность\nВведите число: ";
+	std::cin >> a;
+	std::cout << "Ответ: ";
+	IsUneven(a) == 1 ? std::cout << "Да" : std::cout << "Нет";
+	std::cout << "\n\n";
+
+
+	std::cout << "Задание 2\n";
+	std::cout << "Создать проект в котором:\n1. Создать три файла:\n - function.h\n - function.cpp\n - prog.cpp\n2. В файле function.cpp необходимо написать функции для работы с массивом данных\n3. В файле function.h нужно описать прототипы всех функций\n4. В файле prog.cpp нужно:\n - сделать проверку определена ли константа, указывающая на тип данных\n - в функции main вызвать все функции\n\n";
+
+	const size_t size = 10;
+
+#if INT
+
+	std::cout << "Используется константа, указывающая на тип данный INTEGER\n\n";
+	int arrInt[size];
+	InitArray(arrInt, size);
+	std::cout << "Заполненный массив имеет вид:\n";
+	PrintArray(arrInt, size);
+	QuickSort(arrInt, size - 1);
+	std::cout << "\n";
+	std::cout << "Отсортированный массив имеет вид:\n";
+	PrintArray(arrInt, size);
+	std::cout << "\n";
+	Edit(arrInt, size);
+	std::cout << "\n";
+	std::cout << "Измененный массив имеет вид:\n";
+	PrintArray(arrInt, size);
+	std::cout << "\n";
+	std::cout << "Минимальный элемент массива: " << Minim(arrInt, size) << "\n";
+	std::cout << "Максимальный элемент массива: " << Maxim(arrInt, size) << "\n";
+	std::cout << "\n\n";
+
+#elif DUB
+
+	std::cout << "Используется константа, указывающая на тип данный DOUBLE\n\n";
+	double arrDub[size];
+	InitArray(arrDub, size);
+	std::cout << "Заполненный массив имеет вид:\n";
+	PrintArray(arrDub, size);
+	QuickSort(arrDub, size - 1);
+	std::cout << "\n";
+	std::cout << "Отсортированный массив имеет вид:\n";
+	PrintArray(arrDub, size);
+	std::cout << "\n";
+	Edit(arrDub, size);
+	std::cout << "\n";
+	std::cout << "Измененный массив имеет вид:\n";
+	PrintArray(arrDub, size);
+	std::cout << "\n";
+	std::cout << "Минимальный элемент массива: " << Minim(arrDub, size) << "\n";
+	std::cout << "Максимальный элемент массива: " << Maxim(arrDub, size) << "\n";
+	std::cout << "\n\n";
+
+#elif CHAR
+
+	std::cout << "Используется константа, указывающая на тип данный CHAR\n\n";
+	char arrCh[size];
+	InitArray(arrCh, size);
+	std::cout << "Заполненный массив имеет вид:\n";
+	PrintArray(arrCh, size);
+	QuickSort(arrCh, size - 1);
+	std::cout << "\n";
+	std::cout << "Отсортированный массив имеет вид:\n";
+	PrintArray(arrCh, size);
+	std::cout << "\n";
+	Edit(arrCh, size);
+	std::cout << "\n";
+	std::cout << "Измененный массив имеет вид:\n";
+	PrintArray(arrCh, size);
+	std::cout << "\n";
+	std::cout << "Минимальный элемент массива: " << Minim(arrCh, size) << "\n";
+	std::cout << "Максимальный элемент массива: " << Maxim(arrCh, size) << "\n";
+	std::cout << "\n\n";
+
+#else
+
+	std::cout << "Не определена константа, указывающая на тип данных\n\n";
+
+#endif
+
+	system("pause");
+	return 0;
+}
+
+
+############################################################## function.cpp
+
+#include "function.h"
+
+void InitArray(int* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		arr[i] = rand() % 100 + 1;
+	}
+}
+
+void InitArray(double* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		arr[i] = (rand() % 100) * 0.01 + rand() % 100 + 1;
+	}
+}
+
+void InitArray(char* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		arr[i] = rand() % (26) + 65;
+	}
+}
+
+void PrintArray(int* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		std::cout << arr[i] << " ";
+	}
+
+	std::cout << "\n";
+}
+
+void PrintArray(double* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		std::cout << arr[i] << " ";
+	}
+
+	std::cout << "\n";
+}
+
+void PrintArray(char* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		std::cout << arr[i] << " ";
+	}
+
+	std::cout << "\n";
+}
+
+int Minim(int* arr, size_t size)
+{
+	int min = arr[0];
+
+	for (size_t i = 1; i < size; i++)
+	{
+		if (min > arr[i])
+		{
+			min = arr[i];
+		}
+	}
+
+	return min;
+}
+
+double Minim(double* arr, size_t size)
+{
+	double min = arr[0];
+
+	for (size_t i = 1; i < size; i++)
+	{
+		if (min > arr[i])
+		{
+			min = arr[i];
+		}
+	}
+
+	return min;
+}
+
+char Minim(char* arr, size_t size)
+{
+	char min = arr[0];
+
+	for (size_t i = 1; i < size; i++)
+	{
+		if (min > arr[i])
+		{
+			min = arr[i];
+		}
+	}
+
+	return min;
+}
+
+int Maxim(int* arr, size_t size)
+{
+	int max = arr[0];
+
+	for (size_t i = 1; i < size; i++)
+	{
+		if (max < arr[i])
+		{
+			max = arr[i];
+		}
+	}
+
+	return max;
+}
+
+double Maxim(double* arr, size_t size)
+{
+	double max = arr[0];
+
+	for (size_t i = 1; i < size; i++)
+	{
+		if (max < arr[i])
+		{
+			max = arr[i];
+		}
+	}
+
+	return max;
+}
+
+char Maxim(char* arr, size_t size)
+{
+	char max = arr[0];
+
+	for (size_t i = 1; i < size; i++)
+	{
+		if (max < arr[i])
+		{
+			max = arr[i];
+		}
+	}
+
+	return max;
+}
+
+void QuickSort(int* arr, size_t size)
+{
+	int i = 0, j = size;
+	int p = arr[size / 2];
+
+	do
+	{
+		while (arr[i] < p)
+		{
+			i++;
+		}
+
+		while (arr[j] > p)
+		{
+			j--;
+		}
+
+		if (i <= j)
+		{
+			std::swap(arr[i], arr[j]);
+			i++;
+			j--;
+		}
+
+	} while (i <= j);
+
+	if (j > 0)
+	{
+		QuickSort(arr, j);
+	}
+
+	if (size > i)
+	{
+		QuickSort(arr + i, size - i);
+	}
+}
+
+void QuickSort(double* arr, size_t size)
+{
+	int i = 0, j = size;
+	double p = arr[size / 2];
+
+	do
+	{
+		while (arr[i] < p)
+		{
+			i++;
+		}
+
+		while (arr[j] > p)
+		{
+			j--;
+		}
+
+		if (i <= j)
+		{
+			std::swap(arr[i], arr[j]);
+			i++;
+			j--;
+		}
+
+	} while (i <= j);
+
+	if (j > 0)
+	{
+		QuickSort(arr, j);
+	}
+
+	if (size > i)
+	{
+		QuickSort(arr + i, size - i);
+	}
+}
+
+void QuickSort(char* arr, size_t size)
+{
+	int i = 0, j = size;
+	char p = arr[size / 2];
+
+	do
+	{
+		while (arr[i] < p)
+		{
+			i++;
+		}
+
+		while (arr[j] > p)
+		{
+			j--;
+		}
+
+		if (i <= j)
+		{
+			std::swap(arr[i], arr[j]);
+			i++;
+			j--;
+		}
+
+	} while (i <= j);
+
+	if (j > 0)
+	{
+		QuickSort(arr, j);
+	}
+
+	if (size > i)
+	{
+		QuickSort(arr + i, size - i);
+	}
+}
+
+void Edit(int* arr, size_t size)
+{
+	std::cout << "Введите индекс массива от 0 до " << size - 1 << ", в котором хотите заменить значение: ";
+	size_t i;
+	std::cin >> i;
+	std::cout << "Введите натуральное число для замены: ";
+	int num;
+	std::cin >> num;
+	arr[i] = num;
+}
+
+void Edit(double* arr, size_t size)
+{
+	std::cout << "Введите индекс массива от 0 до " << size - 1 << ", в котором хотите заменить значение: ";
+	size_t i;
+	std::cin >> i;
+	std::cout << "Введите действительное число для замены: ";
+	double num;
+	std::cin >> num;
+	arr[i] = num;
+}
+
+void Edit(char* arr, size_t size)
+{
+	std::cout << "Введите индекс массива от 0 до " << size - 1 << ", в котором хотите заменить значение: ";
+	size_t i;
+	std::cin >> i;
+	std::cout << "Введите символ для замены: ";
+	char sym;
+	std::cin >> sym;
+	arr[i] = sym;
+}
+
+
+############################################################## function.h
+
+#pragma once
+
+#include <iostream>
+#include <cmath>
+#include <ctime>
+
+void InitArray(int*, size_t);
+void InitArray(double*, size_t);
+void InitArray(char*, size_t);
+void PrintArray(int*, size_t);
+void PrintArray(double*, size_t);
+void PrintArray(char*, size_t);
+int Minim(int*, size_t);
+double Minim(double*, size_t);
+char Minim(char*, size_t);
+int Maxim(int*, size_t);
+double Maxim(double*, size_t);
+char Maxim(char*, size_t);
+void QuickSort(int*, size_t);
+void QuickSort(double*, size_t);
+void QuickSort(char*, size_t);
+void Edit(int*, size_t);
+void Edit(double*, size_t);
+void Edit(char*, size_t);
