@@ -1,0 +1,238 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<cstring>
+
+
+int main()
+{
+	setlocale(0, "");
+
+	//Задание 1
+	{
+		std::cout << "Задание 1.\nДана строка символов.\nОпределить количество букв, количество цифр и количество символов.\n\n";
+		char* str = new char[100];
+		std::cout << "Введите строку: ";
+		std::cin.getline(str, 99);
+		int countLett = 0, countDig = 0, countSym = 0;
+		size_t countLine = strlen(str);
+
+
+		for (size_t i = 0; i < countLine; i++)
+		{
+			if (isalpha(str[i]) != 0)
+			{
+				countLett++;
+			}
+			else if (isdigit(str[i]) != 0)
+			{
+				countDig++;
+			}
+			else
+			{
+				countSym++;
+			}
+		}
+
+		std::cout << "Количество букв: " << countLett << "\n";
+		std::cout << "Количество цифр: " << countDig << "\n";
+		std::cout << "Количество символов: " << countSym << "\n\n\n";
+		delete[]str;
+
+	}
+
+	//Задание 2
+	{
+		std::cout << "Задание 2.\nУдалить из строки заданное слово.\n\n";
+		char* str = new char[100];
+		std::cout << "Введите строку: ";
+		std::cin.getline(str, 99);
+		char* str1 = new char[10];
+		std::cout << "Введите слово: ";
+		std::cin.getline(str1, 10);
+		char* temp = strtok(str, " ,.-?!");
+		char* newStr = new char[100];
+		*newStr = '\0';
+
+		while (temp)
+		{
+			if (strcmp(temp, str1))
+			{
+				strcat(newStr, temp);
+				strcat(newStr, " ");
+			}
+
+			temp = strtok(nullptr, " ,.-?!");
+		}
+
+		std::cout << "Answer: " << newStr << "\n\n\n";
+
+		delete[]str;
+		delete[]str1;
+		delete[]newStr;
+	}
+
+	//Задание 3
+	{
+		std::cout << "Задание 3.\nСтрока состоит из целых чисел, возможно отрицательных, разделенных пробелами или запятыми\nНайти сумму этих чисел.\n\n";
+		char* str = new char[100];
+		std::cout << "Введите строку: ";
+		std::cin.getline(str, 99);
+		char* temp = strtok(str, " ,");
+		int answer = 0;
+
+		while (temp)
+		{
+			answer += atoi(temp);
+			temp = strtok(nullptr, " ,");
+		}
+
+		std::cout << "Сумма чисел: " << answer << "\n\n\n";
+		delete[]str;
+		delete[]temp;
+	}
+
+	//Задание 4
+	{
+		std::cout << "Задание 4.\nСтрока представляет собой арифметическое бесскобочное выражение,\nсостоящее из операндов и арифметических бинарных операций.\nВывести:\n- операции\n- операнды\n- значение выражения\n\n";
+		char* str = new char[100];
+		std::cout << "Введите арифметическое выражение: ";
+		std::cin.getline(str, 99);
+		char* operation = new char[50];
+		int* numbers = new int[50];
+		char* strCopy = new char[100];
+		strcpy(strCopy, str);
+		char* s = nullptr;
+		int Nop = 0, Nch = 0;
+
+		while (s = strpbrk(strCopy, "+-/*"))
+		{
+			operation[Nop++] = *s;
+			*s = ' ';
+		}
+
+		s = strtok(strCopy, " ");
+
+		while (s != nullptr)
+		{
+			numbers[Nch++] = atoi(s);
+			s = strtok(nullptr, " ");
+		}
+
+		std::cout << "Операции: ";
+
+		for (size_t i = 0; i < Nop; i++)
+		{
+			std::cout << operation[i] << " ";
+		}
+
+		std::cout << "\nОперанды: ";
+
+		for (size_t i = 0; i < Nch; i++)
+		{
+			std::cout << numbers[i] << " ";
+		}
+
+		std::cout << std::endl;
+
+		for (int i = 0; i < Nop; i++)
+		{
+			if (operation[i] == '*')
+			{
+				numbers[i] = numbers[i] * numbers[i + 1];
+				memcpy(numbers + (i + 1), numbers + (i + 2), sizeof(int) * (Nch - (i + 2)));
+				Nch--;
+				memcpy(operation + i, operation + (i + 1), sizeof(char) * (Nop - (i + 1)));
+				Nop--;
+				i--;
+			}
+
+			if (operation[i] == '/')
+			{
+				numbers[i] = numbers[i] / numbers[i + 1];
+				memcpy(numbers + (i + 1), numbers + (i + 2), sizeof(int) * (Nch - (i + 2)));
+				Nch--;
+				memcpy(operation + i, operation + (i + 1), sizeof(char) * (Nop - (i + 1)));
+				Nop--;
+				i--;
+			}
+		}
+
+		for (size_t i = 0; i < Nop; i++)
+		{
+			if (operation[i] == '+')
+			{
+				numbers[i + 1] = numbers[i] + numbers[i + 1];
+			}
+
+			if (operation[i] == '-')
+			{
+				numbers[i + 1] = numbers[i] - numbers[i + 1];
+			}
+		}
+
+		std::cout << "Ответ: " << numbers[Nch - 1] << "\n\n\n";
+
+		delete[]numbers;
+		delete[]operation;
+		delete[]str;
+		delete[]strCopy;
+
+	}
+
+	//Задание 5
+	{
+		std::cout << "Задание 5.\nСтрока состоит из целых чисел, бинарных арифметических операций и пробелов.\nОпределить является ли строка арифметическим выражением.\n\n";
+		char* str = new char[100];
+		std::cout << "Введите строку: ";
+		std::cin.getline(str, 99);
+		char* temp = strtok(str, " ");
+		bool answer = true;
+		size_t count = 0; // используется для подсчета операндов. если операнд один - выражением не является
+
+		while (temp)
+		{
+			if (isdigit(*temp) == 0) //проверка, являются ли первые символы строки числом
+			{
+				answer = false;
+				break;
+			}
+
+			count++;
+			temp = strtok(nullptr, " ");
+
+			if (temp == NULL)//проверка, закончилась ли строка
+			{
+				break;
+			}
+
+			if (*temp != '*' && *temp != '/' && *temp != '+' && *temp != '-') //проверка на наличие операции
+			{
+				answer = false;
+				break;
+			}
+
+			count++;
+			temp = strtok(nullptr, " ");
+		}
+
+		if (count < 2) //если операнд один - выражением не является
+		{
+			answer = false;
+		}
+
+		if (answer)
+		{
+			std::cout << "Ответ: cтрока является арифметическим выражением\n\n\n";
+		}
+		else
+		{
+			std::cout << "Ответ: cтрока не является арифметическим выражением\n\n\n";
+		}
+
+		delete[]str;
+	}
+
+	system("pause");
+	return 0;
+}
+
