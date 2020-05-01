@@ -1,0 +1,334 @@
+#include<iostream>
+#include<fstream>
+#include<ctime>
+
+struct Node
+{
+	int data;
+	Node* next;
+};
+
+struct Fifo
+{
+	Node* head; //указатель на голову
+	Node* tail; //указатель на хвост
+};
+
+void init(Fifo& queue)
+{
+	queue.head = nullptr;
+	queue.tail = nullptr;
+}
+
+void pushBack(Fifo& queue, int key)
+{
+	Node* temp = new Node; //создали пустой узел для очереди
+	temp->data = key; //сохраняем данные в новый узел
+	temp->next = nullptr;
+
+	if (queue.tail) //если есть элементы в очереди
+	{
+		queue.tail->next = temp; //переместили указатель хвоста на новый элемент
+	}
+	else
+	{
+		queue.head = temp; //установили голову на элемент temp если очередь пуста
+	}
+
+	queue.tail = temp;
+}
+
+int popFront(Fifo& queue)
+{
+	int key;
+	Node* temp = queue.head; //создаем копию головы очереди
+
+	if (queue.head == nullptr) //если очередь пуста то выходим из функции
+	{
+		return 0;
+	}
+	else
+	{
+		key = queue.head->data; //помещаем данные из головы очереди в переменную key
+	}
+
+	if (queue.head == queue.tail)
+	{
+		queue.tail = temp->next;
+	}
+
+	queue.head = temp->next;
+	delete temp;
+	return key;
+}
+
+void initQueue(Fifo& queue)
+{
+	int size = rand() % 10 + 2;
+
+	for (size_t i = 0; i < size; i++)
+	{
+		pushBack(queue, rand() % 10);
+	}
+}
+
+void printQueue(Fifo& queue)
+{
+	for (Node* i = queue.head; i != nullptr; i = i->next)
+	{
+		std::cout << i->data << " ";
+	}
+
+	std::cout << "\n";
+}
+
+struct Step
+{
+	size_t x, y;
+	size_t count;
+};
+
+struct FifoStep
+{
+	const static size_t size = 50;
+	Step queue[size];
+	size_t tail;
+	size_t head;
+};
+
+void pushStep(FifoStep& q, Step key)
+{
+	if (q.tail + 1 == q.head || q.tail == (q.size - 1) && q.head == 0) //проверка полноты очереди с учетом того, что она круговая
+	{
+		std::cout << "Очередь заполнена\n";
+		return;
+	}
+
+	q.tail++;
+
+	if (q.tail == q.size) //организовываем круговой цикл
+	{
+		q.tail = 0;
+	}
+
+	q.queue[q.tail] = key;
+}
+
+Step popFrontStep(FifoStep& q)
+{
+	if (q.head == q.tail)
+	{
+		std::cout << "Очередь пуста\n";
+		return Step();
+	}
+
+	q.head++;
+
+	if (q.head == q.size)
+	{
+		q.head = 0;
+	}
+
+	Step key = q.queue[q.head];
+	return key;
+}
+
+void initStep(FifoStep& q)
+{
+	q.head = 0;
+	q.tail = 0;
+}
+
+bool checkStep(size_t x, size_t y, int** board)
+{
+	if (x >= 0 && x < 8 && y >= 0 && y < 8)
+	{
+		if (board[x][y] == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void newStep(FifoStep& q, int** board, Step& s)
+{
+
+	if (checkStep(s.x + 1, s.y + 2, board)) //координаты s.x + 1, s.y + 2, считаются как новый ход из текущей точки, если ходить буквой Г
+	{
+		Step s1; //чтобы не портить исходную переменную, добавили новую
+		s1.x = s.x + 1;
+		s1.y = s.y + 2;
+		s1.count = s.count + 1;
+		pushStep(q, s1);
+		board[s1.x][s1.y] = 1;
+	}
+
+	if (checkStep(s.x - 1, s.y + 2, board))
+	{
+		Step s1;
+		s1.x = s.x - 1;
+		s1.y = s.y + 2;
+		s1.count = s.count + 1;
+		pushStep(q, s1);
+		board[s1.x][s1.y] = 1;
+	}
+
+	if (checkStep(s.x + 1, s.y - 2, board))
+	{
+		Step s1;
+		s1.x = s.x + 1;
+		s1.y = s.y - 2;
+		s1.count = s.count + 1;
+		pushStep(q, s1);
+		board[s1.x][s1.y] = 1;
+	}
+
+	if (checkStep(s.x - 1, s.y - 2, board))
+	{
+		Step s1;
+		s1.x = s.x - 1;
+		s1.y = s.y - 2;
+		s1.count = s.count + 1;
+		pushStep(q, s1);
+		board[s1.x][s1.y] = 1;
+	}
+
+	if (checkStep(s.x - 2, s.y + 1, board))
+	{
+		Step s1;
+		s1.x = s.x - 2;
+		s1.y = s.y + 1;
+		s1.count = s.count + 1;
+		pushStep(q, s1);
+		board[s1.x][s1.y] = 1;
+	}
+
+	if (checkStep(s.x - 2, s.y - 1, board))
+	{
+		Step s1;
+		s1.x = s.x - 2;
+		s1.y = s.y - 1;
+		s1.count = s.count + 1;
+		pushStep(q, s1);
+		board[s1.x][s1.y] = 1;
+	}
+
+	if (checkStep(s.x + 2, s.y + 1, board))
+	{
+		Step s1;
+		s1.x = s.x + 2;
+		s1.y = s.y + 1;
+		s1.count = s.count + 1;
+		pushStep(q, s1);
+		board[s1.x][s1.y] = 1;
+	}
+
+	if (checkStep(s.x + 2, s.y - 1, board))
+	{
+		Step s1;
+		s1.x = s.x + 2;
+		s1.y = s.y - 1;
+		s1.count = s.count + 1;
+		pushStep(q, s1);
+		board[s1.x][s1.y] = 1;
+	}
+}
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	{
+		std::cout << "Задание 1\n";
+		std::cout << "Даны две очереди Q1 и Q2, заполненные произвольными целыми числами.\nСоздать третью очередь Q3, в которую занести сумму элементов, Q3[i]=Q1[i]+Q2[i].\nТретью очередь мы заполняем до тех пор, пока одна из очередей не опустеет.\n\n";
+		Fifo queue1, queue2, queue3;
+		init(queue1);
+		init(queue2);
+		init(queue3);
+		initQueue(queue1);
+		initQueue(queue2);
+		std::cout << "Первая очередь имеет вид\n";
+		printQueue(queue1);
+		std::cout << "\nВторая очередь имеет вид\n";
+		printQueue(queue2);
+
+		for (Node* i = queue1.head, *j = queue2.head; i != nullptr && j != nullptr; )
+		{
+			i = i->next, j = j->next;
+			pushBack(queue3, (popFront(queue1) + popFront(queue2)));
+		}
+
+		std::cout << "\nТретья очередь имеет вид\n";
+		printQueue(queue3);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 2\n";
+		std::cout << "Имеется N черных и белых карточек, сложенных в стопку.\nНапишите программу, которая определит, каким должно быть исходное расположение карточек в стопке,\nчтобы разложенные на столе карточки чередовались по цвету: белая, черная, белая, черная и т.д.\n\n";
+		std::cout << "Введите количество карточек (N): ";
+		int number; //всего карт в стопке
+		std::cin >> number;
+		int temp_number = number;
+		Fifo queue;
+		init(queue);
+
+		for (int i = 0; i < number - 1; i++, temp_number--)  //собираем стопку, не добавляя верхнюю карточку
+		{
+			int colour = temp_number % 2; //меняем цвет карты
+			pushBack(queue, colour); //добавляем в стопку карту
+			pushBack(queue, popFront(queue)); //перекладываем нижнюю карту из стопки наверх
+		}
+
+		pushBack(queue, temp_number % 2); //добавляем последнюю карту наверх
+		std::cout << "\nРасположение карточек в стопке: (низ стопки >>> верх стопки)\n";
+		printQueue(queue);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 3\n";
+		std::cout << "Дана шахматная доска 8x8 клеток.\nНайти минимальное количество ходов за которое конь переместится из одной клетки в другую.\nИспользовать структуру данных очередь\n\n";
+		FifoStep queue;
+		initStep(queue);
+
+		size_t size = 8;
+		int** board = new int* [size]; //создали доску и заполнили ее нулями
+
+		for (size_t i = 0; i < size; i++)
+		{
+			board[i] = new int[size] {0};
+		}
+
+		Step start, end, cur;
+		std::cout << "Введите начальные координаты X, Y: ";
+		std::cin >> start.x >> start.y;
+		start.count = 0;
+		std::cout << "\nВведите конечные координаты X, Y: ";
+		std::cin >> end.x >> end.y;
+		board[start.x][start.y] = 1;
+		cur = start;
+
+		while (!(cur.x == end.x && cur.y == end.y)) //пока мы не достигли конечной точки, делаем шаги
+		{
+			newStep(queue, board, cur);
+			cur = popFrontStep(queue);
+		}
+
+		std::cout << "\nМинимальное количество шагов: ";
+		std::cout << cur.count << "\n\n\n";
+
+		for (size_t i = 0; i < size; i++)
+		{
+			delete[]board[i];
+		}
+
+		delete[]board;
+	}
+
+	system("pause");
+	return 0;
+}
