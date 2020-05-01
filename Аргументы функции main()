@@ -1,0 +1,327 @@
+Пожалуйста заранее создайте файлы с данными наименованиями и содержанием
+
+######################################################## Аргументы команды
+ 
+Text.txt Text2.txt Text4.txt 6 Text5.dat 3
+
+
+######################################################## Text.txt
+
+10 98 25 36 25 41 1 9 17 63 12
+
+
+######################################################## Text4.txt
+
+In 1979, Bjarne Stroustrup, a Danish computer scientist, began work on "C with Classes", the predecessor to C++. The motivation for creating a new language originated from Stroustrup's experience in programming for his PhD thesis.
+
+
+######################################################## Text5.dat
+
+Пустой файл. Создать перед запуском кода
+
+
+######################################################## Main.cpp
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <cstring>
+#include <fstream>
+
+struct Message
+{
+	char author[10];
+	char message[255];
+};
+
+bool checkFile(std::ifstream&);
+void quickSort(int*, size_t);
+void printArray(int*, size_t);
+void printWord(size_t, std::ifstream&);
+void read(std::fstream&, int&);
+void write(std::fstream&, int&);
+
+int main(int argc, char* argv[])
+{
+	setlocale(0, "");
+
+	if (argc < 7) //проверяем количество аргументов
+	{
+		std::cout << "Задайте в командной строке все аргументы\n";
+		system("pause");
+		return 1;
+	}
+
+
+	std::cout << "Задание 1\n";
+	std::cout << "Написать программу, возвращающую размер файла, указанного в командной строке\n\n";
+	const size_t size = 30;
+	char filename[size];
+	strcpy(filename, argv[1]);
+	std::ifstream fin1(filename);
+
+	if (!checkFile(fin1)) //проверка файла на открытие
+	{
+		return 0;
+	}
+
+	fin1.seekg(0, std::ios::end); //перемещаем указатель на конец файла
+	int sizefile = fin1.tellg(); //получаем размер файла в байтах
+	std::cout << "Размер файла составляет " << sizefile << " байт\n";
+	fin1.close();
+	std::cout << "\n\n";
+
+
+	std::cout << "Задание 2\n";
+	std::cout << "Написать программу, копирующую один файл в другой. Имена файлов передаются в качестве аргументов командной строки\n\n";
+	char filename2[size];
+	strcpy(filename2, argv[2]);
+	std::ifstream fin2(filename);
+	std::ofstream fout2(filename2);
+	fout2 << fin2.rdbuf();
+	std::cout << "Файл " << filename << " скопирован в файл с наименованием " << filename2 << "\n";
+	fin2.close();
+	fout2.close();
+	std::cout << "\n\n";
+
+
+	std::cout << "Задание 3\n";
+	std::cout << "Имя файла передается в качестве аргумента командной строки.\nВ файле находится размер массива, элементы массива.\nВывести в командную строку отсортированный массив\n\n";
+	std::ifstream fin3(filename);
+	size_t size3;
+	fin3 >> size3; //читаем размер массива из файла
+	int* arr = new int[size3];
+
+	for (size_t i = 0; i < size3; i++) //переносим все числа в массив
+	{
+		fin3 >> arr[i];
+	}
+
+	std::cout << "Размер масства: " << size3 << "\n\n";
+	std::cout << "Исходный массив имеет вид:\n";
+	printArray(arr, size3);
+	fin3.close();
+	quickSort(arr, size3 - 1);
+	std::cout << "\nОтсортированный массив имеет вид:\n";
+	printArray(arr, size3);
+	delete[]arr;
+	std::cout << "\n\n";
+
+
+	std::cout << "Задание 4\n";
+	std::cout << "В качестве параметров командной строки передается файл и строка, в которой записано целое число.\nНужно вывести в командную строку все слова, длина которых равна указанному в строке числу\n\n";
+	char filename4[size];
+	strcpy(filename4, argv[3]);
+	size_t num = atoi(argv[4]); //записываем число аргумента в переменную
+	std::ifstream fin4(filename4);
+
+	if (!checkFile(fin4)) //проверка файла на открытие
+	{
+		return 0;
+	}
+
+	printWord(num, fin4);
+	fin4.close();
+	std::cout << "\n\n";
+
+
+	std::cout << "Задание 5\n";
+	std::cout << "Написать программу для передачи сообщений через бинарный файл.\nИмя бинарного файла и количество сообщений передаются в качестве параметров функции main\n\n";
+	Message m;
+	std::fstream file;
+	char filename5[20];
+	strcpy(filename5, argv[5]);
+	file.open(filename5, std::ios::out); //очистка бинарого файла от мусора. при наличии мусора может вести себя некорректно
+	file.close();
+	file.open(filename5, std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+	int amount = atoi(argv[6]); //строку char переводим в int
+	bool flag = 1;
+	bool isWrite = 0, isRead = 0;
+	int countRead = 0, countWrite = 0, countReadAll = 0, countWriteAll = 0;
+	char command[10];
+
+	while (flag)
+	{
+		std::cout << "Enter command (write \\ read \\ exit): ";
+		std::cin >> command;
+
+		if (strcmp(command, "write") == 0)
+		{
+			if (countWriteAll - countReadAll >= amount)
+			{
+				std::cout << "Sorry, no place to write!\n\n";
+				continue;
+			}
+
+			if (!checkFile)
+			{
+				return 0;
+			}
+
+			write(file, countWrite);
+
+			if (countWrite < amount)
+			{
+				countWrite++;
+			}
+			else
+			{
+				countWrite = 0;
+			}
+
+			isWrite = 1;
+			countWriteAll++;
+		}
+		else if (strcmp(command, "read") == 0)
+		{
+			if (isWrite == 0 || countWriteAll <= countReadAll)
+			{
+				std::cout << "Sorry, no messages!\n\n";
+				continue;
+			}
+
+			if (!checkFile)
+			{
+				return 0;
+			}
+
+			read(file, countRead);
+
+			if (countRead < amount)
+			{
+				countRead++;
+			}
+			else
+			{
+				countRead = 0;
+			}
+
+			countReadAll++;
+			isRead = 1;
+
+		}
+		else if (strcmp(command, "exit") == 0)
+		{
+			flag = 0;
+		}
+		else
+		{
+			std::cout << "Sorry, wrong command!\n";
+		}
+
+		std::cout << "\n";
+	}
+
+	file.close();
+	file.open(filename5, std::ios::out); //очистка бинарого файла от мусора. при наличии мусора на следующем запуске может вести себя некорректно
+	file.close();
+
+	system("pause");
+	return 0;
+}
+
+
+bool checkFile(std::ifstream& file)
+{
+	if (!file)
+	{
+		std::cout << "Ошибка открытия файла\n";
+		return 0;
+	}
+
+	else return 1;
+}
+
+void quickSort(int* arr, size_t size)
+{
+	int i = 0, j = size;
+	int p = arr[size / 2];
+
+	do
+	{
+		while (arr[i] < p)
+		{
+			i++;
+		}
+
+		while (arr[j] > p)
+		{
+			j--;
+		}
+
+		if (i <= j)
+		{
+			std::swap(arr[i], arr[j]);
+			i++;
+			j--;
+		}
+
+	} while (i <= j);
+
+	if (j > 0)
+	{
+		quickSort(arr, j);
+	}
+
+	if (size > i)
+	{
+		quickSort(arr + i, size - i);
+	}
+}
+
+void printArray(int* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		std::cout << arr[i] << " ";
+	}
+
+	std::cout << "\n";
+}
+
+void printWord(size_t size, std::ifstream& fin)
+{
+	char* array = new char[300];
+	bool flag = false;
+	fin.get(array, 300, '\0');
+	std::cout << "В файле содержится следующий текст: \n" << array << "\n\n";
+	char* str = strtok(array, " ,.-!?()");
+	std::cout << "Слова с " << size << " буквами: ";
+
+	while (str != NULL)
+	{
+		if (strlen(str) == size)
+		{
+			flag = true;
+			std::cout << str << " ";
+		}
+
+		str = strtok(NULL, " ,.-!?()");
+	}
+
+	if (!flag)
+	{
+		std::cout << "отсутствуют\n";
+	}
+
+	std::cout << "\n";
+
+	delete[]array;
+}
+
+void read(std::fstream& file, int& countRead)
+{
+	Message m;
+	file.seekg(countRead * sizeof(Message), std::ios::beg);//переместились на нужную позицию в файле
+	file.read(reinterpret_cast <char*>(&m), sizeof(m));
+	std::cout << m.author << ": " << m.message << std::endl;
+}
+
+void write(std::fstream& file, int& countWrite)
+{
+	Message m;
+	std::cout << "Enter name and message: ";
+	std::cin >> m.author;
+	std::cin >> m.message;
+	file.seekp(countWrite * sizeof(Message), std::ios::beg);
+	file.write(reinterpret_cast <char*>(&m), sizeof(m));
+}
