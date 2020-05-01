@@ -1,1 +1,537 @@
 
+#define _CRT_SECURE_NO_WARNINGS
+#include<cstring>
+#include<iostream>
+#include<fstream>
+#include<ctime>
+
+struct Train
+{
+	char station[50];
+	size_t number;
+	bool express;
+};
+
+bool   checkFile(std::ifstream&);
+size_t countSymbol(char**, size_t);
+size_t countLine(char**, size_t);
+size_t countDigit(char**, size_t);
+size_t countGls(char**, size_t);
+size_t countSogls(char**, size_t);
+void   initBinaryFile(std::fstream&);
+void   printArray(int[], size_t);
+void   plusNum(int[], size_t, std::fstream&);
+void   mul(int[], size_t, std::fstream&);
+void   changeAverage(int[], size_t, std::fstream&);
+void   Read(Train&, std::ifstream&);
+void   Print(const Train&, std::ostream&);
+void   sort(Train*, size_t);
+void   printStation(Train*, size_t);
+void   checkStation(Train*, size_t, char*);
+void   outputTrain(Train*, size_t, char*);
+void   outputExpressTrain(Train*, size_t, char*);
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	{
+		std::cout << "Задание 1.\nДано два текстовых файла.\nВыяснить, являются ли строки из первого файла строками второго файла.\nЕсли нет, то вывести несовпадающие строки.\n\n";
+		std::ifstream fin1("Task1_1.txt"), fin2("Task1_2.txt"); //открытие файла только для чтения
+
+		if (checkFile(fin1) && checkFile(fin2)) //проверка файла на корректность открытия
+		{
+			char* line = new char[300];
+			int count = 0;
+
+			while (!fin1.eof()) //цикл выполняется пока не конец первого файла. цикл используем для подсчета количества строк первого файла
+			{
+				fin1.getline(line, 300);
+				count++;
+			}
+
+			fin1.close(); //закрытие первого файла
+			char** array = new char* [count];
+
+			for (size_t i = 0; i < count; i++) //создаем массив для переноса в него строк их первого файла
+			{
+				array[i] = new char[300];
+			}
+
+			fin1.open("Task1_1.txt"); //открытие первого файла заново, чтобы считывать файл с первой строки
+			int i = 0;
+
+			while (!fin1.eof()) //пока не конец первого файла копируем строки из первого файла в массив
+			{
+				fin1.getline(line, 300);
+				strcpy(array[i], line);
+				i++;
+			}
+
+			bool flagNotLine = false;
+
+			while (!fin2.eof()) //пока не конец второго файла, сравниваем строки из массива и строки второго файла
+			{
+				bool flag = false;
+				fin2.getline(line, 300);
+
+				for (i = 0; i < count; i++)
+				{
+					if (strcmp(array[i], line) == 0)
+					{
+						flag = true;
+						break;
+					}
+				}
+
+				if (flag == false) //если строка не нашлась - выводим ее на консоль
+				{
+					std::cout << line << "\n";
+					flagNotLine = true;
+				}
+			}
+
+			if (flagNotLine == false)
+			{
+				std::cout << "Все строки файлов совпадают\n";
+			}
+
+			for (size_t i = 0; i < count; i++)
+			{
+				delete[]array[i];
+			}
+
+			delete[]line;
+			delete[]array;
+			fin1.close();
+			fin2.close();
+		}
+
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 2.\nДан текстовый файл.\nНеобходимо создать новый файл и записать в него следующую статистику по исходному файлу:\n- количество символов\n- количество строк\n- количество гласных букв\n- количество согласных букв\n- количество цифр.\n\n";
+		std::ifstream fin1("Task2.txt"); //открытие файла только для чтения
+
+		if (checkFile(fin1)) //проверка файла на корректность открытия файлов
+		{
+			char* line = new char[300];
+			int count = 0; // количество строк в файле
+
+			while (!fin1.eof()) //цикл выполняется пока не конец файла. цикл используем для подсчета количества строк файла
+			{
+				fin1.getline(line, 300);
+				count++;
+			}
+
+			fin1.close(); //закрытие первого файла
+			char** array = new char* [count];
+
+			for (size_t i = 0; i < count; i++) //создаем массив для переноса в него строк их первого файла
+			{
+				array[i] = new char[300];
+			}
+
+			fin1.open("Task2.txt"); //открытие первого файла заново, чтобы считывать файл с первой строки
+			int i = 0;
+
+			while (!fin1.eof()) //пока не конец первого файла копируем строки из первого файла в массив
+			{
+				fin1.getline(line, 300);
+				strcpy(array[i], line);
+				i++;
+			}
+
+			std::ofstream fout("Task2_output.txt");
+			fout << "Количество символов: " << countSymbol(array, count) << "\n";
+			fout << "Количество строк: " << count << "\n";
+			fout << "Количество гласных букв: " << countGls(array, count) << "\n";
+			fout << "Количество согласных букв: " << countSogls(array, count) << "\n";
+			fout << "Количество цифр: " << countDigit(array, count) << "\n";
+			std::cout << "Ститистика выведена в файл Task2_output.txt\n";
+
+			for (size_t i = 0; i < count; i++)
+			{
+				delete[]array[i];
+			}
+
+			delete[]array;
+			delete[]line;
+			fin1.close();
+			fout.close();
+		}
+
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 3.\nНаписать функцию с помощью которой подготовить входной бинарный файл,\nзаписав в него 20 чисел в диапазоне от -20 до 20.\nСформировать выходной текстовый файл, преобразовав числа следующим образом:\n- добавить к каждому числу последнее число файла\n- умножить каждое число на произведение первого и последнего отрицательного числа\n- заменить все нули средним арифметическим\n\n";
+		std::fstream bfile("Task3.dat", std::ios::binary | std::ios::out);
+		size_t const SIZE = 20;
+		int array[SIZE];
+		initBinaryFile(bfile);
+		bfile.open("Task3.dat");
+		bfile.read(reinterpret_cast<char*>(array), sizeof(array));
+		std::cout << "Исходный текстовый файл имеет вид:\n";
+		printArray(array, SIZE);
+		std::fstream output("Task3_output.txt", std::ios::out);
+		plusNum(array, SIZE, output);
+		std::cout << "\n";
+		mul(array, SIZE, output);
+		std::cout << "\n";
+		changeAverage(array, SIZE, output);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 4.\nОписать структуру с именем TRAIN, содержащий следующие поля:\n- название пункта назначения\n- номер поезда\n- экспресс или нет\n\nСоздать массив структур, данные прочитать из файла Task4.txt\n\n";
+		size_t const SIZE = 10;
+		Train array[SIZE];
+		std::ifstream fin("Task4.txt");
+
+		if (checkFile(fin)) //проверка файла на корректность открытия
+		{
+			for (size_t i = 0; i < SIZE; i++)
+			{
+				Read(array[i], fin);
+			}
+
+			fin.close();
+			sort(array, SIZE);
+			printStation(array, SIZE);
+			char* ptr = new char[50];
+			checkStation(array, SIZE, ptr);
+			std::cout << "Возможные варианты вывода информации:\n1. Все поезда, направляющиеся в пункт назначения\n2. Только экспресс поезда, направляющиеся в пункт назначения\n\nВыберите нужный вариант: ";
+
+			while (true)
+			{
+				size_t answer;
+				std::cin >> answer;
+
+				if (answer == 1)
+				{
+					outputTrain(array, SIZE, ptr);
+					break;
+				}
+				else if (answer == 2)
+				{
+					outputExpressTrain(array, SIZE, ptr);
+					break;
+				}
+				else
+				{
+					std::cout << "Вы ввели неверный вариант вывода информации.\n\nВыберите нужный вариант: ";
+				}
+			}
+		}
+
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
+
+bool checkFile(std::ifstream& f)
+{
+	if (!f.is_open()) //проверка файла на корректность открытия
+	{
+		std::cout << "Не удалось открыть файл\n";
+		return 0;
+	}
+	return true;
+}
+
+size_t countSymbol(char** array, size_t SIZE)
+{
+	size_t count = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		count += strlen(array[i]);
+	}
+
+	return count;
+}
+
+size_t countLine(char** array, size_t SIZE)
+{
+	size_t count = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		count += strlen(array[i]);
+	}
+
+	return count;
+}
+
+size_t countDigit(char** array, size_t SIZE)
+{
+	char digit[] = "0123456789";
+	size_t count = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		char* pch = strpbrk(array[i], digit);
+
+		while (pch != NULL)
+		{
+			count++;
+			pch = strpbrk(pch + 1, digit);
+		}
+	}
+
+	return count;
+}
+
+size_t countGls(char** array, size_t SIZE)
+{
+	char gls[] = "AEIOUYaeiouyАОИЕЁЭЫУЮЯаоиеёэыуюя";
+	size_t count = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		char* pch = strpbrk(array[i], gls);
+
+		while (pch != NULL)
+		{
+			count++;
+			pch = strpbrk(pch + 1, gls);
+		}
+	}
+
+	return count;
+}
+
+size_t countSogls(char** array, size_t SIZE)
+{
+	char sogls[] = "BCDFGHJKLMNPQRSTVWXZbcdfghjklmnpqrstvwxzБВГДЖЗЙКЛМНПРСТФХЦЧШЩбвгджзйклмнпрстфхцчшщ";
+	size_t count = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		char* pch = strpbrk(array[i], sogls);
+
+		while (pch != NULL)
+		{
+			count++;
+			pch = strpbrk(pch + 1, sogls);
+		}
+	}
+
+	return count;
+}
+void initBinaryFile(std::fstream& fun)
+{
+	for (size_t i = 0; i < 20; i++) //заполнение двух файлов числами от -20 до 20
+	{
+		int value = rand() % 41 - 20;
+		fun.write(reinterpret_cast<char*>(&value), sizeof(value));
+	}
+
+	fun.close();
+}
+
+void printArray(int array[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		std::cout << array[i] << " ";
+	}
+
+	std::cout << "\n\n";
+}
+
+void plusNum(int array[], size_t SIZE, std::fstream& output)
+{
+	int num = array[SIZE - 1];
+	std::cout << "Добавить к каждому числу последнее число файла:\n";
+	output << "Добавить к каждому числу последнее число файла: ";
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		std::cout << array[i] + num << " ";
+		output << array[i] + num << " ";
+	}
+
+	std::cout << "\n";
+	output << "\n";
+}
+
+void mul(int array[], size_t SIZE, std::fstream& output)
+{
+	int n1, n2;
+	bool flag = false;
+	std::cout << "Умножить каждое число на произведение первого и последнего отрицательного числа:\n";
+	output << "Умножить каждое число на произведение первого и последнего отрицательного числа: ";
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (array[i] < 0)
+		{
+			n1 = array[i];
+			flag = true;
+			break;
+		}
+	}
+
+	if (flag == true)
+	{
+		for (int i = SIZE - 1; i >= 0; i--)
+		{
+			if (array[i] < 0)
+			{
+				n2 = array[i];
+				break;
+			}
+		}
+
+		for (size_t i = 0; i < SIZE; i++)
+		{
+			std::cout << array[i] * n1 * n2 << " ";
+			output << array[i] * n1 * n2 << " ";
+		}
+
+		std::cout << "\n";
+		output << "\n";
+	}
+	else
+	{
+		std::cout << "отсутствуют отрицательные числа\n";
+		output << "отсутствуют отрицательные числа\n";
+	}
+}
+
+void changeAverage(int array[], size_t SIZE, std::fstream& output)
+{
+	int ave = 0;
+	std::cout << "Заменить все нули средним арифметическим:\n";
+	output << "Заменить все нули средним арифметическим: ";
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		ave += array[i];
+	}
+
+	ave /= (int)SIZE;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (array[i] != 0)
+		{
+			std::cout << array[i] << " ";
+			output << array[i] << " ";
+		}
+		else
+		{
+			std::cout << ave << " ";
+			output << ave << " ";
+		}
+	}
+
+	std::cout << "\n";
+	output << "\n";
+}
+
+void Read(Train& st, std::ifstream& stream)
+{
+	stream >> st.station >> st.number >> st.express;
+}
+
+void Print(const Train& st, std::ostream& stream)
+{
+	stream << "Станция " << st.station << " | Номер вагона " << st.number << " | Экспресс поезд " << st.express << "\n";
+}
+
+void sort(Train* st, size_t SIZE)
+{
+	for (size_t i = SIZE - 1; i > 0; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (strcmp(st[j].station, st[j + 1].station) > 0)
+			{
+				std::swap(st[j], st[j + 1]);
+			}
+		}
+	}
+}
+
+void printStation(Train* st, size_t SIZE)
+{
+	std::cout << "Возможные пункты назвачения: \n";
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (strcmp(st[i].station, st[i + 1].station) != 0)
+		{
+			std::cout << "- " << st[i].station << "\n";
+		}
+	}
+}
+
+void checkStation(Train* st, size_t SIZE, char* ptr)
+{
+	while (true)
+	{
+		std::cout << "\nВведите желаемый пункт назначения: ";
+		std::cin.getline(ptr, 50);
+
+		for (size_t i = 0; i < SIZE; i++)
+		{
+			if (strcmp(st[i].station, ptr) == 0)
+			{
+				std::cout << "\n";
+				return;
+			}
+		}
+
+		std::cout << "Данный пункт назначения отсутствует\n";
+	}
+}
+
+void outputTrain(Train* st, size_t SIZE, char* ptr)
+{
+	std::ofstream fout("Task4_output.txt");
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (strcmp(st[i].station, ptr) == 0)
+		{
+			Print(st[i], fout);
+		}
+	}
+
+	fout.close();
+	std::cout << "\nИнформация сохранена в файл Task4_output.txt\n";
+}
+
+
+void outputExpressTrain(Train* st, size_t SIZE, char* ptr)
+{
+	bool flag = false;
+	std::ofstream fout("Task4_output.txt");
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (strcmp(st[i].station, ptr) == 0 && st[i].express == 1)
+		{
+			Print(st[i], fout);
+			flag = true;
+		}
+	}
+
+	fout.close();
+
+	if (flag == true)
+	{
+		std::cout << "\nИнформация сохранена в файл Task4_output.txt\n";
+	}
+	else
+	{
+		std::cout << "\nПоезда экспресс в данный пункт назначения отсутстуют\n";
+	}
+}
