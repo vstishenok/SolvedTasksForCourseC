@@ -1,0 +1,408 @@
+#include <iostream>
+#include<ctime>
+
+void initArrayAuto(int[], size_t);
+void initArrayAuto2(int[], size_t);
+void initArrayAutoZero(int[], size_t);
+void initArray(int[], size_t);
+void printArray(int[], size_t);
+void bubbleSort(int[], size_t);
+void searchMax(int[], int[], size_t);
+void oddNumber(int[], size_t);
+void initArrayStartNumber(int[], size_t, int);
+void maxProduct(int[], size_t);
+void checkZone(int[], size_t);
+void copyArray(int[], int[], size_t);
+int searchMaxNumber(int[], size_t);
+void swapVariables(int[], size_t, int);
+int devRemainder(int[], size_t, int, int);
+void bubbleSortDiv(int[], size_t, int);
+int differenceMinMax(int[], size_t, int);
+void bubbleSortDifference(int[], size_t, int);
+void coutDifferenceMinMax(int[], size_t);
+
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		std::cout << "Задание 1.\nВвести два массива А и В целых чисел.\nНайти максимальный элемент массива А не принадлежащий массиву В.\n\n";
+		const size_t SIZE = 10;
+		int A[SIZE], B[SIZE];
+		srand(time(0));
+		initArrayAuto(A, SIZE);
+		initArrayAuto(B, SIZE);
+		std::cout << "Массив А: ";
+		printArray(A, SIZE);
+		std::cout << "Массив B: ";
+		printArray(B, SIZE);
+		bubbleSort(A, SIZE);
+		searchMax(A, B, SIZE);
+	}
+
+	{
+		std::cout << "Задание 2.\nДан массив целых чисел, в котором все числа кроме одного встречаются четное количество раз.\nОдно число встречается нечетное количество раз. Найти это число.\n\n";
+		const size_t SIZE = 7;
+		std::cout << "Размер массива - "  << SIZE << "\nЗаполните массив...\n";
+		int A[SIZE];
+		initArray(A, SIZE);
+		oddNumber(A, SIZE);
+
+	}
+
+	{
+		std::cout << "Задание 3.\nИз последовательности целых чисел выбрать три числа, произведение которых максимально.\n\n";
+		const size_t SIZE = 15;
+		int n, A[SIZE];
+		std::cout << "Введите число, которое будет являться началом последовательности: ";
+		std::cin >> n;
+		initArrayStartNumber(A, SIZE, n);
+		std::cout << "Полученный массив: ";
+		printArray(A, SIZE);
+		maxProduct(A, SIZE);
+	}
+
+	{
+		std::cout << "Задание 4.\nЗадан одномерный массив. Подсчитать количество нулевых зон.\n\n";
+		const size_t SIZE = 15;
+		int A[SIZE];
+		srand(time(0));
+		initArrayAutoZero(A, SIZE);
+		std::cout << "Полученный массив: ";
+		printArray(A, SIZE);
+		checkZone(A, SIZE);
+	}
+
+	{
+		std::cout << "Задание 5.\nПоменять местами максимальный элемент массива и последний.\nПри этом сформировать новый массив. Вывести оба массива.\n\n";
+		const size_t SIZE = 10;
+		int A[SIZE], B[SIZE];
+		srand(time(0));
+		initArrayAuto(A, SIZE);
+		copyArray(A, B, SIZE);
+		int maxIndex = searchMaxNumber(B, SIZE);
+		swapVariables(B, SIZE, maxIndex);
+		printArray(A, SIZE);
+		std::cout << "\n";
+		printArray(B, SIZE);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 6.\nДан массив натуральных чисел.\nСоставить программу, которая выполняет сортировку его элементов следующим образом: сначала идут элементы, кратные числу K (дают 0 в остатке от деления на K), затем те, которые при делении на K дают в остатке 1, и т.д. Последнюю группу составляют числа, остаток от деления на K которых равен K-1.\nЗатем в каждой из полученных групп выполнить сортировку в порядке возрастания разности минимальной и максимальной цифр в записи чисел\n\n";
+		const size_t SIZE = 15;
+		int A[SIZE], dev;
+		srand(time(0));
+		initArrayAuto2(A, SIZE);
+		std::cout << "Полученный массив:\n";
+		printArray(A, SIZE);
+		std::cout << "Введите число К: ";
+		std::cin >> dev;
+		bubbleSortDiv(A, SIZE, dev);
+		std::cout << "Отсортированный массив по возростанию остатка от деления на число К:\n";
+		printArray(A, SIZE);
+		std::cout << "Отсортированный группами массив в порядке возрастания разности минимальной и максимальной цифр в записи числа:\n";
+		bubbleSortDifference(A, SIZE, dev);
+		printArray(A, SIZE);
+		std::cout << "Разность милимального и максимального значения чисел выше:\n";
+		coutDifferenceMinMax(A, SIZE);
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
+
+void initArrayAuto(int A[], size_t SIZE) //автоматическое заполнение массива
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		A[i] = 1 + rand() % 10;
+	}
+}
+
+void initArrayAuto2(int A[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		A[i] = 1 + rand() % 100;
+	}
+}
+
+void initArrayAutoZero(int A[], size_t SIZE) //автоматическое заполнение массива (более часто встречается 0)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		A[i] = rand() % 3;
+	}
+}
+
+void initArray(int A[], size_t SIZE) //ручное заполнение массива
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		std::cout << "[" << i << "] = ";
+		std::cin >> A[i];
+	}
+}
+
+void printArray(int A[], size_t SIZE) //вывод массива на консоль
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		std::cout << A[i] << " ";
+	}
+	std::cout << "\n";
+}
+
+void bubbleSort(int A[], size_t SIZE) //сортировка массива
+{
+	for (size_t i = SIZE - 1; i > 0; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (A[j] < A[j + 1])
+			{
+				int temp = A[j];
+				A[j] = A[j + 1];
+				A[j + 1] = temp;
+			}
+
+		}
+	}
+}
+
+void searchMax(int A[], int B[], size_t SIZE) //нахождение максимального числа в массиве, не принадлежащего другому массиву
+{
+	bubbleSort(A, SIZE);
+	bool flag = false;
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		flag = true;
+		for (size_t j = 0; j < SIZE; j++)
+		{
+			if (A[i] == B[j])
+			{
+				flag = false;
+				break;
+			}
+		}
+
+		if (flag == true)
+		{
+			std::cout << "\nМаксимальный элемент массива А не принадлежащий массиву В: " << A[i] << "\n\n\n";
+			return;
+		}
+	}
+
+	if (flag == false)
+	{
+		std::cout << " Элементы отсутствуют\n\n\n";
+	}
+}
+
+void oddNumber(int A[], size_t SIZE) // нахождение нечетного количества чисел в массиве
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		int count = 0;
+
+		for (size_t j = 0; j < SIZE; j++)
+		{
+			if (A[i] == A[j])
+			{
+				count++;
+			}
+		}
+
+		if (count % 2 != 0)
+		{
+			std::cout << "\nЧисло, которое встречается нечетное количество раз: " << A[i] << "\n\n\n";
+			return;
+		}
+	}
+}
+
+void initArrayStartNumber(int A[], size_t SIZE, int n) // заполнение массива последовательностью целых чисел, начиная с указанного числа
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		A[i] = n;
+		n++;
+	}
+}
+
+void maxProduct(int A[], size_t SIZE)
+{
+	int max1 = 0, max2 = 0;
+	max1 = A[SIZE - 3] * A[SIZE - 2] * A[SIZE - 1];
+	max2 = A[0] * A[1] * A[SIZE - 1];
+	if (max1 > max2)
+	{
+		std::cout << "Произведение чисел " << A[SIZE - 3] << " " << A[SIZE - 2] << " " << A[SIZE - 1] << " является максимальным.\n\n\n";
+	}
+	else
+	{
+		std::cout << "Произведение чисел " << A[0] << " " << A[1] << " " << A[SIZE - 1] << " является максимальным.\n\n\n";
+	}
+}
+
+void checkZone(int A[], size_t SIZE) // подсчет нулевых зон
+{
+	bool isLastZero = false;
+	int count = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (A[i] == 0 && !isLastZero)
+		{
+			count++;
+		}
+
+		isLastZero = (A[i] == 0);
+	}
+
+	std::cout << "Всего нулевых зон в массиве: " << count << "\n\n\n";
+}
+
+void copyArray(int A[], int B[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		B[i] = A[i];
+	}
+}
+
+int searchMaxNumber(int A[], size_t SIZE)
+{
+	int maxIndex = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		if (A[i] > A[maxIndex])
+		{
+			maxIndex = i;
+		}
+	}
+
+	return maxIndex;
+}
+
+void swapVariables(int B[], size_t SIZE, int maxIndex)
+{
+	int temp = B[SIZE - 1];
+	B[SIZE - 1] = B[maxIndex];
+	B[maxIndex] = temp;
+}
+
+void bubbleSortDiv(int A[], size_t SIZE, int dev)
+{
+	for (size_t i = SIZE - 1; i > 0; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (devRemainder(A, SIZE, j, dev) > (devRemainder(A, SIZE, j + 1, dev)))
+			{
+				int temp = A[j];
+				A[j] = A[j + 1];
+				A[j + 1] = temp;
+			}
+		}
+	}
+}
+
+int devRemainder(int A[], size_t SIZE, int i, int dev)
+{
+	int remainder = A[i] % dev;
+	return remainder;
+}
+
+int differenceMinMax(int A[], size_t SIZE, int i)
+{
+	int n, min = 10, max = -1;
+	n = A[i];
+	while (n != 0)
+	{
+		if (n % 10 < min)
+		{
+			min = n % 10;
+		}
+
+		if (n % 10 > max)
+		{
+			max = n % 10;
+		}
+
+		n = n / 10;
+	}
+
+	return min - max;
+}
+
+void bubbleSortDifference(int A[], size_t SIZE, int k)
+{
+	for (size_t y = 0; y < k; y++) // перебор остатка от деления по модулю от 0 до К-1
+	{
+		int indexMin = -1, indexMax = -1;
+
+		for (int i = 0; i < SIZE; i++) // нахождение минимального и максимального значения индекса массива для остатка К
+		{
+			if (A[i] % k == y)
+			{
+				if (indexMin == -1)
+				{
+					indexMin = i;
+				}
+
+				if (i > indexMax)
+				{
+					indexMax = i;
+				}
+			}
+		}
+
+		if (indexMin != indexMax) //проверка не одно ли число в группе
+		{
+
+			for (size_t i = indexMax; i > indexMin; i--) //цикл отвечает за перестановку маркера
+			{
+				for (size_t j = indexMin; j < i; j++) //цикл перебирает элементы от 0-го до маркера
+				{
+					if ((differenceMinMax(A, SIZE, j) > (differenceMinMax(A, SIZE, j + 1))))
+					{
+						int temp = A[j];
+						A[j] = A[j + 1];
+						A[j + 1] = temp;
+					}
+				}
+			}
+		}
+	}
+}
+
+void coutDifferenceMinMax(int A[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		int n, min = 10, max = -1;
+		n = A[i];
+		while (n != 0)
+		{
+			if (n % 10 < min)
+			{
+				min = n % 10;
+			}
+
+			if (n % 10 > max)
+			{
+				max = n % 10;
+			}
+
+			n = n / 10;
+		}
+
+		std::cout << min - max << " ";
+	}
+
+}
