@@ -1,0 +1,661 @@
+################################################################################################################# input1.txt
+
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+int main()
+{
+	char** words = new char* [20];//массив на 20 слов
+
+	for (size_t i = 0; i < 20; i++)
+	{
+		words[i] = new char[15];// каждое слово не более 15 символов 
+	}
+
+	char* sptr = new char[200];
+	char copyStr[200];
+	cout << "Enter the string\n";
+	cin.getline(sptr, 200);
+	strcpy(copyStr, sptr);// создадим копию исходной строки
+	size_t N = 0;
+	char* s = strtok(copyStr, " ,.-!?");
+
+	while (s)
+	{
+		strcpy(words[N++], s);
+		s = strtok(NULL, " ,.-!?");
+	}
+
+	for (size_t i = 0; i < N; i++)
+	{
+		cout << words[i] << endl;
+	}
+
+	///сортировка пузырьком
+
+	for (size_t i = N - 1; i > 1; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (strcmp(words[j], words[j + 1]) > 0)
+				swap(words[j], words[j + 1]);
+		}
+	}
+
+	cout << "Sorted array\n";
+
+	for (size_t i = 0; i < N; i++)
+	{
+		cout << words[i] << endl;
+	}
+
+	system("pause");
+	return 0;
+}
+
+#################################################################################################################  input2.txt
+
+We can do it
+In order to succeed, we must first believe that we can
+Motivation comes from working on things we care about
+
+#################################################################################################################  input3.txt
+
+bool break case char continue double else float for if int namespace new static struct switch using void while
+
+#################################################################################################################  input4.txt
+
+#pragma once
+#include<iostream>
+#include<ctime>
+
+struct Node
+{
+	int data;
+	Node* prev;
+	Node* next;
+};
+
+struct List
+{
+	Node* head;
+	Node* tail;
+	size_t size;
+};
+
+struct ListMouse //отказался от (Node* tail), так как список зациклен
+{
+	Node* head;
+	size_t size;
+};
+
+
+void initList(List& list)
+{
+	list.head = nullptr;
+	list.tail = nullptr;
+	list.size = 0;
+}
+
+void initListMouse(ListMouse& list)
+{
+	list.head = nullptr;
+	list.size = 0;
+}
+
+void printList(List& list)
+{
+	for (Node* i = list.head; i != nullptr; i = i->next)
+	{
+		std::cout << i->data << " ";
+	}
+
+	std::cout << "\n";
+}
+
+void printListMouse(ListMouse& list)
+{
+	Node* i = list.head;
+
+	for (size_t j = 0; j < list.size; i = i->next, j++)
+	{
+		std::cout << static_cast<char>(i->data) << " ";
+	}
+
+	std::cout << "\n";
+}
+
+void pushFront(List& list, int key) //добавление в начало списка
+{
+	Node* temp = new Node;
+	temp->data = key;
+	temp->prev = nullptr;
+	temp->next = list.head;
+
+	if (list.size == 0)
+	{
+		list.tail = temp;
+	}
+	else
+	{
+		list.head->prev = temp;
+	}
+
+	list.head = temp;
+	list.size++;
+}
+
+void pushBack(List& list, int key) //добавление в конец списка
+{
+	Node* temp = new Node;
+	temp->data = key;
+	temp->prev = list.tail;
+	temp->next = nullptr;
+
+	if (list.size == 0)
+	{
+		list.head = temp;
+	}
+	else
+	{
+		list.tail->next = temp;
+	}
+
+	list.tail = temp;
+	list.size++;
+}
+
+void pushFrontMouse(ListMouse& list, int key) //добавление в начало списка мышки
+{
+	Node* temp = new Node;
+	temp->data = key;
+
+	if (list.size == 0)
+	{
+		temp->next = temp;
+		temp->prev = temp;
+	}
+	else
+	{
+		temp->next = list.head;
+		temp->prev = list.head->prev;
+		list.head->prev->next = temp;
+		list.head->prev = temp;
+	}
+
+	list.head = temp;
+	list.size++;
+}
+
+void pushPosition(List& list, size_t index, int key) //добавление в список по индексу
+{
+	if (list.size < index)
+	{
+		std::cout << "Нельзя выполнить добавление\n";
+		return;
+	}
+
+	if (index == 0)
+	{
+		pushFront(list, key);
+		return;
+	}
+
+	if (index == list.size)
+	{
+		pushBack(list, key);
+		return;
+	}
+
+	Node* temp = new Node;
+	temp->data = key;
+	Node* i = list.head;
+	size_t count = 0;
+
+	for (; count < index; count++, i = i->next);
+
+	temp->next = i;
+	temp->prev = i->prev;
+	(i->prev)->next = temp;
+	i->prev = temp;
+	list.size++;
+}
+
+void pushMousePosition(ListMouse& list, size_t index, int key) //добавление в список по индексу
+{
+	if (list.size == 0)
+	{
+		pushFrontMouse(list, key);
+		return;
+	}
+
+	Node* temp = new Node;
+	temp->data = key;
+
+	Node* i = list.head;
+	size_t count = 1
+		;
+
+	for (; count < index; count++, i = i->prev);
+
+	temp->next = i;
+	temp->prev = i->prev;
+	(i->prev)->next = temp;
+	i->prev = temp;
+	list.head = temp;
+	list.size++;
+}
+
+int popFront(List& list) //удаление из начала списка
+{
+	if (list.size == 0)
+	{
+		std::cout << "Лист пустой\n";
+		return -1;
+	}
+
+	int key = list.head->data;
+	Node* temp = list.head;
+
+	if (list.size == 1)
+	{
+		list.head = list.tail = nullptr;
+	}
+	else if (list.size > 1)
+	{
+		list.head = temp->next;
+		list.head->prev = nullptr;
+	}
+
+	delete temp;
+	list.size--;
+	return key;
+}
+
+int popBack(List& list) //удаление из конца списка
+{
+	if (list.size == 0)
+	{
+		std::cout << "Список пуст\n";
+		return -1;
+	}
+
+	int key = list.tail->data;
+	Node* temp = list.tail;
+
+	if (list.size == 1)
+	{
+		list.head = list.tail = nullptr;
+	}
+	else if (list.size > 1)
+	{
+		list.tail = temp->prev;
+		list.tail->next = nullptr;
+	}
+
+	delete temp;
+	list.size--;
+	return key;
+}
+
+int popPosition(List& list, size_t index) //удаление по индексу
+{
+	if (list.size < index)
+	{
+		std::cout << "Нельзя выполнить удаление\n";
+		return -1;
+	}
+
+	if (index == 0)
+	{
+		return popFront(list);
+	}
+
+	if (index == list.size - 1)
+	{
+		return popBack(list);
+	}
+
+	Node* i = list.head;
+	size_t count = 0;
+
+	for (; count < index; count++, i = i->next);
+
+	(i->prev)->next = i->next;
+	(i->next)->prev = i->prev;
+	int key = i->data;
+	delete i;
+	list.size--;
+	return key;
+}
+
+int printKey(List list, size_t index) //вывод ключа
+{
+	if (index >= list.size)
+	{
+		std::cout << "Нет элемента с данным индексом\n";
+		return -1;
+	}
+
+	Node* i = list.head;
+	size_t count = 0;
+
+	for (; count < index; count++, i = i->next);
+
+	return i->data;
+}
+
+void popKey(List& list, int key) //удаление по ключу
+{
+	for (size_t i = 0; i < list.size; i++)
+	{
+		if (printKey(list, i) == key)
+		{
+			popPosition(list, i);
+			return;
+		}
+	}
+
+	std::cout << "Элемент с данным ключом не найден\n";
+	return;
+}
+
+void insertSort(List& list, int key) //добавление в отсортированный список
+{
+	if (list.size == 0)
+	{
+		pushFront(list, key);
+		return;
+	}
+
+	Node* i = list.head;
+	size_t count = 0;
+
+	for (; i != nullptr && key > i->data; i = i->next, count++);
+
+	if (i == nullptr)
+	{
+		pushBack(list, key);
+		return;
+	}
+
+	pushPosition(list, count, key);
+
+	return;
+}
+
+#################################################################################################################  main.cpp
+
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<cmath>
+
+struct KeyWord
+{
+	std::string word;
+	size_t count = 0;
+};
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		std::cout << "Задание 1\nВ тексте программы на C++ перед каждым ключевым словом char вставить ключевое слово unsigned.\n\n";
+		std::ifstream fin("input1.txt");
+		std::ofstream fout("output1.txt");
+
+		if (fin) //проверка на корректное открытие файла
+		{
+			std::string word = "char";
+			std::string wordnew = "unsigned ";
+
+			while (!fin.eof()) //пока не конец файла
+			{
+				
+				int pos = 0; //заводим переменную позиции
+				std::string str;
+				getline(fin, str);
+
+				while (pos != std::string::npos) //пока находим подстроку
+				{
+					pos = str.find(word, pos); //ищет начало вхождения
+
+					if (pos == std::string::npos) //если подстроки нет
+					{
+						break; //выходим из цикла while
+					}
+
+					str.insert(pos, wordnew); //выполняем замену начиная с позиции pos, количество элементов size, на слово "They"
+					pos += wordnew.size() + word.size(); //перемещаем позицию, чтобы не выполнять поиск с начала строки
+				}
+
+				fout << str << "\n";
+			}
+			std::cout << "Код программы с внесенными изменениями записан в текстовый файл output1.txt\n";
+		}
+		else
+		{
+		std::cout << "Файл отсутствует\n";
+		}
+
+
+		fin.close();
+		fout.close();
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 2\nВ тексте на английском языке заменить все местоимения «We» на местоимения «They».\n\n";
+
+		std::ifstream fin("input2.txt");
+		std::ofstream fout("output2.txt");
+
+		if (fin) //проверка на корректное открытие файла
+		{
+			while (!fin.eof()) //пока не конец файла
+			{
+				int pos = 0; //заводим переменную позиции
+				std::string str;
+				std::string word1 = "We";
+				std::string word2 = "we";
+
+				getline(fin, str);
+
+				while (pos != std::string::npos) //пока находим подстроку
+				{
+					pos = str.find(word1, pos); //ищет начало вхождения
+
+					if (pos == std::string::npos) //если подстроки нет
+					{
+						break; //выходим из цикла while
+					}
+
+					str.replace(pos, word1.size(), "They"); //выполняем замену начиная с позиции pos, количество элементов size, на слово "They"
+					pos += word1.size(); //перемещаем позицию, чтобы не выполнять поиск с начала строки
+				}
+
+				pos = 0; //обнуляем позицию
+
+				while (pos != std::string::npos) //пока находим подстроку
+				{
+					pos = str.find(word2, pos); //ищет начало вхождения
+
+					if (pos == std::string::npos) //если подстроки нет
+					{
+						break; //выходим из цикла while
+					}
+
+					str.replace(pos, word2.size(), "they");
+					pos += word2.size();
+				}
+
+				fout << str << "\n";
+			}
+
+			std::cout << "Текст с замененными местоимениями «We» записан в файл output2.txt\n";
+		}
+		else
+		{
+			std::cout << "Файл отсутствует\n";
+		}
+
+		fin.close();
+		fout.close();
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 3\nДана программа на C++.\nЗаписать в выходной файл построчно все ключевые слова, встречающиеся в этой программе.\nВ файле указать количество появлений ключевого слова в программе.\nУдалить наиболее часто встречаемое ключевое слово.\n\n";
+
+		KeyWord* array = new KeyWord[30];
+		std::ifstream fin("input3.txt"); //поток чтения ключевых слов
+
+		if (fin) //проверка на корректное открытие файла
+		{
+			size_t size = 0; //количество структур в массиве
+			std::string str;
+
+			while (!fin.eof()) //пока файл не пустой, записываем ключевые слова в массив
+			{
+				fin >> array[size].word;
+				size++;
+			}
+
+			fin.close();
+			fin.open("input4.txt"); //поток чтения кода программы с++
+
+			if (fin) //проверка на корректное открытие файла
+			{
+
+				while (!fin.eof()) //пока не конец файла
+				{
+					getline(fin, str);
+
+					for (size_t i = 0; i < size; i++)
+					{
+						std::string callword = array[i].word;
+						int pos = 0; //устанавливаем начальную позицию в строке str
+
+						while (pos != std::string::npos) //пока находим подстроку
+						{
+							pos = str.find(callword, pos);
+
+							if (pos == std::string::npos) //если подстроки нет
+							{
+								break; //выходим из цикла while
+							}
+
+							array[i].count++;
+							pos += callword.size();
+						}
+					}
+				}
+			}
+
+			fin.close();
+			std::ofstream fout("output3.txt"); //поток записи выходного файла
+
+			for (size_t i = 0; i < size; i++)
+			{
+				fout << array[i].word << " " << array[i].count << "\n";
+			}
+
+			fout.close();
+			std::cout << "Все ключевые слова записаны с количеством появлений записаны в файл output3.txt\n";
+			KeyWord* max = &array[0]; //заводим указатель max для нахождения наиболее часто встречаемого ключевого слова
+
+			for (size_t i = 1; i < size; i++)
+			{
+				if (array[i].count > max->count)
+				{
+					max = &array[i];
+				}
+			}
+
+			std::cout << "\nНаиболее часто встречающееся ключевое слово: " << max->word << "\n";
+			std::cout << "Количество употреблений в коде: " << max->count << "\n";
+			fin.open("input4.txt"); //поток чтения кода программы с++
+			fout.open("output4.txt");
+			std::string callword = max->word;
+
+			while (!fin.eof()) //пока не конец файла
+			{
+				getline(fin, str);
+				int pos = 0;
+
+				while (pos != std::string::npos) //пока находим подстроку
+				{
+					pos = str.find(callword, pos);
+
+					if (pos == std::string::npos) //если подстроки нет
+					{
+						break; //выходим из цикла while
+					}
+
+					str.erase(pos, callword.size());
+					pos += callword.size();
+				}
+
+				fout << str << "\n";
+			}
+
+			fin.close();
+			fout.close();
+			std::cout << "\nКод программы без ключевого слова " << max->word << " записан в текстовый файл output4.txt\n";
+			std::cout << "\n\n";
+		}
+		else
+		{
+			std::cout << "Файл отсутствует\n";
+		}
+	}
+
+	{
+		std::cout << "Задание 4\nДано дробное число типа double, представляющее собой денежную сумму в рублях и копейках.\nПреобразовать число в строку, разделив тройки цифр в рублях пробелом.\nВ конце добавить слово «рублей», «рубля» или «рубль».\nПосле копеек вставить сокращение «коп».\n\n";
+
+		std::cout << "Введите число типа double: ";
+		double number; //для хранения числа, введенного с консоли
+		std::cin >> number;
+
+		unsigned long long rub; //для хранения рубля
+		rub = static_cast<unsigned long long>(number);
+
+		double temp; //для перевода в копейки
+		temp = (number - rub) * 100;
+		size_t cop; //для хранения копеек
+		cop = round(temp);
+
+		std::string result; //для вывода на консоль
+		result = std::to_string(rub);
+
+		for (int i = result.size() - 3; i > 0; i = i - 3) //разделяем тройки цифр в рублях пробелом
+		{
+			result = result.insert(i, " ");
+		}
+
+		if ((rub % 100 > 10 && rub % 100 < 20) || (rub % 10 > 4) || (rub % 10 == 0))
+		{
+			result += " рублей ";
+		}
+		else if (rub % 10 > 1 && rub % 10 < 5)
+		{
+			result += " рубля ";
+		}
+		else
+		{
+			result += " рубль ";
+		}
+
+		result += std::to_string(cop);
+		result += " коп.";
+		std::cout << "\nОтвет: " << result;
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
