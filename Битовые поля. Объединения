@@ -1,0 +1,505 @@
+############################### Text.txt
+
+Samsung MX-879 blue 1 25 120 50
+Philips NP-84 white 0 50 100 62
+Vitek VI-589 red 1 25 65 58
+Xiaomi X-985 white 0 50 150 70
+Samsung MZ-84 yellow 1 20 130 80
+
+############################### Main.cpp
+
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<fstream>
+
+struct Byte // структура
+{
+	bool p1 : 1;
+	bool p2 : 1;
+	bool p3 : 1;
+	bool p4 : 1;
+	bool p5 : 1;
+	bool p6 : 1;
+	bool p7 : 1;
+	bool p8 : 1;
+};
+
+union Union1 //объединение для int
+{
+	int num;
+	unsigned char arr[4];
+	Byte byte[4];
+};
+
+union Union2 //объединение для float
+{
+	float num;
+	unsigned char arr[4];
+	Byte byte[4];
+};
+
+union Union3 //объединение для задачи 2
+{
+	int num1;
+	unsigned int num2;
+};
+
+union Union4 //объединение для задачи 3
+{
+	int num;
+	Byte byte[4];
+};
+
+struct Iron
+{
+	char brand[20];
+	char model[20];
+	char color[20];
+	bool steam;
+	int min;
+	int max;
+	int power;
+};
+
+void initNum(Union1&);
+void initNum(Union2&);
+void initNum(Union4&);
+void printBinAllBytes(Union1&);
+void printBinAllBytes(Union2&);
+void printBinAllBytes(Union4&);
+void printDecAllBytes(Union1&);
+void printDecAllBytes(Union2&);
+void printHexAllBytes(Union1&);
+void printHexAllBytes(Union2&);
+void printBinByte(Union1&);
+void printBinByte(Union2&);
+void zeroBytes(Union4&);
+void isZeroByte(Union4&);
+void readFile(Iron*, size_t, std::ifstream&);
+void printAllIron(Iron*, size_t);
+void printSteamIron(Iron*, size_t);
+void printPowerIron(Iron*, size_t);
+void printBrandIron(Iron*, size_t);
+void editIron(Iron*, size_t);
+
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		std::cout << "Задание 1.\nСоздайте объединение, состоящее из целого числа и массива символов и из вещественного числа и массива символов.\nНапишите следующие функции:\n - Ввести целое число\n - Просмотреть все байты числа\n - Просмотреть выбранный байт числа\n - Вывод байтов числа в двоичном и шестнадцатеричном виде\n\n";
+		std::cout << "##### Объединение их целого числа и массива символов\n";
+		Union1 un1; //объединение для int
+		initNum(un1);
+		printBinByte(un1);
+		printBinAllBytes(un1);
+		printDecAllBytes(un1);
+		printHexAllBytes(un1);
+		std::cout << "\n";
+		std::cout << "##### Объединение их вещественного числа и массива символов\n";
+		Union2 un2;//объединение для float
+		initNum(un2);
+		printBinByte(un2);
+		printBinAllBytes(un2);
+		printDecAllBytes(un2);
+		printHexAllBytes(un2);
+		std::cout << "\n";
+	}
+
+	{
+		std::cout << "Задание 2.\nРеализовать 4-х байтовую целую переменную, к которой можно обращаться и как к знаковому целому,\nи как беззнаковому целому, без явного преобразования типов.\nДля этого используйте объединение\n\n";
+		Union3 un;
+		std::cout << "Введите целое число (желательно отрицательное): ";
+		std::cin >> un.num1;
+		std::cout << "Обращение к знаковому целому: " << un.num1 << "\n";
+		std::cout << "Обращение беззнаковому целому: " << un.num2 << "\n";
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 3.\nСоздайте объединение, состоящее из целого числа и массива логических переменных.\nНапишите следующие функции:\n - Ввести целое число\n - Посчитать сколько нулевых байтов у числа\n - Вывод информации о байтах числа (нулевой, не нулевой)\n\n";
+		Union4 un;
+		initNum(un);
+		printBinAllBytes(un);
+		isZeroByte(un);
+		zeroBytes(un);
+	}
+
+	{
+		std::cout << "Задание 4.\nРеализовать структуру «Утюг» со следующими характеристиками:\nфирма, модель, цвет, минимальная температура, максимальная температура, подача пара, мощность.\nСоздайте динамический массив структур «Утюг»:\n - Редактировать элемент\n - Вывести модели только с подачей пара\n - Вывести модели больше заданной мощности\n - Вывести все модели одного производителя\n\n";
+		size_t size = 5;
+		Iron* array = new Iron[size];
+		std::ifstream fin("Text.txt");
+
+		if (!fin)
+		{
+			std::cout << "Невозможно открыть файл\n\n";
+			return 1;
+		}
+
+		readFile(array, size, fin);
+		fin.close();
+		printAllIron(array, size);
+		printSteamIron(array, size);
+		printPowerIron(array, size);
+		printBrandIron(array, size);
+		editIron(array, size);
+		printAllIron(array, size);
+
+	}
+
+
+
+	system("pause");
+	return 0;
+}
+
+
+void initNum(Union1& un)
+{
+	std::cout << "Введите целове число: ";
+	std::cin >> un.num;
+	std::cout << "\n";
+}
+
+void initNum(Union2& un)
+{
+	std::cout << "Введите вещественное число: ";
+	std::cin >> un.num;
+	std::cout << "\n";
+}
+
+void initNum(Union4& un)
+{
+	std::cout << "Введите целове число: ";
+	std::cin >> un.num;
+	std::cout << "\n";
+}
+
+void printBinAllBytes(Union1& un) //вывод на консоль каждого байта в двоичной системе счисления
+{
+	std::cout << "Вывод каждого байта числа в двоичной системе счисления:\n";
+
+	for (int i = 3; i >= 0; i--)
+	{
+		std::cout << un.byte[i].p8 << un.byte[i].p7 << un.byte[i].p6 << un.byte[i].p5 << un.byte[i].p4 << un.byte[i].p3 << un.byte[i].p2 << un.byte[i].p1 << "  ";
+	}
+
+	std::cout << "\n\n";
+}
+
+void printBinAllBytes(Union2& un) //вывод на консоль каждого байта в двоичной системе счисления
+{
+	std::cout << "Вывод каждого байта числа в двоичной системе счисления:\n";
+
+	for (int i = 3; i >= 0; i--)
+	{
+		std::cout << un.byte[i].p8 << un.byte[i].p7 << un.byte[i].p6 << un.byte[i].p5 << un.byte[i].p4 << un.byte[i].p3 << un.byte[i].p2 << un.byte[i].p1 << "  ";
+	}
+
+	std::cout << "\n\n";
+}
+void printBinAllBytes(Union4& un) //вывод на консоль каждого байта в двоичной системе счисления
+{
+	std::cout << "Вывод каждого байта числа в двоичной системе счисления:\n";
+
+	for (int i = 3; i >= 0; i--)
+	{
+		std::cout << un.byte[i].p8 << un.byte[i].p7 << un.byte[i].p6 << un.byte[i].p5 << un.byte[i].p4 << un.byte[i].p3 << un.byte[i].p2 << un.byte[i].p1 << "  ";
+	}
+
+	std::cout << "\n\n";
+}
+
+
+void printBinByte(Union1& un) //вывод на консоль выбранного байта в двоичной системе счисления
+{
+	int index;
+	std::cout << "Введите номер байта, который нужно вывести на консоль (от 1 до 4): ";
+	std::cin >> index;
+	index = 4 - index; //для чтения номера байта с лева направо, начиная с единицы
+	std::cout << un.byte[index].p8 << un.byte[index].p7 << un.byte[index].p6 << un.byte[index].p5 << un.byte[index].p4 << un.byte[index].p3 << un.byte[index].p2 << un.byte[index].p1 << "  ";
+	std::cout << "\n\n";
+}
+
+void printBinByte(Union2& un) //вывод на консоль выбранного байта в двоичной системе счисления
+{
+	int index;
+	std::cout << "Введите номер байта, который нужно вывести на консоль (от 1 до 4): ";
+	std::cin >> index;
+	index = 4 - index; //для чтения номера байта с лева направо, начиная с единицы
+	std::cout << un.byte[index].p8 << un.byte[index].p7 << un.byte[index].p6 << un.byte[index].p5 << un.byte[index].p4 << un.byte[index].p3 << un.byte[index].p2 << un.byte[index].p1 << "  ";
+	std::cout << "\n\n";
+}
+
+void printDecAllBytes(Union1& un) //вывод каждого байта числа на консоль в десятичной системе счисления
+{
+	std::cout << "Вывод каждого байта числа в десятичной системе счисления:\n";
+
+	for (int i = 3; i >= 0; i--)
+	{
+		std::cout << static_cast <int> (un.arr[i]) << " ";
+	}
+
+	std::cout << "\n\n";
+}
+
+void printDecAllBytes(Union2& un) //вывод каждого байта числа на консоль в десятичной системе счисления
+{
+	std::cout << "Вывод каждого байта числа в десятичной системе счисления:\n";
+
+	for (int i = 3; i >= 0; i--)
+	{
+		std::cout << static_cast <int> (un.arr[i]) << " ";
+	}
+
+	std::cout << "\n\n";
+}
+
+void printHexAllBytes(Union1& un) //вывод каждого байта числа на консоль в шестнадцатиричной системе счисления
+{
+	std::cout << "Вывод каждого байта числа в шестнадцатиричной системе счисления:\n";
+
+	for (int i = 3; i >= 0; i--)
+	{
+		std::cout << std::hex << static_cast <int> (un.arr[i]) << std::dec << " ";
+	}
+
+	std::cout << "\n\n";
+}
+
+void printHexAllBytes(Union2& un) //вывод каждого байта числа на консоль в шестнадцатиричной системе счисления
+{
+	std::cout << "Вывод каждого байта числа в шестнадцатиричной системе счисления:\n";
+
+	for (int i = 3; i >= 0; i--)
+	{
+		std::cout << std::hex << static_cast <int> (un.arr[i]) << std::dec << " ";
+	}
+
+	std::cout << "\n\n";
+}
+
+void zeroBytes(Union4& un)
+{
+	std::cout << "Всего нулевый байтов у числа: ";
+	size_t count = 0;
+
+	for (int i = 3; i >= 0; i--)
+	{
+		if ((un.byte[i].p8 == 0) && (un.byte[i].p7 == 0) && (un.byte[i].p6 == 0) && (un.byte[i].p5 == 0) && (un.byte[i].p4 == 0) && (un.byte[i].p3 == 0) && (un.byte[i].p2 == 0) && (un.byte[i].p1 == 0))
+		{
+			count++;
+		}
+	}
+
+	std::cout << count << "\n\n";
+}
+
+void isZeroByte(Union4& un)
+{
+	std::cout << "Информация о байтах: ";
+
+	for (int i = 3; i >= 0; i--)
+	{
+		if ((un.byte[i].p8 == 0) && (un.byte[i].p7 == 0) && (un.byte[i].p6 == 0) && (un.byte[i].p5 == 0) && (un.byte[i].p4 == 0) && (un.byte[i].p3 == 0) && (un.byte[i].p2 == 0) && (un.byte[i].p1 == 0))
+		{
+			std::cout << "нулевой ";
+		}
+		else
+		{
+			std::cout << "ненулевой ";
+		}
+	}
+
+	std::cout << "\n\n";
+}
+
+void readFile(Iron* iron, size_t size, std::ifstream& fin)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		fin >> iron[i].brand >> iron[i].model >> iron[i].color >> iron[i].steam >> iron[i].min >> iron[i].max >> iron[i].power;
+	}
+}
+
+void printAllIron(Iron* iron, size_t size)
+{
+	std::cout << "Все модели:\n\n";
+	std::cout << "Бренд\tМодель\tЦвет\tПар\tTmin\tTmax\tМощность\n";
+
+	for (size_t i = 0; i < size; i++)
+	{
+		std::cout << iron[i].brand << "\t" << iron[i].model << "\t" << iron[i].color << "\t" << iron[i].steam << "\t" << iron[i].min << "\t" << iron[i].max << "\t" << iron[i].power << "\n";
+	}
+
+	std::cout << "\n\n";
+}
+
+void printSteamIron(Iron* iron, size_t size)
+{
+	std::cout << "Все модели с подачей пара:\n\n";
+	bool flag = false;
+
+	for (size_t i = 0; i < size; i++)
+	{
+		if (iron[i].steam == 1)
+		{
+			if (flag == false)
+			{
+				std::cout << "Бренд\tМодель\tЦвет\tПар\tTmin\tTmax\tМощность\n";
+				flag = true;
+			}
+
+			std::cout << iron[i].brand << "\t" << iron[i].model << "\t" << iron[i].color << "\t" << iron[i].steam << "\t" << iron[i].min << "\t" << iron[i].max << "\t" << iron[i].power << "\n";
+		}
+	}
+
+	if (flag == false)
+	{
+		std::cout << "Модели утюгов с данными характеристиками отсутствуют\n";
+	}
+
+	std::cout << "\n\n";
+}
+
+void printPowerIron(Iron* iron, size_t size)
+{
+	std::cout << "Для отображения моделей утюгов выше заданной мощности введите желаемую мощность: ";
+	size_t power;
+	std::cin >> power;
+	bool flag = false;
+
+	for (size_t i = 0; i < size; i++)
+	{
+		if (power < iron[i].power)
+		{
+			if (flag == false)
+			{
+				std::cout << "\nБренд\tМодель\tЦвет\tПар\tTmin\tTmax\tМощность\n";
+				flag = true;
+			}
+
+			std::cout << iron[i].brand << "\t" << iron[i].model << "\t" << iron[i].color << "\t" << iron[i].steam << "\t" << iron[i].min << "\t" << iron[i].max << "\t" << iron[i].power << "\n";
+		}
+	}
+
+	if (flag == false)
+	{
+		std::cout << "\nМодели утюгов с данными характеристиками отсутствуют\n";
+	}
+
+	std::cout << "\n\n";
+}
+
+void printBrandIron(Iron* iron, size_t size)
+{
+	std::cout << "Для отображения определенных моделей утюгов введите желаемый бренд: ";
+	char brand[20];
+	std::cin >> brand;
+	bool flag = false;
+
+	for (size_t i = 0; i < size; i++)
+	{
+		if (strcmp(iron[i].brand, brand) == 0)
+		{
+			if (flag == false)
+			{
+				std::cout << "\nБренд\tМодель\tЦвет\tПар\tTmin\tTmax\tМощность\n";
+				flag = true;
+			}
+
+			std::cout << iron[i].brand << "\t" << iron[i].model << "\t" << iron[i].color << "\t" << iron[i].steam << "\t" << iron[i].min << "\t" << iron[i].max << "\t" << iron[i].power << "\n";
+		}
+	}
+
+	if (flag == false)
+	{
+		std::cout << "\nМодели утюгов данного бренда отсутствуют\n";
+	}
+
+	std::cout << "\n\n";
+}
+
+void editIron(Iron* iron, size_t size)
+{
+
+
+	for (; ; )
+	{
+		std::cout << "Все модели:\n\n";
+		std::cout << "Номер\tБренд\tМодель\tЦвет\tПар\tTmin\tTmax\tМощность\n";
+
+		for (size_t i = 0; i < size; i++)
+		{
+			std::cout << i + 1 << "\t" << iron[i].brand << "\t" << iron[i].model << "\t" << iron[i].color << "\t" << iron[i].steam << "\t" << iron[i].min << "\t" << iron[i].max << "\t" << iron[i].power << "\n";
+		}
+
+		std::cout << "\n\nУкажите номер для редактирования: ";
+		size_t num_iron;
+		std::cin >> num_iron;
+		std::cout << "\nХарактеристики для редактирования:\n1. Бренд\n2. Модель\n3. Цвет\n4. Пар\n5. Tmin\n6. Tmax\n7. Мощность\n\nУкажите номер характеристики: ";
+		size_t num_feature;
+		std::cin >> num_feature;
+		std::cout << "\n";
+		char* temp = new char[20];
+
+		switch (num_feature)
+		{
+		case 1: std::cout << "Введите бренд: ";
+			std::cin >> temp;
+			strcpy(iron[num_iron - 1].brand, temp);
+			break;
+		case 2: std::cout << "Введите модель: ";
+			std::cin >> temp;
+			strcpy(iron[num_iron - 1].model, temp);
+			break;
+		case 3:  std::cout << "Введите цвет: ";
+			std::cin >> temp;
+			strcpy(iron[num_iron - 1].color, temp);
+			break;
+		case 4:  std::cout << "Введите значение пара (1 - есть / 2 - нет): ";
+			std::cin >> iron[num_iron - 1].steam;
+			break;
+		case 5: std::cout << "Введите целое значение минимальной температруты: ";
+			std::cin >> iron[num_iron - 1].min;
+			break;
+		case 6: std::cout << "Введите целое значение максимальной температруты: ";
+			std::cin >> iron[num_iron - 1].max;
+			break;
+		case 7: std::cout << "Введите целое значение мощности: ";
+			std::cin >> iron[num_iron - 1].power;
+			break;
+
+		default: std::cout << "Номер характеристики указан неверно";
+			break;
+		}
+
+		delete[]temp;
+		std::cout << "\nРедактирование выполнено!\n\n";
+
+		for (; ; )
+		{
+			std::cout << "Доступные команды:\n1. Редактировать еще один элемент\n2. Выход из фукнции редактирования\n\nВведите номер команды: ";
+			size_t num_oper;
+			std::cin >> num_oper;
+
+			if (num_oper == 1)
+			{
+				break;
+			}
+
+			if (num_oper == 2)
+			{
+				std::cout << "\n";
+				return;
+			}
+
+			std::cout << "Команда выбрана неверно!\n\n";
+
+		}
+
+		std::cout << "\n";
+	}
+}
