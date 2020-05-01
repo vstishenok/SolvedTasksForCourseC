@@ -1,0 +1,257 @@
+#include <iostream>
+using namespace std;
+
+int main() 
+{
+	setlocale(0, "");
+	
+	{
+	int a, b, c;
+	cout << "Задание 1. Даны два числа. Если первое число больше второго, то вывести yes, иначе поменять значения этих переменных местами и вывести на экран" << endl;
+	cout << "Введите два числа.." << endl;
+	cin >> a >> b;
+	if (a > b)
+	{
+		cout << "Yes" << endl;
+	}
+	else
+	{
+		c = a + b;
+		a = c - a;
+		b = c - b;
+		cout << a << " " << b << endl;
+
+	}
+	cout << endl;
+	}
+
+
+	{
+	int a, b, c, max;
+	cout << "Задание 2. Даны три числа. Найдите наибольшее число из них" << endl;
+	cout << "Введите три числа.." << endl;
+	cin >> a >> b >> c;
+	max = a;
+	if (max < b)
+	{
+		max = b;
+	}
+	if (max < c)
+	{
+		max = c;
+	}
+	cout << "Наибольшим числом является число " << max << endl;
+	cout << endl; 
+	}
+
+	
+	{
+	int a, b, c, m1, m2, max;
+	cout << "Задание 3. Даны три числа. Найдите те два из них, сумма которых наибольшая" << endl;
+	cout << "Введите три числа.." << endl;
+	cin >> a >> b >> c;
+	max = a + b;
+	m1 = a;
+	m2 = b;
+	if (max < b+c)
+	{
+		max = b + c;
+		m1 = b;
+		m2 = c;
+	}
+	if (max < a + c)
+	{
+		max = a + c;
+		m1 = a;
+		m2 = c;
+	}
+	cout << "Наибольшей суммой является сумма чисел " << m1 << " и " << m2 << endl;
+	cout << endl;
+	}
+
+
+	{
+	    int a, b, c, d, max;
+		cout << "Задание 4. Пользователь вводит четыре числа. Найдите наибольшее четное число среди них. Если оно не существует, выведите фразу \"Not found\"" << endl;
+		cout << "Введите четыре числа.." << endl;
+		cin >> a >> b >> c >> d;
+		max = INT_MIN;
+		if (max < a && a % 2 == 0)
+		{
+			max = a;
+		}
+		if (max < b && b%2==0)
+		{
+			max = b;
+		}
+		if (max < c && c%2==0)
+		{
+			max = c;
+		}
+		if (max < d && d % 2 == 0)
+		{
+			max = d;
+		}
+		if (max != INT_MIN)
+		{
+			cout << "Наибольшим четным числом является число " << max << endl;
+		}
+		else
+		{
+			cout << "Не найдено"<< endl;
+		}
+		cout << endl;
+	}
+
+
+	{
+		int a, b, c;
+		cout << "Задание 5. Даны три числа. Написать \"Yes\", если среди них есть одинаковые" << endl;
+		cout << "Введите три числа.." << endl;
+		cin >> a >> b >> c;
+		if (a==b || a==c || b==c)
+		{
+			cout << "Да" << endl;;
+		}
+		else
+		{
+			cout << "Нет" << endl;
+		}
+		cout << endl;
+	}
+
+
+	{
+		int a, b, c;
+		cout << "Задание 6. Даны три числа. Написать \"yes\", если можно взять какие-то два из них и в сумме получить третье" << endl;
+		cout << "Введите три числа.." << endl;
+		cin >> a >> b >> c;
+		if (a+b==c || a+c==b || b+c==a)
+		{
+			cout << "Да" << endl;
+		}
+		else
+		{
+			cout << "Нет" << endl;
+		}
+		cout << endl;
+	}
+
+	{
+		int a, b, c, d;
+		cout << "Задание 7. Дано четыре числа. Если первые два числа больше 5, третье число делится на 6, четвертое число не делится на 3, то вывести \"Yes\", иначе \"No\"" << endl;
+		cout << "Введите три числа.." << endl;
+		cin >> a >> b >> c >> d;
+		if (a>5 && b>5 && c%6==0 && d%3!=0)
+		{
+			cout << "Да" << endl;
+		}
+		else
+		{
+			cout << "Нет" << endl;
+		}
+		cout << endl;
+	}
+
+	{
+		int day;
+		cout << "Задание 8. Дан номер дня недели. Выведите название дня недели" << endl;
+		cout << "Введите номер дня недели.." << endl;
+		cin >> day;
+		switch (day)
+		{
+		case 1: cout << "Понедельник" << endl; break;
+		case 2: cout << "Вторник" << endl; break;
+		case 3: cout << "Среда" << endl; break;
+		case 4: cout << "Четверг" << endl; break;
+		case 5: cout << "Пятница" << endl; break;
+		case 6: cout << "Суббота" << endl; break;
+		case 7: cout << "Воскресенье" << endl; break;
+		default: cout << "Введенный номер дня недели некорректен" << endl; break;
+		}
+		cout << endl;
+	}
+
+
+	{
+		int month;
+		cout << "Задание 9. Дан номер месяца. Выведите пору года (осень, зима, лето, весна)" << endl;
+		cout << "Введите номер месяца.." << endl;
+		cin >> month;
+		switch (month)
+		{
+		case 1: case 2: case 12: cout << "Зима" << endl; break;
+		case 3: case 4: case 5: cout << "Весна" << endl; break;
+		case 6: case 7: case 8: cout << "Лето" << endl; break;
+		case 9: case 10: case 11: cout << "Осень" << endl; break;
+		default: cout << "Введенный номер месяца некорректен" << endl; break;
+		}
+		cout << endl;
+	}
+
+
+	{
+		bool a, b;
+		int c, d, e;
+		cout << "Задание 10. Написать программу-калькулятор для логических операций. \nПользователь вводит два значения типа bool и выбирает действие. Вывести на экран результат" << endl;
+		cout << "Введите два значения типа bool от 0 до 1 (0 - false, 1 - true).." << endl;
+		cin >> d >> e;
+
+		if ((d==0||d==1) && (e==0||e==1))
+		{
+			a = d;
+			b = e;
+			cout << "Выберите нужную логическую операцию и введите соответствующее число: \n1. a && b\n2. !a && b\n3. a && !b\n4. !a && b\n5. a || b\n6. !a || b\n7. a || !b\n8. !a || !b" << endl;
+			cin >> c; 
+
+			switch (c)
+			{
+			case 1: cout << "Результат - " << a && b ; break;
+			case 2: cout << "Результат - " << !a && b; break;
+			case 3: cout << "Результат - " << a && !b; break;
+			case 4: cout << "Результат - " << !a && b; break;
+			case 5: cout << "Результат - " << a || b; break;
+			case 6: cout << "Результат - " << !a || b; break;
+			case 7: cout << "Результат - " << a || !b; break;
+			case 8: cout << "Результат - " << !a || !b; break;
+			default: cout << "Логический оператор выбран некорректно" << endl;
+			}
+
+		}
+		else
+		{
+		cout << "Введенны некорректные значения bool" << endl;
+		}
+		cout << endl;
+	}
+
+	{
+		int k, n, p;
+		cout << "Задание 11. Для натурального числа К напечатать фразу \"Мы нашли К грибов в лесу\", согласовав окончание слова \"гриб\" с числом К" << endl;
+		cout << "Введите натуральное число.." << endl;
+		cin >> k;
+		p = k % 100;
+		if (p>10 && p <20)
+		{
+			cout << "Мы нашли " << k << " грибов в лесу" << endl;
+		}
+		else if (k<=0)
+		{
+			cout << "Введенно некорректное значения натурального числа" << endl;
+		}
+		else
+		{
+			n = k % 10;
+			switch (n)
+			{
+			case 0: case 5: case 6: case 7: case 8: case 9: cout << "Мы нашли " << k << " грибов в лесу" << endl; break;
+			case 1: cout << "Мы нашли " << k << " гриб в лесу" << endl; break;
+			case 2: case 3: case 4: cout << "Мы нашли " << k << " гриба в лесу" << endl; break;
+			}
+		}
+		cout << endl;
+	}
+
+	system("pause");
+	return 0;
+}
