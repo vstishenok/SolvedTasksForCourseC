@@ -1,0 +1,512 @@
+#include<iostream>
+#include<ctime>
+
+int OperationTask();
+int* LowerNumber(int*, int*);
+void InitArray(int*, size_t);
+void InitArray2(int*, size_t);
+void InitArray3(int*, size_t);
+void InitArray4(int*, size_t);
+int* InitArrayWitoutPrimeNum(int*, size_t, int*, size_t);
+void PrintArray(int*, size_t);
+int SumNumbers(int*, size_t);
+long long ProdNumbers(int*, size_t);
+int* SearchArray(int*, size_t, int*, size_t);
+int* SearchBibary(int A[], size_t, int);
+bool PrimeNumber(int*);
+int CountingPrimes(int*, size_t);
+int* AllocateMem(int*, size_t);
+int* FreeMem(int*);
+void Swap(int*, int*);
+void SortSelection(int*, size_t);
+void SortInsert(int A[], size_t);
+
+
+
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+	int check;
+
+	for (check = 1; check == 1;) //задание 1
+	{
+		{
+			std::cout << "Задание 1.\nСоздать две целые переменные и определить «расстояние» между ними в памяти.\nРасстояние определяется в переменных того же типа.\n\n";
+			int a = 1, b = 1;
+			std::cout << "&a: " << &a << "\n&b: " << &b << "\n&a - &b: " << ((int*)&a - (int*)&b) << "\n\n";
+		}
+
+		check = OperationTask();
+
+	}
+
+	for (check = 1; check == 1;) // задание 2
+	{
+		{
+			std::cout << "Задание 2.\nНаписать функцию, которая принимает два указателя и возвращает указатель на меньшее число.\n\n";
+			int a, b;
+			std::cout << "Введите первое число: ";
+			std::cin >> a;
+			std::cout << "Введите второе число: ";
+			std::cin >> b;
+			int* iPtra = &a, * iPtrb = &b;
+			if (LowerNumber(iPtra, iPtrb) == nullptr)
+			{
+				std::cout << "Два числа равны между собой";
+			}
+			else
+			{
+				std::cout << "Меньшим числом является: " << *LowerNumber(iPtra, iPtrb);
+			}
+			std::cout << "\n\n";
+		}
+
+		check = OperationTask();
+
+	}
+
+	for (check = 1; check == 1;) // задание 3
+	{
+		{
+			std::cout << "Задание 3.\nДан массив чисел, необходимо ввести в него и вывести из него числа с помощью указателей.\n\n";
+			const size_t SIZE = 10;
+			int A[SIZE];
+			InitArray(A, SIZE);
+			std::cout << "Заполненный массив имеет вид: ";
+			PrintArray(A, SIZE);
+			std::cout << "\n";
+		}
+
+		check = OperationTask();
+
+	}
+
+	for (check = 1; check == 1;) // задание 4
+	{
+		{
+			std::cout << "Задание 4.\nСоздать массив из 10 целых чисел.\nЗаполнить массив случайным образом в диапазоне от -25 до 35.\nПользуясь указателем на массив целых чисел, посчитать сумму элементов массива.\n\n";
+			const size_t SIZE = 10;
+			int A[SIZE];
+			InitArray(A, SIZE);
+			std::cout << "Заполненный массив имеет вид: ";
+			PrintArray(A, SIZE);
+			std::cout << "\n";
+			std::cout << "Cумма элементов массива: " << SumNumbers(A, SIZE);
+			std::cout << "\n\n";
+
+		}
+
+		check = OperationTask();
+
+	}
+
+	for (check = 1; check == 1;) // задание 5
+	{
+		{
+			std::cout << "Задание 5.\nСоздать массив из 10 целых чисел.\nЗаполнить массив случайным образом в диапазоне от -44 до 76.\nПользуясь указателем на массив целых чисел, посчитать произведение элементов массива.\n\n";
+			const size_t SIZE = 10;
+			int A[SIZE];
+			InitArray2(A, SIZE);
+			std::cout << "Заполненный массив имеет вид: ";
+			PrintArray(A, SIZE);
+			std::cout << "\n";
+			std::cout << "Произведение элементов массива: " << ProdNumbers(A, SIZE);
+			std::cout << "\n\n";
+
+		}
+
+		check = OperationTask();
+
+	}
+
+	for (check = 1; check == 1;) // задание 6
+	{
+		{
+			std::cout << "Задание 6.\nНаписать программу, которая содержит функцию, принимающую в качестве аргумента, указатели на два массива (А и В) и размеры массивов.\nФункция проверяет, является ли массив В подмножеством массива А и возвращает указатель на начало найденного фрагмента, если элемента нет, возвращает 0.\n\n";
+			const size_t SIZE1 = 10, SIZE2 = 2;
+			int A[SIZE1], B[SIZE2], * firstIndex;
+			InitArray3(A, SIZE1);
+			std::cout << "Заполненный массив A имеет вид: ";
+			PrintArray(A, SIZE1);
+			std::cout << "\n";
+			InitArray3(B, SIZE2);
+			std::cout << "Заполненный массив B имеет вид: ";
+			PrintArray(B, SIZE2);
+			std::cout << "\n";
+			firstIndex = SearchArray(A, SIZE1, B, SIZE2);
+			if (firstIndex == nullptr)
+			{
+				std::cout << "Массив В не является подмножеством массива А";
+			}
+			else
+			{
+				std::cout << "Массив В является подмножеством массива А\nАдресс начала массива B в массиве A: " << firstIndex;
+			}
+			std::cout << "\n\n";
+		}
+
+		check = OperationTask();
+
+	}
+
+	for (check = 1; check == 1;) // задание 7
+	{
+		{
+			std::cout << "Задание 7.\nНаписать функцию, которая получает указатель на массив и его размер.\nФункция должна удалить из массива все простые числа и вернуть указатель на новый массив.\n\n";
+			const size_t SIZEA = 10;
+			int A[SIZEA];
+			InitArray4(A, SIZEA);
+			std::cout << "Заполненный массив имеет вид: ";
+			PrintArray(A, SIZEA);
+			std::cout << "\n";
+			size_t SIZEB = SIZEA - CountingPrimes(A, SIZEA);
+			std::cout << "\n";
+			if (SIZEB != 0)
+			{
+				int* B = nullptr;
+				B = AllocateMem(B, SIZEB);
+				B = InitArrayWitoutPrimeNum(A, SIZEA, B, SIZEB);
+				std::cout << "Новый массив без простых чисел: ";
+				PrintArray(B, SIZEB);
+				FreeMem(B);
+			}
+			else
+			{
+				std::cout << "Новый массив не создан, так как в старом массиве все числа являются простыми.\n";
+			}
+			std::cout << "\n";
+		}
+
+		check = OperationTask();
+
+	}
+
+	for (check = 1; check == 1;) // задание 8
+	{
+		{
+			std::cout << "Задание 8.\nНаписать функцию, которая находит минимальный элемент массива и возвращает указатель на него.\nС использованием этой функции реализовать сортировку выбором.\n\n";
+			const size_t SIZE = 10;
+			int A[SIZE];
+			InitArray2(A, SIZE);
+			std::cout << "Заполненный массив имеет вид: ";
+			PrintArray(A, SIZE);
+			std::cout << "\n";
+			SortSelection(A, SIZE);
+			std::cout << "Отсортированный массив имеет вид: ";
+			PrintArray(A, SIZE);
+			std::cout << "\n";
+		}
+
+		check = OperationTask();
+
+	}
+
+	for (check = 1; check == 1;) // задание 9
+	{
+		{
+			std::cout << "Задание 9.\nНаписать функцию, которая производит двоичный поиск места размещения нового элемента в упорядоченном массиве и возвращает указатель на место включения нового элемента.\nС помощью данной функции реализовать сортировку вставками.\n\n";
+			const size_t SIZE = 10;
+			int A[SIZE], key;
+			InitArray2(A, SIZE);
+			std::cout << "Заполненный массив имеет вид: ";
+			PrintArray(A, SIZE);
+			std::cout << "\n";
+			SortInsert(A, SIZE);
+			std::cout << "Отсортированный массив имеет вид: ";
+			PrintArray(A, SIZE);
+		}
+
+		check = OperationTask();
+
+	}
+
+	system("pause");
+	return 0;
+
+}
+
+int OperationTask()
+{
+	int check;
+	std::cout << "Возможные действия:\n1. проверить задание еще раз\n2. перейти к следующему заданию\n\nВыберите действие: ";
+	std::cin >> check;
+
+	while (check != 1 && check != 2)
+	{
+		std::cout << "Действие выбрано неверно. Выберите действие: ";
+		std::cin >> check;
+	}
+
+	system("cls");
+	return check;
+}
+
+int* LowerNumber(int* a, int* b)
+{
+	if (*a > * b)
+	{
+		return b;
+	}
+	else if (*a == *b)
+	{
+		return nullptr;
+	}
+	else
+	{
+		return a;
+	}
+}
+
+void InitArray(int* A, size_t SIZE)
+{
+	for (int* ptr = A; ptr < A + SIZE; ptr++)
+	{
+		*ptr = rand() % (35 - (-25) + 1) + (-25);
+	}
+}
+
+void InitArray2(int* A, size_t SIZE)
+{
+	for (int* ptr = A; ptr < A + SIZE; ptr++)
+	{
+		*ptr = rand() % (76 - (-44) + 1) + (-44);
+	}
+}
+
+void InitArray3(int* A, size_t SIZE)
+{
+	for (int* ptr = A; ptr < A + SIZE; ptr++)
+	{
+		*ptr = rand() % 5 + 1;
+	}
+}
+
+void InitArray4(int* A, size_t SIZE)
+{
+	for (int* ptr = A; ptr < A + SIZE; ptr++)
+	{
+		*ptr = rand() % 10 + 1;
+	}
+}
+
+int* InitArrayWitoutPrimeNum(int* A, size_t SIZEA, int* B, size_t SIZEB)
+{
+	int* ptrBfirst = B;
+
+	for (int* ptrA = A, *ptrB = B; ptrA < A + SIZEA; ptrA++)
+	{
+		if (PrimeNumber(ptrA) != true)
+		{
+			*ptrB = *ptrA;
+			ptrB++;
+		}
+	}
+
+	return ptrBfirst;
+
+}
+
+void PrintArray(int* A, size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		std::cout << *(A + i) << " ";
+	}
+	std::cout << "\n";
+}
+
+int SumNumbers(int* A, size_t SIZE)
+{
+	int sum = 0;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		sum += *(A + i);
+	}
+
+	return sum;
+}
+
+long long ProdNumbers(int* A, size_t SIZE)
+{
+	long long prod = 1;
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		prod *= *(A + i);
+	}
+
+	return prod;
+}
+
+int* SearchArray(int* A, size_t SIZEA, int* B, size_t SIZEB)
+{
+	for (int* ptrA = A; ptrA < A + SIZEA; ptrA++)
+	{
+		if (*ptrA == *B)
+		{
+			int* firstIndex = ptrA, * ptrAtemp = ptrA + 1;
+			int count = 1;
+
+			for (int* ptrB = B + 1; (ptrB < B + SIZEB) && (ptrAtemp < A + SIZEA); ptrAtemp++, ptrB++)
+			{
+				if (*ptrAtemp == *ptrB)
+				{
+					count++;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if (count == SIZEB)
+			{
+				return firstIndex;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+bool PrimeNumber(int* ptr)
+{
+	int count = 0;
+
+	for (int i = 1; i < *ptr + 1; i++)
+	{
+		if (*ptr % i == 0)
+		{
+			count++;
+		}
+	}
+
+	if (count == 2)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+int CountingPrimes(int* A, size_t SIZE)
+{
+	int count = 0;
+	std::cout << "Простые числа в массиве: ";
+
+	for (int* ptrA = A; ptrA < A + SIZE; ptrA++)
+	{
+		if (PrimeNumber(ptrA) == true)
+		{
+			count++;
+			std::cout << *ptrA << " ";
+		}
+	}
+
+	if (count == 0)
+	{
+		std::cout << "отсутствуют\n";
+	}
+	else
+	{
+		std::cout << "\n";
+	}
+
+	return count;
+}
+
+int* AllocateMem(int* A, size_t SIZE)
+{
+	A = new int[SIZE];
+	return A;
+}
+
+int* FreeMem(int* A)
+{
+	delete[]A;
+	A = nullptr;
+	return A;
+}
+
+int* Min(int* A, size_t SIZE, int* ptrA)
+{
+	int* min = ptrA;
+
+	for (int* ptrB = ptrA + 1; ptrB < SIZE + A; ptrB++)
+	{
+		if (*min > * ptrB)
+		{
+			min = ptrB;
+		}
+	}
+
+	return min;
+}
+
+void SortSelection(int* A, size_t SIZE)
+{
+
+	for (int* ptrA = A; ptrA < SIZE + A; ptrA++)
+	{
+		Swap(ptrA, Min(A, SIZE, ptrA));
+	}
+}
+
+void Swap(int* a, int* b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+int* SearchBibary(int A[], size_t SIZE, int key)
+{
+	int left = 0, right = SIZE, middle;
+
+	while (left < right)
+	{
+		middle = (left + right) / 2;
+
+		if (A[middle] > key)
+		{
+			right = middle;
+		}
+		else
+		{
+			left = middle + 1;
+		}
+
+	}
+
+	return &A[left];
+
+}
+
+void SortInsert(int A[], size_t SIZE)
+{
+	int temp;
+
+	//делит массив на отсортированный и не отсортированный
+	for (size_t i = 1; i < SIZE; i++)
+	{
+		//берем первый элемент из неотсортированного массива
+		temp = A[i];
+
+		//находим позицию куда вставить
+		int* pos = SearchBibary(A, i, temp);
+		int* j;
+
+		//сдвиг всех элементов, до позиции pos на один в право
+		for (j = &A[i] - 1; j >= pos; j--)
+		{
+			*(j + 1) = *j;
+		}
+
+		*(j + 1) = temp;
+	}
+}
