@@ -1,0 +1,447 @@
+################################################################################################### head.h
+
+#pragma once
+#include<iostream>
+#include<ctime>
+#include<fstream>
+
+struct Node //узел
+{
+	int data;
+	Node* next;
+};
+
+struct List //лист
+{
+	Node* head;
+	Node* tail;
+	size_t size;
+};
+
+void initList(List&);
+void pushBack(List&, int);
+void pushFront(List&, int);
+void pushPosition(List&, int, size_t);
+int  popBack(List&);
+int  popFront(List&);
+void removeKey(List&, int);
+int  removeIndex(List&, int);
+void addSort(List&, int);
+void printList(const List&);
+int searchMin(const List&);
+void insertSort(List&);
+void pushBackPerson(List&, int);
+void printListPerson(const List&);
+int removeIndexPerson(List&, int);
+
+################################################################################################### head.cpp
+
+#include "head.h"
+
+void initList(List& list)
+{
+	list.head = nullptr;
+	list.tail = nullptr;
+	list.size = 0;
+}
+
+void pushBack(List& list, int key)
+{
+	Node* temp = new Node; //создаем пустой узел
+	temp->data = key; //кладем key в пустой узел
+	temp->next = nullptr;
+
+	if (list.size != 0) //если список не пустой
+	{
+		list.tail->next = temp;// переставляем указатель на новый элемент
+		list.tail = temp; // хвосту присваиваем новый элемент
+	}
+	else //если список пустой
+	{
+		list.head = list.tail = temp;
+	}
+
+	list.size++; //увеличиваем размер списка
+}
+
+void pushFront(List& list, int key)
+{
+	Node* temp = new Node; //создаем пустой узел
+	temp->data = key; //кладем key в пустой узел
+	temp->next = list.head; //новый элемент указывет на голову
+	list.head = temp; //голову переставляем на новый элемент
+
+	if (list.size == 0)
+	{
+		list.tail = list.head;
+	}
+
+	list.size++;
+}
+
+void pushPosition(List& list, int key, size_t position)
+{
+	if (position <= list.size)
+	{
+		if (position == 0)
+		{
+			pushFront(list, key);
+			return;
+		}
+
+		Node* temp = new Node; //создаем пустой узел
+		temp->data = key; //кладем key в пустой узел
+		Node* i = list.head;
+
+		for (int count = 0; count < position - 1; count++) //цикл пробегает по списку пока не достигнет заданной позиции
+		{
+			i = i->next;//переходим к след элементу пока не окажемся на нужной позиции
+		}
+
+		temp->next = i->next; //указатель temp переставляем на следующий элемент
+		i->next = temp; //указатель i (предыдущий элемент) переставляем на temp
+		list.size++;
+	}
+	else
+	{
+		std::cout << "Невозможно выполнить встаку.\n";
+		return;
+	}
+}
+
+int popFront(List& list)
+{
+	int key = -1;
+
+	if (list.size > 1)
+	{
+		key = list.head->data;
+		Node* temp = list.head->next;
+		delete list.head;
+		list.head = temp;
+		list.size--;
+	}
+	else if (list.size == 1)
+	{
+		key = list.head->data;
+		delete list.head;
+		list.head = list.tail = nullptr;
+		list.size--;
+	}
+	else
+	{
+		std::cout << "Лист пуст\n";
+	}
+
+	return key;
+}
+
+int popBack(List& list)
+{
+	int key = 0;
+
+	if (list.size == 1)
+	{
+		key = list.head->data;
+		delete list.head;
+		list.head = list.tail = nullptr;
+		list.size--;
+	}
+	else if (list.size > 1)
+	{
+		key = list.tail->data;
+		Node* temp;
+
+		for (temp = list.head; temp->next != list.tail; temp = temp->next);
+
+		list.tail = temp;
+		delete list.tail->next;
+		list.tail->next = nullptr;
+		list.size--;
+	}
+	else
+	{
+		std::cout << "Лист пуст\n";
+	}
+
+	return key;
+}
+
+void removeKey(List& list, int key)
+{
+	Node* prev = nullptr;
+
+	for (Node* i = list.head; i != nullptr; prev = i, i = i->next)
+	{
+		if (i->data == key)
+		{
+			if (prev != nullptr)
+			{
+				prev->next = i->next;
+				delete i;
+				list.size--;
+			}
+			else
+			{
+				popFront(list);
+			}
+
+			return;
+		}
+	}
+
+	std::cout << "Ключ для удаления отсутствует\n";
+}
+
+int removeIndex(List& list, int index)
+{
+	if (index > list.size)
+	{
+		std::cout << "Невозможно удалить\n";
+		return -1;
+	}
+
+	int result, count = 0;
+	Node* prev = nullptr;
+	Node* i = list.head;
+
+	for (i; count < index - 1; count++, prev = i, i = i->next);
+
+	if (prev)
+	{
+		result = i->data;
+		prev->next = i->next;
+		delete i;
+		list.size--;
+		return result;
+	}
+	else
+	{
+		result = popFront(list);
+		return result;
+	}
+}
+
+void addSort(List& list, int key)
+{
+	Node* temp = new Node;
+	temp->data = key;
+	temp->next = nullptr;
+
+	if (list.size == 0)
+	{
+		list.head = list.tail = temp;
+		list.size++;
+		return;
+	}
+
+	if (list.tail->data <= key)
+	{
+		pushBack(list, key);
+		return;
+	}
+
+	if (list.head->data >= key)
+	{
+		pushFront(list, key);
+		return;
+	}
+
+	Node* prev = nullptr;
+	Node* i = list.head;
+
+	for (i; i->data <= key; prev = i, i = i->next);
+
+	temp->next = i;
+	prev->next = temp;
+	list.size++;
+}
+
+
+void printList(const List& list)
+{
+	for (Node* i = list.head; i != nullptr; i = i->next)
+	{
+		std::cout << i->data << ' ';
+	}
+
+	std::cout << "\n";
+}
+
+int searchMin(const List& list)
+{
+	if (list.size == 0)
+	{
+		std::cout << "Список пуст";
+		return -1;
+	}
+
+	int data = list.head->data, index = 2, result = 1;
+
+	for (Node* i = list.head->next; i != nullptr; i = i->next, index++)
+	{
+		if (data > i->data)
+		{
+			data = i->data;
+			result = index;
+		}
+	}
+
+	return result;
+}
+
+void insertSort(List& list)
+{
+	if (list.size == 0)
+	{
+		std::cout << "Список пуст\n";
+		return;
+	}
+	else if (list.size == 1)
+	{
+		return;
+	}
+	else
+	{
+		List list_new;;
+		initList(list_new);
+
+		while (list.size != 0)
+		{
+			int key = popFront(list);
+			addSort(list_new, key);
+		}
+
+		list = list_new;
+	}
+}
+
+void pushBackPerson(List& list, int num)
+{
+	Node* temp = new Node; //создаем пустой узел
+	temp->data = num; //кладем key в пустой узел
+	temp->next = list.head;
+
+	if (list.size != 0) //если список не пустой
+	{
+		list.tail->next = temp;// переставляем указатель на новый элемент
+		list.tail = temp; // хвосту присваиваем новый элемент
+	}
+	else //если список пустой
+	{
+		list.head = list.tail = temp;
+	}
+
+	list.size++; //увеличиваем размер списка
+}
+
+void printListPerson(const List& list)
+{
+	size_t count = 0;
+
+	for (Node* i = list.head; count < list.size; i = i->next, count++)
+	{
+		std::cout << i->data << ' ';
+	}
+
+	std::cout << "\n";
+}
+
+int removeIndexPerson(List& list, int index)
+{
+
+	int key, count = 0;
+	Node* prev = nullptr;
+	Node* i = list.head;
+
+	for (i; count < index - 1; count++, prev = i, i = i->next);
+
+	key = i->data;
+	prev->next = i->next;
+	list.head = i->next;
+	delete i;
+	list.size--;
+	return key;
+}
+
+################################################################################################### main.cpp
+
+#include "head.h"
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	{
+		std::cout << "Задание 1\n";
+		std::cout << "Элементами односвязного списка являются целые числа.\nНаписать процедуры:\n - удаления минимального элемента в списке\n - сортировка списка по возрастанию вставками\n\n";
+		List list;
+		initList(list);
+
+		for (size_t i = 0; i < 10; i++)
+		{
+			pushBack(list, rand() % 101);
+		}
+
+		std::cout << "Исходый список имеет вид:\n";
+		printList(list);
+		removeIndex(list, searchMin(list));
+		std::cout << "\nПосле удаления минимального элемента список имеет вид:\n";
+		printList(list);
+		insertSort(list);
+		std::cout << "\nОтсортированный список имеет вид:\n";
+		printList(list);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 2\n";
+		std::cout << "Вокруг считающего стоит N человек, из которых выделен первый,\nа остальные занумерованы по часовой стрелке числами от 2 до N.\nСчитающий, начиная с кого-то, ведет счет до M.\nЧеловек, на котором остановился счет, выходит из круга.\nСчет продолжается со следующего человека и так до тех пор, пока не останется один человек.\nОпределить номер оставшегося человека, если известно M и то, что счет начинался с первого человека.\nРезультат записать в текстовый файл.\n\n";
+		int persons, number;
+		std::cout << "Введите количество человек (N): ";
+		std::cin >> persons;
+
+		while (persons < 2)
+		{
+			std::cout << "\nЧисло человек должно быть больше одного\nВведите количество человек (N) : ";
+			std::cin >> persons;
+		}
+
+		std::cout << "\nВведите номер человека, который должен выходить из круга (M): ";
+		std::cin >> number;
+
+		while (number < 2)
+		{
+			std::cout << "\nНомер человека должен быть больше одного\nВведите номер человека (M) : ";
+			std::cin >> number;
+		}
+
+		List list;
+		initList(list);
+
+		for (int i = 1; i <= persons; i++)
+		{
+			pushBackPerson(list, i);
+		}
+
+		std::cout << "\nТекущий список людей имеет вид:\n";
+		printListPerson(list);
+		std::cout << "\nОчередность удаления людей из круга:\n";
+
+		while (list.size != 1)
+		{
+			std::cout << removeIndexPerson(list, number) << " ";
+		}
+
+		std::cout << "\n\nНомер оставшегося человека: " << list.head->data;
+		std::ofstream fout("output_2.txt");
+		fout << "Номер оставшегося человека: " << list.head->data;
+		fout.close();
+		std::cout << "\nВыходные данные записаны в файл output_2.txt";
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
