@@ -1,0 +1,250 @@
+##include<iostream>
+#include<fstream>
+
+struct Lifo
+{
+    static const size_t size = 100;
+    char st[size];
+    int top = 0;
+};
+
+bool isEmpty(const Lifo& stack)
+{
+    if (stack.top == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool isFull(const Lifo& stack)
+{
+    if (stack.top == stack.size - 1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void push(Lifo& stack, char key)
+{
+    if (!isFull(stack))
+    {
+        stack.st[stack.top] = key;
+        stack.top++;
+    }
+    else
+    {
+        std::cout << "Стек заполнен!\n";
+        return;
+    }
+}
+
+char pop(Lifo& stack)
+{
+    char key;
+    
+    if (!isEmpty(stack))
+    {
+        key = stack.st[stack.top - 1];
+        stack.top--;
+        return key;
+    }
+    else
+    {
+        std::cout << "Стек пуст!\n";
+        return 0;
+    }
+}
+
+bool check(char* str)
+{
+    Lifo stack1, stack2, stack3; //каждый стек соответственно для скобок (), [], {}
+    int i = 0;
+    
+    while (str[i])
+    {
+        if (str[i] == '(')
+        {
+            push(stack1, str[i]);
+        }
+        else if(str[i] == '[')
+        {
+            push(stack2, str[i]);
+        }
+        else if(str[i] == '{')
+        {
+            push(stack3, str[i]);
+        }
+        else if (str[i] == ')')
+        {
+            if (isEmpty(stack1))
+            {
+                return false;
+            }
+            else
+            {
+                pop(stack1);
+            }
+        }
+        else if (str[i] == ']')
+        {
+            if (isEmpty(stack2))
+            {
+                return false;
+            }
+            else
+            {
+                pop(stack2);
+            }
+        }
+        else if (str[i] == '}')
+        {
+            if (isEmpty(stack3))
+            {
+                return false;
+            }
+            else
+            {
+                pop(stack3);
+            }
+        }
+        i++;
+    }
+    
+    if (isEmpty(stack1) && isEmpty(stack2) && isEmpty(stack3))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+char min(char a, char b)
+{
+    if (a < b)
+    {
+        return a;
+    }
+    else
+    {
+        return b;
+    }
+}
+
+char max(char a, char b)
+{
+    if (a > b)
+    {
+        return a;
+    }
+    else
+    {
+        return b;
+    }
+}
+
+char solve(char* str)
+{
+    Lifo stack;
+    int i = 0;
+    char value1, value2, operation;
+    
+    while (str[i])
+    {
+        if (str[i] == 'a' || str[i] == 'i' || isdigit(str[i]))
+        {
+            push(stack, str[i]);
+        }
+        else if (str[i] == ')')
+        {
+            value1 = pop(stack);
+            value2 = pop(stack);
+            operation = pop(stack);
+            
+            if (operation == 'a')
+            {
+                push(stack, max(value1, value2));
+            }
+            else
+            {
+                push(stack, min(value1, value2));
+            }
+        }
+        
+        i++;
+    }
+    
+    return pop(stack);
+}
+
+
+int main()
+{
+    setlocale(0, "");
+    
+    {
+        std::cout << "Задание 1.\nНапишите программу, которая определит, правильно ли расставлены скобки в выражении,\nесли оно состоит из скобок типа: ( ) [ ] { }.\n\n";
+        char str[100];
+        std::ifstream fin("task1.txt");
+        
+        if (fin)
+        {
+            fin.getline(str, 100);
+            
+            if (check(str))
+            {
+                std::cout << "Ответ: строка корректна\n";
+            }
+            else
+            {
+                std::cout << "Ответ: строка некорректна\n";
+            }
+        }
+        else
+        {
+            std::cout << "Файл пуст или отсутствует\n";
+        }
+        
+        fin.close();
+        std::cout << "\n\n";
+    }
+    
+    {
+        std::cout << "Задание 2.\nВычислить значение формулы, используя стек\n\n";
+        char str[100];
+        std::ifstream fin("task2.txt");
+        
+        if (fin)
+        {
+            fin.getline(str, 100);
+            std::cout << "Ответ: " << solve(str) << "\n";
+        }
+        else
+        {
+            std::cout << "Файл пуст или отсутствует\n";
+        }
+        
+        fin.close();
+        std::cout << "\n\n";
+    }
+    
+    system("pause");
+    return 0;
+}
+
+
+
+##############################################################################
+
+task1.txt "{{{[][]()}}}"
+
+task2.txt "min(max(3, 9), min(8, max(6, 9)))"
