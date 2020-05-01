@@ -1,0 +1,117 @@
+#include <iostream>
+
+int inverted_number(int);
+bool prime_number(int);
+int check_power(int, int);
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		int n, number;
+		std::cout << "Задание 1\nНаписать функцию, которая принимает целое число и возвращает число с перевернутым порядком цифр.\n\n";
+		std::cout << "Введите количество чисел, которые желаете использовать: ";
+		std::cin >> n;
+		for (size_t i = 1; i <= n; i++)
+		{
+			std::cout << "\nВведите число: ";
+			std::cin >> number;
+			std::cout << "Перевернутое число: " << inverted_number(number) << "\n";
+		}
+
+		std::cout << "\n\n";
+
+	}
+
+	{
+		int n, number;
+		std::cout << "Задание 2\nНаписать функцию, которая принимает целое число и возвращает истину, если число является простым, в противном случае – ложь.\n\n";
+		std::cout << "Введите количество чисел, которые желаете использовать: ";
+		std::cin >> n;
+		for (size_t i = 1; i <= n; i++)
+		{
+			std::cout << "\nВведите число: ";
+			std::cin >> number;
+			prime_number(number) ? std::cout << "Число является простым.\n" : std::cout << "Число не является простым.\n";
+		}
+
+		std::cout << "\n\n";
+
+	}
+
+	{
+		int n, number, base_number, check=0;
+		std::cout << "Задание 3\nНапишите функцию, которая определяет является ли первый принимаемый параметр числом, равным возведению некоторого другого числа в степень равную второму параметру.\n\n";
+		std::cout << "Введите количество попыток, которые желаете использовать: ";
+		std::cin >> n;
+		for (size_t i = 1; i <= n; i++)
+		{
+			std::cout << "\nВведите первое число : ";
+			std::cin >> number;
+			std::cout << "Введите второе число : ";
+			std::cin >> base_number;
+			check = check_power(number, base_number);
+			check == -1 ? std::cout << "Без вариантов\n" : std::cout << number << " = " << base_number << " в степени " << check << "\n";
+
+		}
+
+	}
+	system("pause");
+	return 0;
+}
+
+int inverted_number(int number)
+{
+	int inv_number = 0;
+	while (number % 10 != 0)
+	{
+		inv_number = inv_number * 10 + (number % 10);
+		number /= 10;
+	}
+	return inv_number;
+}
+
+bool prime_number(int number)
+{
+	if (number < 2)
+	{
+		return false;
+	}
+
+	for (size_t i = 2; i < number; i++)
+	{
+		if (number % i == 0)
+		{
+			return false;
+		}
+	}
+
+	return true;
+
+}
+
+int check_power(int number, int base_number)
+{
+	int power = 0;
+
+	if (number==1)
+	{
+		return power;
+	}
+
+	while (number>1)
+	{
+		if (number%base_number==0)
+		{
+			power++;
+			number /= base_number;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+
+	return power;
+}
