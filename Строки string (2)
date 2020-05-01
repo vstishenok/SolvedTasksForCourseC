@@ -1,0 +1,603 @@
+################################################################################################### input_1.txt
+
+There     are  different kinds   of animals on    our planet,   and all of them   are very    important for it   .    For example    ,   everybody knows that     the sharks are     dangerous for people,     but they are     useful for    cleaning      seawater.      There   are two   types of    animals    : domestic     (or pets   ) and     wild    .
+
+################################################################################################### input_2.txt
+
+while (!fin.eof())
+{
+
+}
+
+while ((a + b) * c != 0)
+{
+
+}
+
+while (s)
+{
+
+}
+
+################################################################################################### input_3.txt
+
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+int main()
+{
+	char** words = new char* [20];//массив на 20 слов
+
+	for (size_t i = 0; i < 20; i++)
+	{
+		words[i] = new char[15];// каждое слово не более 15 символов 
+	}
+
+	char* sptr = new char[200];
+	char copyStr[200];
+	cout << "Enter the string\n";
+	cin.getline(sptr, 200);
+	strcpy(copyStr, sptr);// создадим копию исходной строки
+	size_t N = 0;
+	char* s = strtok(copyStr, " ,.-!?");
+
+	while (s)
+	{
+		strcpy(words[N++], s);
+		s = strtok(NULL, " ,.-!?");
+	}
+
+	for (size_t i = 0; i < N; i++)
+	{
+		cout << words[i] << endl;
+	}
+
+	///сортировка пузырьком
+
+	for (size_t i = N - 1; i > 1; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (strcmp(words[j], words[j + 1]) > 0)
+				swap(words[j], words[j + 1]);
+		}
+	}
+
+	cout << "Sorted array\n";
+
+	for (size_t i = 0; i < N; i++)
+	{
+		cout << words[i] << endl;
+	}
+
+	system("pause");
+	return 0;
+}
+
+################################################################################################### input_4.txt
+
+Birds, are some of the most amazing animals on earth.
+Birds
+Some birds like peacock have beautiful and colorful feathers. Birds!
+Birds - National Geographic Kids
+Some birds are rear by man for entertainment like Parrot, dove etc.
+Birds have wings and feathers.
+Seabirds and some waterbirds, have further evolved for swimming.
+007 BIRDS
+Most birds have an extended period of parental care after hatching
+Songbirds, parrots, and other species are popular as pets.
+
+################################################################################################### input_5.txt
+
+22 31 52
+
+################################################################################################### main.cpp
+
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<cstring>
+#include<string>
+#include<fstream>
+#include<sstream>
+
+std::string stringToLower(std::string);
+void sort(std::string*, size_t);
+void infile(std::string*, size_t, std::ofstream&);
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		std::cout << "Задание 1\n";
+		std::cout << "В заданном тексте удалить все лишние пробелы.\nОставить между словами по одному пробелу, а между предложениями по два\n\n";
+		std::ifstream fin("input_1.txt");
+		std::ofstream fout("output_1.txt");
+
+		if (fin) //проверка открытия файла
+		{
+			std::string line;
+			char str[500];
+			int pos;
+
+			while (!fin.eof()) //пока не конец файла
+			{
+				getline(fin, line); //читаем строку из потока
+
+				for (; line.find("  ") != std::string::npos; line.erase(line.find("  "), 1)); //удаляем все лишние пробелы (оставляем только по одному)
+				for (; line.size() != 0 && line[0] == ' '; line.erase(0, 1)); //удаляем пробелы в начале строки, если они имеются
+
+				strcpy_s(str, line.c_str()); //приводим строку string в char и копируем в массив
+
+				//удаляем пробелы перед знаками препинания
+				char* s = strpbrk(str, "!.?,;:)");
+
+				while (s)
+				{
+					pos = (abs(str - s)) - 1;
+
+					if (line[pos] == ' ')
+					{
+						line.erase(pos, 1); //удаляем пробем перед знаком препинания
+						strcpy_s(str, line.c_str()); //копируем новую строку в str
+						s = strpbrk(s, "!.?,;:)"); //начинаем искать с нового места
+						continue;
+					}
+
+					s = strpbrk(s + 1, "!.?,;:)"); //начинаем искать с нового места
+				}
+
+				//добавляем пробел между предложениями
+				s = strpbrk(str, "!.?");
+
+				while (s)
+				{
+					pos = abs(str - s);
+					line.insert(pos + 1, " "); //вставляем пробел в строку типа string
+					strcpy_s(str, line.c_str()); //копируем новую строку в str
+					s = strpbrk(s + 2, "!.?"); //начинаем искать с нового места
+				}
+
+				fout << line << "\n"; //записываем в файл
+			}
+
+			std::cout << "Выходной файл имеет имя output_1.txt\n";
+		}
+		else
+		{
+			std::cout << "Файл отсутствует\n";
+		}
+
+		fin.close();
+		fout.close();
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 2\n";
+		std::cout << "В тексте программы на С++ в заголовке оператора while удалить скобки вокруг логического выражения\nи вставить после него ключевое слово do\n\n";
+		std::ifstream fin("input_2.txt");
+		std::ofstream fout("output_2.txt");
+
+		if (fin) //проверка открытия файла
+		{
+			std::string line;
+			std::string word = "while ";
+
+			while (!fin.eof()) //пока не конец файла
+			{
+				int pos = 0;
+				getline(fin, line); //читаем строку из потока
+				pos = line.find(word, pos);
+
+				if (pos != std::string::npos)
+				{
+					pos = pos + word.size();
+					line.erase(pos, 1); //удаление символа '('
+					int count = 0;
+
+					while (pos <= line.size()) //проверить
+					{
+						if (line[pos] == ')' && count == 0)
+						{
+							line.erase(pos, 1);
+							line.insert(pos, " do");
+							break;
+						}
+						else if (line[pos] == ')' && count != 0)
+						{
+							count--;
+						}
+						else if (line[pos] == '(')
+						{
+							count++;
+						}
+
+						pos++;
+					}
+				}
+
+				fout << line << '\n';
+			}
+
+			std::cout << "Выходной файл имеет имя output_2.txt\n";
+		}
+		else
+		{
+			std::cout << "Файл отсутствует\n";
+		}
+
+		fin.close();
+		fout.close();
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 3\n";
+		std::cout << "Дана программа на С++.\nЗаписать в выходной файл построчно все числовые константы, встречающиеся в этой программе, вместе с номером строки\n\n";
+		std::ifstream fin("input_3.txt");
+		std::ofstream fout("output_3.txt");
+
+		if (fin)
+		{
+			std::string line;
+			char str[500];
+			int count = 1;
+			int pos = 0;
+			fout << "Номер строки | Числовые константы" << "\n\n";
+
+			while (!fin.eof())
+			{
+				bool flag = true;
+				getline(fin, line);
+				strcpy_s(str, line.c_str());
+				char* s = strpbrk(str, "0123456789");
+				std::string result;
+
+				while (s)
+				{
+					if (!isalpha(*(s - 1))) //является ли предыдущее число буквой
+					{
+						int tempIn;
+						std::string tempSt;
+						tempIn = atoi(s);
+						tempSt = std::to_string(tempIn);
+						pos = tempSt.size();
+
+						if (flag)
+						{
+							result += std::to_string(count) + "\t| ";
+							flag = false;
+						}
+
+						result += " " + tempSt;
+					}
+
+					s = strpbrk(s + pos, "0123456789");
+				}
+
+				if (!flag)
+				{
+					fout << result << "\n";
+				}
+
+				count++;
+			}
+
+			std::cout << "Выходной файл имеет имя output_3.txt\n";
+		}
+		else
+		{
+			std::cout << "Файл отсутствует\n";
+		}
+
+		fin.close();
+		fout.close();
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 4\n";
+		std::cout << "Написать программу, которая:\n - читает текстовый файл\n - удаляет заданное слово в каждой строке\n - сортирует прочитанные строки без учета регистра символов\n - сохраняет в новый файл\n\n";
+		std::ifstream fin("input_4.txt");
+		std::ofstream fout("output_4.txt");
+
+		if (fin) //проверка на коррекнтность открытия файла
+		{
+			const size_t size = 20;
+			std::string array[size];
+			size_t count = 0; //отвечает за количство элементов в массиве
+			std::string word_for_delete; //слово, которое нужно удалить в строках
+			std::cout << "Введите слово, которое желаете удалить из текста (например слово \"birds\", регистр не учитывается): ";
+			std::cin >> word_for_delete;
+			word_for_delete = stringToLower(word_for_delete); //приводим слово к нижнему регистру
+
+			while (!fin.eof()) //пока не пустой файл
+			{
+				bool flag = true; //отвечает за первое слово в предложении
+				std::string line, word, word_temp, result;
+				getline(fin, line);
+				std::stringstream finst;
+				finst << line;
+
+				while (!finst.eof())
+				{
+					std::string punct;
+					finst >> word;
+					word_temp = stringToLower(word); //приводим слово к нижнему регистру
+
+					for (size_t i = 0; i < word_temp.size(); i++) //удаляем все знаки препинания
+					{
+						if (ispunct(word_temp[i]))
+						{
+							punct += word_temp[i];
+							word_temp.erase(i);
+						}
+					}
+
+					if (word_temp == word_for_delete) //проверяем слова на равенство
+					{
+						if (punct.empty())
+						{
+							continue;
+						}
+
+						result += punct;
+						flag = false;
+					}
+					else
+					{
+						if (flag)
+						{
+							result = word;
+							flag = false;
+						}
+						else
+						{
+							result += " " + word;
+						}
+					}
+				}
+
+				if (!result.empty())
+				{
+					array[count] = result;
+					count++;
+				}
+			}
+
+			sort(array, count);
+			infile(array, count, fout);
+			std::cout << "\nВыходной файл имеет имя output_4.txt\n";
+		}
+		else
+		{
+			std::cout << "Файл отсутствует\n";
+		}
+
+		fin.close();
+		fout.close();
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 5\n";
+		std::cout << "Дано время в часах минутах и секундах.\nПолучить время в виде строки прописными буквами.\n\n";
+		std::ifstream fin("input_5.txt");
+		std::ofstream fout("output_5.txt");
+
+		if (fin)
+		{
+			int chislo;
+			std::string unit[] = { "ноль","один","два","три","четыре","пять","шесть","семь","восемь","девять" };
+			std::string teen[] = { "десять","одиннадцать","двенадцать","тринадцать","четырнадцать","пятнадцать","шестнадцать","семнадцать","восемнадцать","девятнадцать" };
+			std::string dozen[] = { "двадцать","тридцать","сорок","пятьдесят" };
+			std::string result;
+
+			//выводим часы прописными буквами
+
+			fin >> chislo;
+
+			if (chislo / 10 == 0) //если первая цифра часов равна нулю
+			{
+				result += unit[chislo] + " ";
+			}
+			else if (chislo / 10 == 1) //если первая цифра часов равна единице
+			{
+				result += teen[chislo % 10] + " ";
+			}
+			else
+			{
+				result += dozen[chislo / 10 - 2] + " ";
+
+				if (chislo % 10 != 0)
+				{
+					result += unit[chislo % 10] + " ";
+				}
+			}
+
+			//добавляем слово "час" в нужном падеже
+
+			if ((chislo % 100 > 10 && chislo % 100 < 20) || (chislo % 10 > 4) || (chislo % 10 == 0))
+			{
+				result += "часов ";
+			}
+			else if (chislo % 10 > 1 && chislo % 10 < 5)
+			{
+				result += "часа ";
+			}
+			else
+			{
+				result += "час ";
+			}
+
+			//выводим минуты прописными буквами
+
+			fin >> chislo;
+
+			if (chislo / 10 == 0) //если первая цифра минут равна нулю
+			{
+				if (chislo % 10 == 1)
+				{
+					result += "одна ";
+				}
+				else if (chislo % 10 == 2)
+				{
+					result += "две ";
+				}
+				else
+				{
+					result += unit[chislo] + " ";
+				}
+			}
+			else if (chislo / 10 == 1) //если первая цифра минут равна единице
+			{
+				result += teen[chislo % 10] + " ";
+			}
+			else
+			{
+				result += dozen[chislo / 10 - 2] + " ";
+
+				if (chislo % 10 != 0)
+				{
+					if (chislo % 10 == 1)
+					{
+						result += "одна ";
+					}
+					else if (chislo % 10 == 2)
+					{
+						result += "две ";
+					}
+					else
+					{
+						result += unit[chislo % 10] + " ";
+					}
+				}
+			}
+
+			//добавляем слово "минуты" в нужном падеже
+
+			if ((chislo % 100 > 10 && chislo % 100 < 20) || (chislo % 10 > 4) || (chislo % 10 == 0))
+			{
+				result += "минут ";
+			}
+			else if (chislo % 10 > 1 && chislo % 10 < 5)
+			{
+				result += "минуты ";
+			}
+			else
+			{
+				result += "минута ";
+			}
+
+			//выводим секунды прописными буквами
+
+			fin >> chislo;
+
+			if (chislo / 10 == 0) //если первая цифра секунд равна нулю
+			{
+				if (chislo % 10 == 1)
+				{
+					result += "одна ";
+				}
+				else if (chislo % 10 == 2)
+				{
+					result += "две ";
+				}
+				else
+				{
+					result += unit[chislo] + " ";
+				}
+			}
+			else if (chislo / 10 == 1) //если первая цифра секунд равна единице
+			{
+				result += teen[chislo % 10] + " ";
+			}
+			else
+			{
+				result += dozen[chislo / 10 - 2] + " ";
+
+				if (chislo % 10 != 0)
+				{
+					if (chislo % 10 == 1)
+					{
+						result += "одна ";
+					}
+					else if (chislo % 10 == 2)
+					{
+						result += "две ";
+					}
+					else
+					{
+						result += unit[chislo % 10] + " ";
+					}
+				}
+			}
+
+			//добавляем слово "секунды" в нужном падеже
+
+			fin >> chislo;
+
+			if ((chislo % 100 > 10 && chislo % 100 < 20) || (chislo % 10 > 4) || (chislo % 10 == 0))
+			{
+				result += "секунд";
+			}
+			else if (chislo % 10 > 1 && chislo % 10 < 5)
+			{
+				result += "секунды";
+			}
+			else
+			{
+				result += "секунда";
+			}
+
+			fout << "Время: " << result;
+			std::cout << "Выходной файл имеет имя output_5.txt\n";
+		}
+		else
+		{
+			std::cout << "Файл отсутствует\n";
+		}
+
+		fin.close();
+		fout.close();
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
+
+void sort(std::string* array, size_t size)
+{
+	for (size_t i = size - 1; i > 0; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (stringToLower(array[j]) > stringToLower(array[j + 1]))
+			{
+				std::swap(array[j], array[j + 1]);
+			}
+		}
+	}
+}
+
+std::string stringToLower(std::string line)
+{
+	for (size_t i = 0; i < line.size(); i++)
+	{
+		line[i] = std::tolower(line[i]);
+	}
+
+	return line;
+}
+
+void infile(std::string* array, size_t size, std::ofstream& fout)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		fout << array[i] << "\n";
+	}
+}
