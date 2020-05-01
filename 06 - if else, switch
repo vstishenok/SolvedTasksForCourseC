@@ -1,0 +1,167 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		int day, month, year, helpday, helpmounts;
+		enum mounth { January = 1, February, March, April, May, June, July, August, September, October, November, December };
+		cout << "Задание 1.\nНаписать программу, которая вычисляет дату предыдущего дня" << endl;
+		cout << "Введите дату в формате ДД ММ ГГГГ" << endl;
+		cin >> day >> month >> year;
+
+		if (month == 1)
+		{
+			helpmounts = December;
+		}
+		else
+		{
+			helpmounts = month - 1;
+		}
+
+		switch (helpmounts)
+		{
+		case January: case March: case May: case July: case August: case October: case December: helpday = 31; break;
+		case April: case June: case September: case November: helpday = 30; break;
+		case February:
+
+			if ((year % 400 == 0) || (year % 100 != 0) && (year % 4 == 0))
+			{
+				helpday = 28;
+			}
+			else
+			{
+				helpday = 27;
+			}
+		}
+
+		if (day > 1)
+		{
+			day--;
+		}
+		else if (day == 1 && month != 1)
+		{
+			day = helpday;
+			month = helpmounts;
+		}
+		else
+		{
+			day = helpday;
+			month = helpmounts;
+			year--;
+		}
+
+		cout << "Дата вчерашнего дня " << day << " " << month << " " << year << endl;
+		cout << endl;
+	}
+
+	{
+		int operator1, operator2, m, rub;
+		double cop, price1 = 0.25, price2 = 0.5, summa = 0;
+		cout << "Задание 2.\nНаписать программу подсчета стоимости разговора для разных мобильных операторов.\nПользователь вводит длительность разговора и выбирает с какого на какой оператор он звонит. \nВывести стоимость на экран" << endl;
+		cout << "Выберите оператора, с номера которого осуществлялся исходящий звонок\n1. A1\n2. MTC\n3. LIFE" << endl;
+		cin >> operator1;
+		cout << "Выберите оператора, на номер которого осуществлялся звонок\n1. A1\n2. MTC\n3. LIFE" << endl;
+		cin >> operator2;
+		cout << "Введите продолжительность разговора в минутах" << endl;
+		cin >> m;
+
+		if ((m > 0) && (operator1 > 0 && operator1 < 4) && (operator2 > 0 && operator2 < 4))
+		{
+			if (operator1 == operator2)
+			{
+				summa = price1 * m;
+
+			}
+			else
+			{
+				summa = price2 * m;
+			}
+		}
+		else
+		{
+			summa = 0;
+		}
+
+		if (summa != 0)
+		{
+			rub = summa;
+			cop = (summa - rub) * 100;
+			cout << "Стоимость разговора составляет " << rub << " руб. " << cop << " коп." << endl;
+		}
+		else
+		{
+			cout << "Введены некорректные исходные данные" << endl;
+		}
+		cout << endl;
+	}
+
+	cout << "Задание 3.\nВася работает программистом и получает 50$ за каждые 100 строк кода.\nЗа каждое третье опоздание Васю штрафуют на 20$" << endl;
+	cout << endl;
+
+	{
+		cout << "a) Пользователь вводит желаемый доход Васи и количество опозданий.\nПосчитать, сколько строк кода ему надо написать" << endl;
+		int income, delays, fine;
+		cout << "Введите желаемый доход в $" << endl;
+		cin >> income;
+		cout << "Введите количество опозданий" << endl;
+		cin >> delays;
+		fine = (delays / 3) * 20; //сумма штрафов
+		if ((fine + income) % 50 == 0)
+		{
+			cout << "Нужно написать " << (fine + income) / 50*100 << " строк кода" << endl;
+		}
+		else
+		{
+			cout << "Нужно написать " << (fine + income) / 50*100 + 100 << " строк кода" << endl;
+		}
+		cout << endl;
+	}
+
+	{
+		cout << "б) Пользователь вводит количество строк кода, написанное Васей и желаемый объем зарплаты.\nПосчитать, сколько раз Вася может опоздать" << endl;
+		int income, delays, line;
+		cout << "Введите количество строк кода" << endl;
+		cin >> line;
+		cout << "Введите желаемый объем зарплаты в $" << endl;
+		cin >> income;
+		if (line / 100 * 50 > income)
+		{
+			delays = ((line / 100 * 50 - income) / 20 * 3) + 2;
+			cout << "Можно опоздать " << delays << " раз" << endl;
+		}
+		else if (line / 100 * 50 == income)
+		{
+			cout << "Можно опоздать 2 раза" << endl;
+		}
+		else
+		{
+			cout << "Невозможно достичь желаемой зарплаты с таким количеством строк кода" << endl;
+		}
+		cout << endl;
+	}
+
+	{
+		cout << "в) Пользователь вводит количество строк кода и количество опозданий.\nОпределить, сколько денег заплатят Васе и заплатят ли вообще" << endl;
+		int income, delays, line;
+		cout << "Введите количество строк кода" << endl;
+		cin >> line;
+		cout << "Введите количество опозданий" << endl;
+		cin >> delays;
+		income = (line / 100 * 50) - (delays / 3 * 20);
+		if (income > 0)
+		{
+			cout << "Зарплата составит " << income << "$" << endl;
+		}
+		else if (income <= 0)
+		{
+			cout << "По причине штрафов за опоздания зарплата отсутствует" << endl;
+		}
+		cout << endl;
+	}
+
+	system("pause");
+	return 0;
+}
