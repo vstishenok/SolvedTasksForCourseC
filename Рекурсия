@@ -1,0 +1,379 @@
+#include <iostream>
+#include<ctime>
+
+bool equal(int, int); \
+bool Search(int[], size_t, int);
+int mod(size_t, size_t);
+void prneg(int[], size_t);
+int head3(int);
+int degree5(int);
+int maxDig(int);
+int divs(int);
+float f(float, size_t);
+void initArrayAuto(float[], int);
+void initArrayAutoInt(int[], size_t);
+void initArrayAutoInt2(int[], size_t);
+void printArray(float[], int);
+void printArrayInt(int[], size_t);
+void Bubblesort(int[], size_t);
+void RevPrint(size_t);
+
+
+
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	{
+		std::cout << "Задание 1.\nОписать рекурсивную функцию f(x,n), вычисляющую величину  x^n/n! при любом вещественном x и любом неотрицательном целом n.\n\n";
+		float x;
+		size_t n;
+		std::cout << "Введите вещественное число х: ";
+		std::cin >> x;
+		std::cout << "Введите неотрицательное целое число n: ";
+		std::cin >> n;
+		f(x, n);
+		std::cout << "Ответ: " << f(x, n);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 2.\nНе используя операции умножения и деления, рекурсивно описать функцию Mod(a,b) от целых чисел a и b (a>=0, b>0), которая вычисляет остаток от деления a на b.\n\n";
+		size_t a, b;
+		std::cout << "Введите целое число a: ";
+		std::cin >> a;
+		std::cout << "Введите целое число b: ";
+		std::cin >> b;
+		std::cout << "Остаток от деления: " << mod(a, b);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 3.\nОписать рекурсивную функцию degree5(N), которая вычисляет, какой степенью числа 5 является натуральное число N.\nЕсли N не степень пяти, функция должна вернуть число -1.\n\n";
+		int N;
+		std::cout << "Введите натуральное число N: ";
+		std::cin >> N;
+		std::cout << "Ответ: " << degree5(N);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 4.\nРекурсивно описать функцию maxdig(N), которая находит наибольшую цифру в десятичной записи неотрицательного целого числа N.\n\n";
+		int N;
+		std::cout << "Введите неотрицательное целове число N: ";
+		std::cin >> N;
+		std::cout << "Наибольшая цифра в числе: " << maxDig(N);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 5.\nПусть имеются описания connst int n = 100; float array[n].\nРекурсивно описать процедуру PrNeg(array), которая печатает отрицательные элементы массива.\n\n";
+		const size_t SIZE = 100;
+		int A[SIZE];
+		srand(time(0));
+		initArrayAutoInt2(A, SIZE);
+		std::cout << "Полученный массив: ";
+		printArrayInt(A, SIZE);
+		std::cout << "Отрицательные элементы: ";
+		prneg(A, SIZE);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 6.\nРекурсивно описать функцию head3(n), которая вычисляет число, получаемое приписыванием слева цифры 3 к десятичной записи целого неотрицательного числа n.\n\n";
+		int n;
+		std::cout << "Введите неотрицательное целове число n: ";
+		std::cin >> n;
+		std::cout << "Ответ: " << head3(n) << "\n";
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 7.\nРекурсивно описать функцию equal(n, s), где n и s неотрицательные целые числа, которая проверяет, совпадает ли сумма цифр в десятичной записи числа n со значением s.\n\n";
+		int n, s;
+		std::cout << "Введите неотрицательное целове число n: ";
+		std::cin >> n;
+		std::cout << "Введите предпологаемую сумму цифр числа n: ";
+		std::cin >> s;
+		std::cout << "Ответ: ";
+		equal(n, s) ? std::cout << "Сумма цифр совпадает" : std::cout << "Сумма цифр не совпадает";
+		std::cout << "\n\n\n";
+
+	}
+
+	{
+		std::cout << "Задание 8.\nРекурсивно описать функцию divs(n) для подсчета количества всех делителей целого числа n (n>1), без учета делителей 1 и n.\n\n";
+		int n;
+		std::cout << "Введите целое число n, которое больше единицы: ";
+		std::cin >> n;
+		std::cout << "Количество всех делителей: ";
+		std::cout << divs(n);
+		std::cout << "\n\n\n";
+	}
+
+	{
+		std::cout << "Задание 9.\nРекурсивно описать функцию Search (A, size, key), определяющую, входит ли целое число key в упорядоченный по возрастанию массив A типа int\n\n";
+		const int SIZE = 10;
+		int A[SIZE], key, count;
+		initArrayAutoInt(A, SIZE);
+		std::cout << "Заполненный массив имеет вид: ";
+		printArrayInt(A, SIZE);
+		Bubblesort(A, SIZE);
+		std::cout << "Отсортированный массив имеет вид: ";
+		printArrayInt(A, SIZE);
+		std::cout << "Введите ключ для поиска: ";
+		std::cin >> key;
+		Search(A, SIZE, key) ? std::cout << "\nЧисло используется в массиве А" : std::cout << "\nЧисло не используется в массиве А";
+		std::cout << "\n\n\n";
+
+	}
+
+	{
+		std::cout << "Задание 10.\nРекурсивно описать процедуру RevPrint(N), которая печатает в обратном порядке цифры десятичной записи целого неотрицательного числа N.\n\n";
+		int N;
+		std::cout << "Введите целое неотрицательное число N: ";
+		std::cin >> N;
+		std::cout << "Число в обратном порядке: ";
+		RevPrint(N);
+		std::cout << "\n\n\n";
+	}
+
+
+
+	{
+		//  int N;
+		//cout << "Введите число N: ";
+		//cin >> N;
+		//cout << maxDig(N) << "\n"; // задание 4
+		//cout << degree5(a) << "\n"; // задание 3
+		//cout << "Введите число b: ";
+		//cin >> b;
+		//cout << fact(n) << "\n"; // нахождение факториала
+		//cout << f(x, n) << "\n"; // задание 1
+		//cout << mod(a, b); // задание 2
+	}
+	system("pause");
+	return 0;
+}
+
+float f(float x, size_t n)
+{
+	if (n == 0)
+	{
+		return 1;
+	}
+	else
+	{
+		return f(x, n - 1) * x / n;
+	}
+}
+
+int mod(size_t a, size_t b)
+{
+	if (b > a)
+	{
+		return a;
+	}
+	else
+	{
+		return mod(a - b, b);
+	}
+}
+
+int degree5(int N)
+{
+	int count = 0;
+
+	if (N == 1)
+	{
+		return 0;
+	}
+	else if (N % 5 != 0)
+	{
+		return -1;
+	}
+	else
+	{
+		count = degree5(N / 5);
+
+		if (count == -1)
+		{
+			return count;
+		}
+		else
+		{
+			return count + 1;
+		}
+	}
+}
+
+int maxDig(int N)
+{
+	int temp;
+
+	if (N < 10)
+	{
+		return N;
+	}
+	else
+	{
+		temp = maxDig(N / 10);
+	}
+
+	if (temp > N % 10)
+	{
+		return temp;
+	}
+	else
+	{
+		return N % 10;
+	}
+}
+
+void initArrayAuto(float A[], int SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		A[i] = rand() % 201 - 100;
+	}
+}
+
+void printArray(float A[], int SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		std::cout << A[i] << " ";
+	}
+	std::cout << "\n";
+}
+
+void prneg(int A[], size_t size)
+
+{
+	if (size == 0) return;
+	if (size > 0 && A[size - 1] < 0)
+	{
+		std::cout << A[size - 1] << " ";
+
+	}
+
+	return prneg(A, size - 1);
+
+}
+
+int head3(int n)
+{
+
+	if (n < 10)
+	{
+		return 3 * 10 + n;
+	}
+	else
+
+	{
+		return head3(n / 10) * 10 + n % 10;
+	}
+
+}
+
+bool equal(int n, int s)
+{
+	if (n == 0)
+	{
+		if (s != 0)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	s -= n % 10;
+	n /= 10;
+	return equal(n, s);
+}
+
+int divs(int n)
+{
+	static int k = 0;
+	static int divisor = 2;
+
+	if (n / 2 < divisor)
+	{
+		return k;
+	}
+	else if (n % divisor == 0)
+	{
+		k++;
+		divisor++;
+		divs(n);
+	}
+	else {
+		divisor++;
+		divs(n);
+	}
+}
+
+void initArrayAutoInt(int A[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		A[i] = rand() % 100;
+	}
+}
+
+void initArrayAutoInt2(int A[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		A[i] = rand() % 100 - 100;
+	}
+}
+
+void printArrayInt(int A[], size_t SIZE)
+{
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		std::cout << A[i] << " ";
+	}
+	std::cout << "\n";
+}
+
+void Bubblesort(int array[], size_t SIZE)
+{
+	for (size_t i = SIZE - 1; i > 0; i--)
+	{
+		for (size_t j = 0; j < i; j++)
+		{
+			if (array[j] > array[j + 1])
+			{
+				int temp = array[j];
+				array[j] = array[j + 1];
+				array[j + 1] = temp;
+			}
+		}
+	}
+}
+
+bool Search(int A[], size_t SIZE, int key)
+{
+	if (SIZE == 0) {
+		return false;
+	}
+
+	if (A[SIZE - 1] == key)
+	{
+		return true;
+	}
+
+	return Search(A, SIZE - 1, key);
+}
+
+void RevPrint(size_t N)
+{
+	std::cout << N % 10;
+	if (N > 9)
+		RevPrint(N / 10);
+}
