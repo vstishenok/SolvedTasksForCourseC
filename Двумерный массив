@@ -1,0 +1,762 @@
+#include <iostream>
+#include <conio.h>
+#include <ctime>
+
+using namespace std;
+const size_t cols = 4;
+const size_t rows = 4;
+
+void start(int[][cols], size_t, size_t);
+void pause();
+void initMatrixAuto(int[][cols], size_t, size_t, int);
+void initMatrix(int[][cols], size_t, size_t);
+void printMatrix(int[][cols], size_t, size_t);
+void createProArray(int[][cols], size_t, size_t, int[]);
+void swapMinAndMaxRows(int[][cols], size_t, size_t, int arr[]);
+void sumDiagonalUp(int[][cols], size_t, size_t);
+void sumDiagonalDown(int[][cols], size_t, size_t);
+void searchPosIndexRows(int[][cols], size_t, size_t);
+void searchPosIndexCols(int[][cols], size_t, size_t);
+void zeroDiagonal(int[][cols], size_t, size_t);
+void position(int[][cols], size_t, size_t, int);
+void positionDiag(int[][cols], size_t, size_t, int);
+void magicSquare(int[][cols], size_t, size_t);
+void matrixSort(int[][cols], size_t, size_t);
+void insertSort(int[], size_t);
+int searchCountDiag(int[][cols], size_t, size_t, int);
+int searchMinDiag(int[][cols], size_t, size_t);
+int searchMaxDiag(int[][cols], size_t, size_t);
+int serchCount(int[][cols], size_t, size_t, int);
+int searchMin(int[][cols], size_t, size_t);
+int searchMax(int[][cols], size_t, size_t);
+int prodInRows(int[][cols], size_t, size_t);
+int prodInCols(int[][cols], size_t, size_t);
+int binSearch(int[], size_t, int);
+int findMinArray(int[], size_t);
+int findMaxArray(int[], size_t);
+int getRange();
+
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	cout << "Выполнить заданную обработку числового двумерного массива.\nЭлементы массива должны заполняться случайным образом.\nДиапазон выбирается самостоятельно.\n\n";
+	int A[rows][cols], arr[rows];
+	start(A, rows, cols);
+
+	cout << "Задание 1.\nВычислить произведение чисел в каждом столбце.\n\n";
+	printMatrix(A, rows, cols);
+	cout << "------------------------------ \n";
+
+	for (size_t i = 0; i < cols; i++)
+	{
+		cout << prodInCols(A, rows, i) << "\t";
+	}
+
+	pause();
+
+	cout << "Задание 2.\nВычислить сумму элементов матрицы, которые расположены выше главной диагонали.\n\n";
+	printMatrix(A, rows, cols);
+	cout << "\n";
+	sumDiagonalUp(A, rows, cols);
+	pause();
+
+	cout << "Задание 3.\nВычислить сумму элементов матрицы, которые расположены ниже побочной диагонали.\n\n";
+	printMatrix(A, rows, cols);
+	cout << "\n";
+	sumDiagonalDown(A, rows, cols);
+	pause();
+
+	cout << "Задание 4.\nВычислить произведение элементов для каждой строки.\nПоменять местами строки с максимальным и минимальным значением произведения.\n\n";
+	
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			cout << A[i][j] << "\t";
+		}
+		cout << " | " << prodInRows(A, i, cols) << "\n";
+	}
+
+	cout << "\n";
+	swapMinAndMaxRows(A, rows, cols, arr);
+	cout << "Измененный массив: \n\n";
+	printMatrix(A, rows, cols);
+	pause();
+
+	cout << "Задание 5.\nОпределите столбцы и строки массива, в которых не содержится ни одного отрицательного элемента.\nВыведите на экран найденные индексы строк и столбцов.\n\n";
+	printMatrix(A, rows, cols);
+	cout << "\n";
+	searchPosIndexRows(A, rows, cols);
+	searchPosIndexCols(A, rows, cols);
+	pause();
+
+	cout << "Задание 6.\nЗаполните главные диагонали массива нулями.\n\n";
+	printMatrix(A, rows, cols);
+	cout << "\n";
+	zeroDiagonal(A, rows, cols);
+	cout << "Измененный массив: \n\n";
+	printMatrix(A, rows, cols);
+	pause();
+
+	cout << "Задание 7.\nОтсортировать методом вставок элементы в каждой строке.\nМетодом бинарного поиска найти в каждой строке заданный элемент и вывести на экран.\n\n";
+	cout << "Исходный массив:\n\n";
+	printMatrix(A, rows, cols);
+	cout << "\n";
+	matrixSort(A, rows, cols);
+	cout << "Измененный массив: \n\n";
+	printMatrix(A, rows, cols);
+	cout << "\n";
+	int key;
+	cout << "Введите ключ: ";
+	cin >> key;
+	cout << "\n";
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		cout << "For now " << i << " key is " << binSearch(A[i], cols, key) << "\n";
+	}
+
+	pause();
+
+	cout << "Задание 8.\nНайти количество минимальных и максимальных элементов массива.\nНайти количество минимальных и максимальных элементов на главных диагоналях.\nСложить найденные минимумы и максимумы.\nОтобразить:\n- исходный массив\n- минимальный элемент массива\n- максимальный элемент массива\n- минимумы, максимумы диагоналей\n- позиции\n- суммы\n\n";
+	start(A, rows, cols);
+	cout << "Исходный массив:\n\n";
+	printMatrix(A, rows, cols);
+	cout << "\n";
+	int min = searchMin(A, rows, cols);
+	cout << "Минимальный элемент массива: " << min << "\n";
+	cout << "Количество: " << serchCount(A, rows, cols, min) << "\n";
+	cout << "Позиции: ";
+	position(A, rows, cols, min);
+	cout << "\n\n";
+	int max = searchMax(A, rows, cols);
+	cout << "Максимальный элемент массива: " << max << "\n";
+	cout << "Количество: " << serchCount(A, rows, cols, max) << "\n";
+	cout << "Позиции: ";
+	position(A, rows, cols, max);
+	cout << "\n\n";
+	cout << "Сумма максимального и минимального элементов массива: " << max + min;
+	cout << "\n\n";
+	int minDiag = searchMinDiag(A, rows, cols);
+	cout << "Минимальный элемент массива на главных диагоналях: " << minDiag << "\n";
+	cout << "Количество: " << searchCountDiag(A, rows, cols, minDiag) << "\n";
+	cout << "Позиции: \n";
+	positionDiag(A, rows, cols, minDiag);
+	cout << "\n\n";
+	int maxDiag = searchMaxDiag(A, rows, cols);
+	cout << "Максимальный элемент массива на главных диагоналях: " << maxDiag << "\n";
+	cout << "Количество: " << searchCountDiag(A, rows, cols, maxDiag) << "\n";
+	cout << "Позиции: \n";
+	positionDiag(A, rows, cols, maxDiag);
+	cout << "\n\n";
+	cout << "Сумма максимального и минимального элементов массива на главных диагоналях: " << minDiag + maxDiag << "\n";
+	pause();
+
+	cout << "Задание 9.\nОпределить является ли квадратная матрица магическим квадратом.\n\n";
+	cout << "Данна квадратная матрица размером " << cols << "x" << rows << "\nЗаполните матрицу вручную:\n";
+	initMatrix(A, rows, cols);
+	cout << "Матрица имеет вид:\n\n";
+	printMatrix(A, rows, cols);
+	cout << "\n";
+	magicSquare(A, rows, cols);
+	cout << "\n\n";
+
+	system("pause");
+	return 0;
+
+}
+
+void start(int A[][cols], size_t rows, size_t cols)
+{
+	for (;;)
+	{
+		int range = getRange(), answer;
+		initMatrixAuto(A, rows, cols, range);
+		cout << "\nЗаполненный массив имеет вид:\n\n";
+		printMatrix(A, rows, cols);
+		cout << "\nДействия над массивом:\n1. Использовать данный массив для решения задач далее.\n2. Перезаписать массив другими числами.\n\nВыберите действие: ";
+		cin >> answer;
+
+		if (answer == 1)
+		{
+			system("cls");
+			break;
+		}
+
+		system("cls");
+	}
+}
+
+void pause()
+{
+	cout << "\n\nНажмите любую клавишу для перехода к следующему заданию...";
+	_getch();
+	system("cls");
+}
+
+int getRange()
+{
+	int range;
+	cout << "Массив будет заполнен числами от -X до X.\n";
+
+	for (;;)
+	{
+		cout << "Введите натуральное число X: ";
+		cin >> range;
+
+		if (range > 0)
+		{
+			return range;
+		}
+
+		cout << "Число " << range << " не является натуральным. Попробуйте еще раз.\n";
+	}
+}
+
+void initMatrixAuto(int A[][cols], size_t rows, size_t cols, int range)
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			A[i][j] = rand() % (range * 2 + 1) - range;
+		}
+	}
+}
+
+void initMatrix(int A[][cols], size_t rows, size_t cols)
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			cout << "A[" << i << "][" << j << "]= ";
+			cin >> A[i][j];
+
+		}
+	}
+
+	system("cls");
+}
+
+void printMatrix(int A[][cols], size_t rows, size_t cols)
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			cout << A[i][j] << "\t";
+		}
+
+		cout << endl;
+	}
+}
+
+int prodInRows(int A[][cols], size_t rowIndex, size_t cols)
+{
+	int prod = 1;
+
+	for (size_t j = 0; j < cols; j++)
+	{
+		prod *= A[rowIndex][j];
+	}
+
+	return prod;
+}
+
+int prodInCols(int A[][cols], size_t rows, size_t colsIndex)
+{
+	int prod = 1;
+
+	for (size_t i = 0; i < rows; i++) // отвечает за пробег по строкам
+	{
+		prod *= A[i][colsIndex];
+	}
+
+	return prod;
+}
+
+int findMinArray(int A[], size_t size)
+{
+	int index = 0, min = A[0];
+
+	for (size_t i = 0; i < size; i++)
+	{
+		if (A[i] < min)
+		{
+			min = A[i];
+			index = i;
+		}
+	}
+
+	return index;
+}
+
+int findMaxArray(int A[], size_t size)
+{
+	int index = 0, max = A[0];
+
+	for (size_t i = 0; i < size; i++)
+	{
+		if (A[i] > max)
+		{
+			max = A[i];
+			index = i;
+		}
+	}
+
+	return index;
+}
+
+void createProArray(int A[][cols], size_t rows, size_t cols, int arr[])
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		arr[i] = prodInRows(A, i, cols);
+	}
+}
+
+void swapMinAndMaxRows(int A[][cols], size_t rows, size_t cols, int arr[])
+{
+	int indMin, indMax;
+	createProArray(A, rows, cols, arr);
+	indMin = findMinArray(arr, rows);
+	indMax = findMaxArray(arr, rows);
+
+	for (size_t j = 0; j < cols; j++)
+	{
+		int temp = A[indMin][j];
+		A[indMin][j] = A[indMax][j];
+		A[indMax][j] = temp;
+	}
+}
+
+void sumDiagonalUp(int A[][cols], size_t rows, size_t cols)
+{
+	int sum = 0;
+
+	for (size_t i = 0, j = 1; (i < rows) && (j < cols); i++, j++)
+	{
+		sum += A[i][j];
+	}
+
+	cout << "Сумма равна " << sum;
+
+}
+
+void sumDiagonalDown(int A[][cols], size_t rows, size_t cols)
+{
+	int sum = 0;
+
+	for (size_t i = 1, j = cols - 1; (i < rows) && (j >= 0); i++, j--)
+	{
+		sum += A[i][j];
+	}
+
+	cout << "Сумма равна " << sum;
+
+}
+
+void searchPosIndexRows(int A[][cols], size_t rows, size_t cols)
+{
+	bool allPosNumber, notPosRows = true;
+	cout << "Индексы строк, которые не содержат отрицательных элементов: ";
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		allPosNumber = true;
+
+		for (size_t j = 0; j < cols; j++)
+		{
+			if (A[i][j] < 0)
+			{
+				allPosNumber = false;
+				break;
+			}
+		}
+
+		if (allPosNumber == true)
+		{
+			notPosRows = false;
+			cout << i << " ";
+		}
+	}
+
+	if (notPosRows == true)
+	{
+		cout << "отсутствуют\n";
+	}
+	else
+	{
+		cout << "\n";
+	}
+}
+
+void searchPosIndexCols(int A[][cols], size_t rows, size_t cols)
+{
+	bool allPosNumber, notPosCols = true;
+	cout << "Индексы столбцов, которые не содержат отрицательных элементов: ";
+
+	for (size_t j = 0; j < rows; j++)
+	{
+		allPosNumber = true;
+
+		for (size_t i = 0; i < cols; i++)
+		{
+			if (A[i][j] < 0)
+			{
+				allPosNumber = false;
+				break;
+			}
+		}
+
+		if (allPosNumber == true)
+		{
+			notPosCols = false;
+			cout << j << " ";
+		}
+	}
+
+	if (notPosCols == true)
+	{
+		cout << "отсутствуют\n";
+	}
+	else
+	{
+		cout << "\n";
+	}
+}
+
+void zeroDiagonal(int A[][cols], size_t rows, size_t cols)
+{
+	for (size_t i = 0, j = 0; (i < rows) && (j < cols); i++, j++)
+	{
+		A[i][j] = 0;
+	}
+
+	for (size_t i = 0, j = cols - 1; (i < rows) && (j >= 0); i++, j--)
+	{
+		A[i][j] = 0;
+	}
+}
+
+int searchMin(int A[][cols], size_t rows, size_t cols)
+{
+	int min = A[0][0];
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			if (A[i][j] < min)
+			{
+				min = A[i][j];
+			}
+		}
+	}
+
+	return min;
+}
+
+int searchMax(int A[][cols], size_t rows, size_t cols)
+{
+	int max = A[0][0];
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			if (A[i][j] > max)
+			{
+				max = A[i][j];
+			}
+		}
+	}
+
+	return max;
+}
+
+int serchCount(int A[][cols], size_t rows, size_t cols, int number)
+{
+	int count = 0;
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			if (A[i][j] == number)
+			{
+				count++;
+			}
+		}
+	}
+
+	return count;
+}
+
+void position(int A[][cols], size_t rows, size_t cols, int number)
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			if (A[i][j] == number)
+			{
+				cout << "A" << i << j << " ";
+			}
+		}
+	}
+}
+
+int searchMinDiag(int A[][cols], size_t rows, size_t cols)
+{
+	int min = A[0][0];
+
+	for (size_t i = 0, j = 0; (i < rows) && (j < cols); i++, j++)
+	{
+		if (A[i][j] < min)
+		{
+			min = A[i][j];
+		}
+	}
+
+	for (size_t i = 0, j = cols - 1; (i < rows) && (j >= 0); i++, j--)
+	{
+		if (A[i][j] < min)
+		{
+			min = A[i][j];
+		}
+	}
+
+	return min;
+}
+
+int searchCountDiag(int A[][cols], size_t rows, size_t cols, int number)
+{
+	int count = 0;
+
+	for (size_t i = 0, j = 0; (i < rows) && (j < cols); i++, j++)
+	{
+		if (A[i][j] == number)
+		{
+			count++;
+		}
+	}
+
+	for (size_t i = 0, j = cols - 1; (i < rows) && (j >= 0); i++, j--)
+	{
+		if (A[i][j] == number)
+		{
+			count++;
+		}
+	}
+
+	return count;
+}
+
+void positionDiag(int A[][cols], size_t rows, size_t cols, int number)
+{
+	bool notNumber = true;
+	cout << "- на главной диагонали ";
+
+	for (size_t i = 0, j = 0; (i < rows) && (j < cols); i++, j++)
+	{
+		if (A[i][j] == number)
+		{
+			cout << "A" << i << j << " ";
+			notNumber = false;
+		}
+	}
+
+	if (notNumber == true)
+	{
+		cout << "отсутствуют";
+	}
+
+	cout << "\n";
+	notNumber = true;
+	cout << "- на побочной диагонали ";
+
+	for (size_t i = 0, j = cols - 1; (i < rows) && (j >= 0); i++, j--)
+	{
+		if (A[i][j] == number)
+		{
+			cout << "A" << i << j << " ";
+			notNumber = false;
+		}
+	}
+
+	if (notNumber == true)
+	{
+		cout << "отсутствуют";
+	}
+
+}
+
+int searchMaxDiag(int A[][cols], size_t rows, size_t cols)
+{
+	int max = A[0][0];
+
+	for (size_t i = 0, j = 0; (i < rows) && (j < cols); i++, j++)
+	{
+		if (A[i][j] > max)
+		{
+			max = A[i][j];
+		}
+	}
+
+	for (size_t i = 0, j = cols - 1; (i < rows) && (j >= 0); i++, j--)
+	{
+		if (A[i][j] > max)
+		{
+			max = A[i][j];
+		}
+	}
+
+	return max;
+}
+
+void magicSquare(int A[][cols], size_t rows, size_t cols)
+{
+	int count, sum, oldsum = 0;
+	bool flag = true;
+
+	for (size_t i = 0; i < rows; i++) // проверка на использование каждого числа только по одному разу
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			count = 0;
+
+			for (size_t r = 0; r < rows; r++)
+			{
+				for (size_t c = 0; c < cols; c++)
+				{
+
+					if (A[i][j] == A[r][c])
+					{
+						count++;
+					}
+				}
+			}
+
+			if (count > 1)
+			{
+				cout << "Данная матрица не является магическим квадратом.";
+				return;
+			}
+		}
+	}
+
+	for (size_t i = 0; i < rows; i++) //проверка суммы всех строчек
+	{
+		sum = 0;
+
+		for (size_t j = 0; j < cols; j++)
+		{
+			sum += A[i][j];
+		}
+
+		if (flag == true)
+		{
+			oldsum = sum;
+			flag = false;
+		}
+
+		if (oldsum != sum)
+		{
+			cout << "Данная матрица не является магическим квадратом.";
+			return;
+		}
+	}
+
+	for (size_t j = 0; j < cols; j++) //проверка суммы всех столбцов
+	{
+		sum = 0;
+
+		for (size_t i = 0; i < rows; i++)
+		{
+			sum += A[i][j];
+		}
+
+		if (sum != oldsum)
+		{
+			cout << "Данная матрица не является магическим квадратом.";
+			return;
+		}
+	}
+
+	sum = 0;
+
+	for (size_t i = 0, j = 0; (i < rows) && (j < cols); i++, j++) //проверка суммы диагоалей
+	{
+		sum += A[i][j];
+	}
+
+	if (sum != oldsum)
+	{
+		cout << "Данная матрица не является магическим квадратом.";
+		return;
+	}
+
+	sum = 0;
+
+	for (size_t i = 0, j = cols - 1; (i < rows) && (j >= 0); i++, j--)
+	{
+		sum += A[i][j];
+	}
+
+	if (sum != oldsum)
+	{
+		cout << "Данная матрица не является магическим квадратом.";
+		return;
+	}
+
+	cout << "Данная матрица является магическим квадратом.";
+
+}
+
+void matrixSort(int A[][cols], size_t rows, size_t cols)
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		insertSort(A[i], cols);
+	}
+}
+
+int binSearch(int A[], size_t size, int key)
+{
+	int left = 0, right = size, middle;
+
+	while (left < right)
+	{
+		middle = (left + right) / 2;
+		if (A[middle] > key)
+			right = middle;
+		else if (A[middle] < key)
+			left = middle + 1;
+		else
+			return middle;
+	}
+
+	return -1;
+}
+
+void insertSort(int A[], size_t size)
+{
+	int temp, j;
+
+	for (size_t i = 1; i < size; i++)
+	{
+		temp = A[i];
+
+		for (j = i - 1; j >= 0 && temp < A[j]; j--)
+		{
+			A[j + 1] = A[j];
+		}
+
+		A[j + 1] = temp;
+	}
+}
