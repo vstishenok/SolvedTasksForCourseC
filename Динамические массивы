@@ -1,0 +1,688 @@
+####################################################################################### head.h
+
+#pragma once
+#include<iostream>
+#include<ctime>
+
+int*  allocateMem(int*, size_t);
+int** allocateMem(int**, size_t, size_t);
+int*  freeMem(int*);
+int** freeMem(int**, size_t);
+void  inputData(size_t&);
+void  inputData(size_t&, size_t&);
+void  initArray(int*, size_t, int, int);
+void  initArray(int**, size_t, size_t, int, int);
+int*  insertByIndex(int*, size_t&, size_t, int);
+int** insertCol(int**, size_t, size_t&, size_t, int*);
+int** insertRow(int**, size_t&, size_t, size_t, int*);
+int** delCol(int**, size_t, size_t&, size_t);
+int** delRow(int**, size_t&, size_t, size_t);
+void  printArray(int*, size_t);
+void  printArray(int**, size_t, size_t);
+void  matrixProd(int**, int**, int**, size_t, size_t);
+
+####################################################################################### head.cpp
+
+#include"head.h"
+
+int* allocateMem(int* arr, size_t size)
+{
+	arr = new int[size];
+	return arr;
+}
+
+int** allocateMem(int** arr, size_t rows, size_t cols)
+{
+	arr = new int* [rows];
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		arr[i] = new int[cols];
+	}
+
+	return arr;
+}
+
+int* freeMem(int* arr)
+{
+	delete[]arr;
+	arr = nullptr;
+	return arr;
+}
+
+int** freeMem(int** arr, size_t rows)
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		delete[]arr[i];
+	}
+
+	delete[]arr;
+	arr = nullptr;
+	return arr;
+}
+
+void initArray(int* arr, size_t size, int a, int b)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		arr[i] = rand() % (b - a + 1) + a;
+	}
+}
+
+void initArray(int** arr, size_t rows, size_t cols, int a, int b)
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			arr[i][j] = rand() % (b - a + 1) + a;
+		}
+	}
+}
+
+int* insertByIndex(int* arr, size_t& size, size_t index, int key)
+{
+	int* newArr = nullptr;
+	newArr = allocateMem(newArr, size + 1);
+
+	for (size_t i = 0; i < index; i++)
+	{
+		newArr[i] = arr[i];
+	}
+
+	newArr[index] = key;
+
+	for (size_t i = index; i < size; i++)
+	{
+		newArr[i + 1] = arr[i];
+	}
+
+	size++;
+	arr = freeMem(arr);
+	return newArr;
+}
+
+
+int** insertCol(int** arr, size_t rows, size_t& colls, size_t index, int* Coll)
+{
+	int** arrNew = nullptr;
+	arrNew = allocateMem(arrNew, rows, colls + 1);
+
+	for (size_t j = 0; j < index; j++)
+	{
+		for (size_t i = 0; i < rows; i++)
+		{
+			arrNew[i][j] = arr[i][j];
+		}
+	}
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		arrNew[i][index] = Coll[i];
+	}
+
+	for (size_t j = index; j < colls; j++)
+	{
+		for (size_t i = 0; i < rows; i++)
+		{
+			arrNew[i][j + 1] = arr[i][j];
+		}
+	}
+
+	arr = freeMem(arr, rows);
+	colls++;
+	return arrNew;
+}
+
+int** insertRow(int** arr, size_t& rows, size_t cols, size_t index, int* Row)
+{
+	int** arrNew = nullptr;
+	arrNew = allocateMem(arrNew, rows + 1, cols);
+
+	for (size_t j = 0; j < cols; j++)
+	{
+		for (size_t i = 0; i < index; i++)
+		{
+			arrNew[i][j] = arr[i][j];
+		}
+	}
+
+	for (size_t i = 0; i < cols; i++)
+	{
+		arrNew[index][i] = Row[i];
+	}
+
+	for (size_t j = 0; j < cols; j++)
+	{
+		for (size_t i = index; i < rows; i++)
+		{
+			arrNew[i + 1][j] = arr[i][j];
+		}
+	}
+
+	arr = freeMem(arr, rows);
+	rows++;
+	return arrNew;
+}
+
+void printArray(int* arr, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		std::cout << arr[i] << " ";
+	}
+
+	std::cout << "\n\n";
+}
+
+void printArray(int** arr, size_t rows, size_t colls)
+{
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < colls; j++)
+		{
+			std::cout << arr[i][j] << " ";
+		}
+
+		std::cout << std::endl;
+
+	}
+
+	std::cout << std::endl;
+}
+
+
+
+int** delRow(int** arr, size_t& rows, size_t colls, size_t index)
+{
+	int** arrNew = nullptr;
+	arrNew = allocateMem(arrNew, rows - 1, colls);
+
+	for (size_t i = 0; i < index; i++)
+	{
+		for (size_t j = 0; j < colls; j++)
+		{
+			arrNew[i][j] = arr[i][j];
+		}
+	}
+
+	for (size_t i = index; i < rows - 1; i++)
+	{
+		for (size_t j = 0; j < colls; j++)
+		{
+			arrNew[i][j] = arr[i + 1][j];
+		}
+	}
+
+	arr = freeMem(arr, rows);
+	rows--;
+	return arrNew;
+}
+
+int** delCol(int** arr, size_t rows, size_t& cols, size_t index)
+{
+	int** arrNew = nullptr;
+	arrNew = allocateMem(arrNew, rows, cols - 1);
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < index; j++)
+		{
+			arrNew[i][j] = arr[i][j];
+		}
+	}
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = index; j < cols - 1; j++)
+		{
+			arrNew[i][j] = arr[i][j + 1];
+		}
+	}
+
+	arr = freeMem(arr, rows);
+	cols--;
+	return arrNew;
+}
+
+void matrixProd(int** A, int** B, int** C, size_t rows, size_t cols)
+{
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			C[i][j] = 0;
+
+			for (int k = 0; k < cols; k++)
+			{
+				C[i][j] += A[i][k] * B[k][j];
+			}
+		}
+	}
+}
+
+void inputData(size_t& rows, size_t& cols)
+{
+	while (true)
+	{
+		std::cout << "Введите количество строк для массивов: ";
+		std::cin >> rows;
+		std::cout << "Введите количество столбцов для массивов: ";
+		std::cin >> cols;
+
+		if (rows > 1 && cols > 1)
+		{
+			return;
+		}
+		else
+		{
+			std::cout << "Введены неверные данные. попробуйте еще раз\n\n";
+		}
+	}
+}
+
+void inputData(size_t& size)
+{
+	while (true)
+	{
+		std::cout << "Введите размер массива: ";
+		std::cin >> size;
+
+		if (size > 0)
+		{
+			return;
+		}
+		else
+		{
+			std::cout << "Введены неверные данные. попробуйте еще раз\n\n";
+		}
+	}
+}
+
+####################################################################################### main.cpp
+
+#include"head.h"
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	{
+		std::cout << "Задания 1\n";
+		std::cout << "Создать функцию, вставляющую строку в двумерный динамический массив в указанную позицию.\n\n";
+		size_t rows, cols;
+		inputData(rows, cols);
+		int** A = nullptr;
+		A = allocateMem(A, rows, cols);
+		initArray(A, rows, cols, 0, 10);
+		std::cout << "\nИсходный массив имеет вид:\n";
+		printArray(A, rows, cols);
+		std::cout << "Введите индекс для вставки строки: ";
+		int index;
+
+		while (true)
+		{
+			std::cin >> index;
+
+			if (index > -1 && index <= rows)
+			{
+				break;
+			}
+			else
+			{
+				std::cout << "Введены неверные данные, попробуйте еще раз\n\nВведите индекс: ";
+			}
+		}
+
+		int* new_row = nullptr;
+		new_row = allocateMem(new_row, cols);
+		initArray(new_row, cols, 0, 0);
+		A = insertRow(A, rows, cols, index, new_row);
+		std::cout << "\nИзмененный массив имеет вид:\n";
+		printArray(A, rows, cols);
+		std::cout << "\n";
+		A = freeMem(A, rows);
+		delete[]A;
+	}
+
+	{
+		std::cout << "Задания 2\n";
+		std::cout << "Создать функцию, вставляющую столбец в двумерный динамический массив в указанную позицию.\n\n";
+		size_t rows, cols;
+		inputData(rows, cols);
+		int** A = nullptr;
+		A = allocateMem(A, rows, cols);
+		initArray(A, rows, cols, 0, 10);
+		std::cout << "\nИсходный массив имеет вид:\n";
+		printArray(A, rows, cols);
+		int index;
+
+		while (true)
+		{
+			std::cout << "Введите индекс для вставки столбца: ";
+			std::cin >> index;
+
+			if (index > -1 && index <= cols)
+			{
+				break;
+			}
+			else
+			{
+				std::cout << "Введены неверные данные, попробуйте еще раз\n\n";
+			}
+		}
+
+		int* new_col = nullptr;
+		new_col = allocateMem(new_col, cols);
+		initArray(new_col, rows, 0, 0);
+		A = insertCol(A, rows, cols, index, new_col);
+		std::cout << "\nИзмененный массив имеет вид:\n";
+		printArray(A, rows, cols);
+		std::cout << "\n";
+		A = freeMem(A, rows);
+		delete[]A;
+	}
+
+	{
+		std::cout << "Задания 3\n";
+		std::cout << "Создать функцию, удаляющую заданную строку двумерного динамического массива.\n\n";
+		size_t rows, cols;
+		inputData(rows, cols);
+		int** A = nullptr;
+		A = allocateMem(A, rows, cols);
+		initArray(A, rows, cols, 0, 10);
+		std::cout << "\nИсходный массив имеет вид:\n";
+		printArray(A, rows, cols);
+		int index;
+
+		while (true)
+		{
+			std::cout << "Введите индекс для удаления строки: ";
+			std::cin >> index;
+
+			if (index > -1 && index < rows)
+			{
+				break;
+			}
+			else
+			{
+				std::cout << "Введены неверные данные, попробуйте еще раз\n\n";
+			}
+		}
+
+		A = delRow(A, rows, cols, index);
+		std::cout << "\nИзмененный массив имеет вид:\n";
+		printArray(A, rows, cols);
+		std::cout << "\n";
+		A = freeMem(A, rows);
+		delete[]A;
+	}
+
+	{
+		std::cout << "Задания 4\n";
+		std::cout << "Создать функцию, удаляющую заданный столбец двумерного динамического массива.\n\n";
+		size_t rows, cols;
+		inputData(rows, cols);
+		int** A = nullptr;
+		A = allocateMem(A, rows, cols);
+		initArray(A, rows, cols, 0, 10);
+		std::cout << "\nИсходный массив имеет вид:\n";
+		printArray(A, rows, cols);
+		int index;
+
+		while (true)
+		{
+			std::cout << "Введите индекс для удаления столбца: ";
+			std::cin >> index;
+
+			if (index > -1 && index < rows)
+			{
+				break;
+			}
+			else
+			{
+				std::cout << "Введены неверные данные, попробуйте еще раз\n\n";
+			}
+		}
+
+		A = delCol(A, rows, cols, index);
+		std::cout << "\nИзмененный массив имеет вид:\n";
+		printArray(A, rows, cols);
+		std::cout << "\n";
+		A = freeMem(A, rows);
+		delete[]A;
+	}
+
+	{
+		std::cout << "Задания 5\n";
+		std::cout << "Объявить и заполнить 2 двумерных динамических массивов случайными числами от -10 до 15.\nВывести их на экран. Для заполнения и показа на экран написать отдельные функции.\nКоличество строк и столбцов выбирает пользователь. Найти произведение этих двухмерных массивов\n\n";
+		size_t rows, cols;
+		inputData(rows, cols);
+		int** A = nullptr, ** B = nullptr, ** С = nullptr;
+		A = allocateMem(A, rows, cols);
+		B = allocateMem(B, rows, cols);
+		С = allocateMem(B, rows, cols);
+		initArray(A, rows, cols, 0, 10);
+		initArray(B, rows, cols, 0, 10);
+		std::cout << "\nПервый массив имеет вид:\n";
+		printArray(A, rows, cols);
+		std::cout << "Второй массив имеет вид:\n";
+		printArray(B, rows, cols);
+		matrixProd(A, B, С, rows, cols);
+		std::cout << "Произведение двух массивов выше имеет вид:\n";
+		printArray(С, rows, cols);
+		std::cout << "\n";
+		A = freeMem(A, rows);
+		B = freeMem(B, rows);
+		С = freeMem(С, rows);
+		delete[]A;
+		delete[]B;
+		delete[]С;
+	}
+
+	{
+		std::cout << "Задания 6\n";
+		std::cout << "Даны два массива: А[M] и B[N].\nНеобходимо создать третий массив минимально возможного размера,\nв котором нужно собрать элементы обоих массивов.\n\n";
+		size_t size1, size2, size3, index = 0;
+		inputData(size1);
+		inputData(size2);
+		int* A = nullptr, * B = nullptr, * С = nullptr;
+		A = allocateMem(A, size1);
+		B = allocateMem(B, size2);
+		initArray(A, size1, 0, 10);
+		initArray(B, size2, 0, 10);
+		std::cout << "\nПервый массив имеет вид:\n";
+		printArray(A, size1);
+		std::cout << "Второй массив имеет вид:\n";
+		printArray(B, size2);
+		size3 = size1 + size2;
+		С = allocateMem(С, size3);
+
+		for (size_t i = 0; i < size1; i++, index++)
+		{
+			С[index] = A[i];
+		}
+
+		for (size_t i = 0; i < size2; i++, index++)
+		{
+			С[index] = B[i];
+		}
+
+		std::cout << "Выходной массив имеет вид:\n";
+		printArray(С, size3);
+		std::cout << "\n";
+		A = freeMem(A);
+		B = freeMem(B);
+		С = freeMem(С);
+	}
+
+	{
+		std::cout << "Задания 7\n";
+		std::cout << "Даны два массива: А[M] и B[N].\nНеобходимо создать третий массив минимально возможного размера,\nв котором нужно собрать общие элементы двух массивов.\n\n";
+		size_t size1, size2, size3 = 0, index = 0;
+		inputData(size1);
+		inputData(size2);
+		int* A = nullptr, * B = nullptr, * С = nullptr;
+		A = allocateMem(A, size1);
+		B = allocateMem(B, size2);
+		initArray(A, size1, 0, 10);
+		initArray(B, size2, 0, 10);
+		std::cout << "\nПервый массив имеет вид:\n";
+		printArray(A, size1);
+		std::cout << "Второй массив имеет вид:\n";
+		printArray(B, size2);
+
+		for (size_t i = 0; i < size1; i++)
+		{
+			bool flag = true;
+
+			for (size_t k = 0; k < i; k++)
+			{
+				if (A[k] == A[i])
+				{
+					flag = false;
+					break;
+				}
+			}
+
+			if (flag == false)
+			{
+				continue;
+			}
+
+			for (size_t j = 0; j < size2; j++)
+			{
+				if (A[i] == B[j])
+				{
+					size3++;
+					break;
+				}
+			}
+		}
+
+		if (size3)
+		{
+			С = allocateMem(С, size3);
+
+			for (size_t i = 0; i < size1; i++)
+			{
+				bool flag = true;
+
+				for (size_t k = 0; k < i; k++)
+				{
+					if (A[k] == A[i])
+					{
+						flag = false;
+						break;
+					}
+				}
+
+				if (flag == false)
+				{
+					continue;
+				}
+
+				for (size_t j = 0; j < size2; j++)
+				{
+					if (A[i] == B[j])
+					{
+						С[index] = A[i];
+						index++;
+						break;
+					}
+				}
+			}
+
+			std::cout << "Выходной массив имеет вид:\n";
+			printArray(С, size3);
+			С = freeMem(С);
+
+		}
+		else
+		{
+			std::cout << "В двух массивах нет общих элементов\n\n";
+		}
+
+		std::cout << "\n";
+		A = freeMem(A);
+		B = freeMem(B);
+	}
+
+	{
+		std::cout << "Задания 8\n";
+		std::cout << "Даны два массива: А[M] и B[N].\nНеобходимо создать третий массив минимально возможного размера,\nв котором нужно собрать элементы массива A, которые не включаются в массив B.\n\n";
+		size_t size1, size2, size3 = 0, index = 0;
+		inputData(size1);
+		inputData(size2);
+		int* A = nullptr, * B = nullptr, * С = nullptr;
+		A = allocateMem(A, size1);
+		B = allocateMem(B, size2);
+		initArray(A, size1, 0, 10);
+		initArray(B, size2, 0, 10);
+		std::cout << "\nПервый массив имеет вид:\n";
+		printArray(A, size1);
+		std::cout << "Второй массив имеет вид:\n";
+		printArray(B, size2);
+
+		for (size_t i = 0; i < size1; i++)
+		{
+			bool flag = false;
+
+			for (size_t j = 0; j < size2; j++)
+			{
+				if (A[i] == B[j])
+				{
+					flag = true;
+					break;
+				}
+			}
+
+			if (flag == false)
+			{
+				size3++;
+			}
+		}
+
+		if (size3)
+		{
+			С = allocateMem(С, size3);
+
+			for (size_t i = 0; i < size1; i++)
+			{
+				bool flag = false;
+
+				for (size_t j = 0; j < size2; j++)
+				{
+					if (A[i] == B[j])
+					{
+						flag = true;
+						break;
+					}
+				}
+
+				if (flag == false)
+				{
+					С[index] = A[i];
+					index++;
+				}
+			}
+
+			std::cout << "Выходной массив имеет вид:\n";
+			printArray(С, size3);
+			С = freeMem(С);
+		}
+		else
+		{
+			std::cout << "В массиве А нет элементов, которые бы не включались в массив В\n\n";
+		}
+
+		std::cout << "\n";
+		A = freeMem(A);
+		B = freeMem(B);
+	}
+
+	system("pause");
+	return 0;
+}
