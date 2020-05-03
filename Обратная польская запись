@@ -1,0 +1,259 @@
+####################################################################################### input_1.txt
+
+500 100 63 15 - * 35 / +
+
+####################################################################################### input_2.txt
+
+8 * (8 - 8 * 2 * (4 / 2)) / 4
+
+####################################################################################### main.cpp
+
+#include<iostream>
+#include<fstream>
+
+struct Node
+{
+	char data;
+	Node* prev;
+};
+
+struct NodeNum
+{
+	int data;
+	NodeNum* prev;
+};
+
+void push(Node*& top, char key)
+{
+	Node* temp = new Node; //создание простого узла
+	temp->data = key; //помещаем данные в новый узел
+	temp->prev = top; //ставим указатель на страую вершину стека
+	top = temp; //меняем вершину стека
+}
+
+void pushNum(NodeNum*& top, int key)
+{
+	NodeNum* temp = new NodeNum; //создание простого узла
+	temp->data = key; //помещаем данные в новый узел
+	temp->prev = top; //ставим указатель на страую вершину стека
+	top = temp; //меняем вершину стека
+}
+
+char pop(Node*& top)
+{
+	char key = 0;
+
+	if (top != nullptr)
+	{
+		key = top->data; //присвоим переменной данные из узла, который собираемся удалить
+		Node* temp = top->prev; //создадим временный указател на предыдущий элемент, чтобы его не потерять при удалении
+		delete top; //удаляем вершину стека
+		top = temp;
+	}
+
+	return key;
+}
+
+int popNum(NodeNum*& top)
+{
+	int key = 0;
+
+	if (top != nullptr)
+	{
+		key = top->data; //присвоим переменной данные из узла, который собираемся удалить
+		NodeNum* temp = top->prev; //создадим временный указател на предыдущий элемент, чтобы его не потерять при удалении
+		delete top; //удаляем вершину стека
+		top = temp;
+	}
+
+	return key;
+}
+
+char top(Node* top) //просмотр вершины стека
+{
+	return top->data;
+}
+
+int topNum(NodeNum* top) //просмотр вершины стека
+{
+	return top->data;
+}
+
+void revPol(char*& str)
+{
+	Node* stack = nullptr;
+	char* newStr = new char[100]{ '\0' };
+	int i = 0, j = 0;
+
+	while (str[i])
+	{
+		if (isdigit(str[i])) //заносим в строку пока число. если число заканчивается - ставим пробел после числа
+		{
+			while (isdigit(str[i]))
+			{
+				newStr[j++] = str[i++];
+			}
+
+			newStr[j++] = ' ';
+			i--;
+		}
+		else if (str[i] == '(')
+		{
+			push(stack, str[i]);
+		}
+		else if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/' && !stack) //если встретили любой оператор и стек пустой
+		{
+			push(stack, str[i]);
+		}
+		else if (str[i] == '*' || str[i] == '/')
+		{
+			if (top(stack) == '+' || top(stack) == '-' || top(stack) == '(')
+			{
+				push(stack, str[i]);
+			}
+			else if (top(stack) == '*' || top(stack) == '/')
+			{
+				newStr[j++] = pop(stack);
+				newStr[j++] = ' ';
+				push(stack, str[i]);
+			}
+		}
+		else if (str[i] == '+' || str[i] == '-')
+		{
+			if (top(stack) != '(')
+			{
+				newStr[j++] = pop(stack);
+				newStr[j++] = ' ';
+			}
+
+			push(stack, str[i]);
+		}
+		else if (str[i] == ')')
+		{
+			while (top(stack) != '(')
+			{
+				newStr[j++] = pop(stack);
+				newStr[j++] = ' ';
+			}
+
+			pop(stack);
+		}
+
+		i++;
+	}
+
+	while (stack)
+	{
+		newStr[j++] = pop(stack);
+		newStr[j++] = ' ';
+	}
+
+	newStr[j] = '\0';
+	delete[]str;
+	str = newStr;
+}
+
+int resultRevPol(char* string)
+{
+	NodeNum* stackNum = nullptr;
+	size_t i = 0;
+
+	while (string[i]) //пока не закончилась строка
+	{
+		if (isdigit(string[i])) //если число, пушим его в числовой
+		{
+			char dig[10]{ '\0' };
+			size_t j = 0;
+			dig[j++] = string[i++];
+
+			while (isdigit(string[i]))
+			{
+				dig[j++] = string[i++];
+			}
+
+			pushNum(stackNum, atoi(dig));
+			i--;
+		}
+		else if (string[i] == '+')
+		{
+
+			pushNum(stackNum, popNum(stackNum) + popNum(stackNum));
+		}
+		else if (string[i] == '-')
+		{
+			int val1 = popNum(stackNum);
+			int val2 = popNum(stackNum);
+			pushNum(stackNum, val2 - val1);
+		}
+		else if (string[i] == '*')
+		{
+			pushNum(stackNum, popNum(stackNum) * popNum(stackNum));
+		}
+		else if (string[i] == '/')
+		{
+			int val1 = popNum(stackNum);
+			int val2 = popNum(stackNum);
+			pushNum(stackNum, val2 / val1);
+		}
+
+		i++;
+	}
+
+	return popNum(stackNum);
+}
+
+int main()
+{
+	setlocale(0, "");
+
+	{
+		std::cout << "Задание 1\n";
+		std::cout << "В файле input_1.txt содержится строка с выражением в обратной польской записи.\nНайти значение выражения, используя стек.\n\n";
+		size_t size = 100;
+		std::ifstream fin("input_1.txt");
+
+		if (fin)
+		{
+			char* string = new char[size];
+			fin.getline(string, size);
+			std::cout << "Исходное выражение в обратной польской записи имеет вид:\n" << string << "\n\n";
+			std::cout << "Ответ: " << resultRevPol(string) << "\n";
+			delete[]string;
+		}
+		else
+		{
+			std::cout << "Файл input_1.txt отсутствует\n";
+		}
+
+		fin.close();
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Задание 2\n";
+		std::cout << "В файле input_2.txt дано выражение, содержащее целые числа, операции +,  *, -, / и скобки.\nВычислите значение записанного выражения, переведя его в обратную польскую запись.\n\n";
+		size_t size = 100;
+		std::ifstream fin("input_2.txt");
+		
+		if (fin)
+		{
+			char* string = new char[size];
+			fin.getline(string, size);
+			std::cout << "Исходное выражение имеет вид:\n" << string << "\n\n";
+			revPol(string);
+			std::cout << "Выражение выше в обратной польской записи имеет вид:\n" << string << "\n\n";
+			std::cout << "Ответ: " << resultRevPol(string) << "\n";
+			delete[]string;
+		}
+		else
+		{
+			std::cout << "Файл input_2.txt отсутствует\n";
+		}
+
+		fin.close();
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
