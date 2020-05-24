@@ -1,0 +1,334 @@
+###################################################################################################### main.cpp
+
+#include"header.h"
+
+int main() {
+	setlocale(0, "");
+
+	std::cout << "Задание 1\n";
+	std::cout << "Реализовать класс \"Set\"\n";
+	Set set1, set2;
+	std::cout << "\nЗаполнение первого множества\n";
+	std::cin >> set1;
+	std::cout << "\nЗаполнение второго множества\n";
+	std::cin >> set2;
+	std::cout << "\nОбъединение множеств имеет вид:\n";
+	std::cout << (set1 + set2);
+	std::cout << "\nРазность множеств имеет вид:\n";
+	std::cout << (set1 - set2);
+	std::cout << "\nПересечение множеств имеет вид:\n";
+	std::cout << (set1 * set2);
+	std::cout << "\nЭквивалентны ли множества?\n";
+	(set1 < set2) ? std::cout << "Да\n" : std::cout << "Нет\n";
+	std::cout << "\nЯвляется ли второе множество подмножеством первого?\n";
+	(set1 > set2) ? std::cout << "Да\n" : std::cout << "Нет\n";
+	std::cout << "\n\n";
+
+	std::cout << "Задание 2\n";
+	std::cout << "Реализовать класс \"Stek\"\n";
+	Stek stek;
+	stek.stekMenu(stek);
+
+	system("pause");
+	return 0;
+}
+
+###################################################################################################### header.h
+
+#pragma once
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<cstring>
+
+class Set {
+private:
+	size_t size;
+	char* data;
+public:
+	Set() : size(0), data(new char[1]) { *data = '\0'; } //конструктор без параметров
+	explicit Set(size_t _size) : size(_size), data(new char[size + 1]) {} //конструктор с параметром size
+	Set(const char* str) : size(strlen(str)), data(new char[size + 1]) { strcpy(data, str); } //конструктор с параметром *str
+	Set(const Set& set) : size(strlen(set.data)), data(new char[size + 1]) { strcpy(data, set.data); } //конструктор копирования
+	~Set() { delete[]data; } //деструктор
+
+	void setSize(size_t _size) { size = _size; };
+	bool operator<(const Set&) const;
+	bool operator>(const Set&) const;
+	const Set operator+(const Set& set) const;
+	const Set operator-(const Set& set) const;
+	const Set operator*(const Set& set) const;
+	Set& operator= (const Set& a);
+	Set& operator= (const char*);
+	friend std::istream& operator>> (std::istream& in, Set& set);
+	friend std::ostream& operator<< (std::ostream& out, const Set& set);
+
+};
+
+std::istream& operator>>(std::istream& in, Set& set)
+{
+	char str[255];
+	std::cout << "Введите множество: ";
+	in >> str;
+	set.setSize(strlen(str));
+	delete[]set.data;
+	set.data = new char[set.size + 1];
+	strcpy(set.data, str);
+	return in;
+}
+
+std::ostream& operator<<(std::ostream& out, const Set& set)
+{
+	if (set.size)
+	{
+		out << set.data << "\n";
+	}
+	else
+	{
+		out << "Множество отсутствует\n";
+	}
+
+	return out;
+}
+
+Set& Set::operator=(const Set& a) //перезагрузка операции присваивания
+{
+	if (this != &a)
+	{
+		delete[]data;
+		size = a.size;
+		data = new char[size + 1];
+		strcpy(data, a.data);
+	}
+
+	return *this;
+}
+
+Set& Set::operator=(const char* a) //перезагрузка операции присваивания
+{
+	delete[]data;
+	size = strlen(a);
+	data = new char[size + 1];
+	strcpy(data, a);
+	return *this;
+}
+
+
+bool Set:: operator<(const Set& set) const //эквивалентность множеств
+{
+	if (set.size != size)
+	{
+		return false;
+	}
+
+	for (size_t i = 0; i < size; i++)
+	{
+		if (!strchr(set.data, data[i]))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Set:: operator>(const Set& set) const //включение множеств
+{
+	for (size_t i = 0; i < set.size; i++)
+	{
+		if (!strchr(data, set.data[i]))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+const Set Set:: operator*(const Set& set) const //пересечение множеств
+{
+	char str[255]{ '\0' };
+	size_t index = 0;
+	char* s = strpbrk(this->data, set.data);
+
+	while (s)
+	{
+		str[index++] = *s;
+		s = strpbrk(s + 1, set.data);
+	}
+
+	return Set(str);
+}
+
+const Set Set:: operator+(const Set& set) const //объединение множеств
+{
+	char str[255]{ '\0' };
+	strcpy(str, data);
+	size_t index = strlen(str);
+
+	for (size_t i = 0; i < set.size; i++)
+	{
+		if (!strchr(str, set.data[i]))
+		{
+			str[index++] = set.data[i];
+		}
+	}
+
+	return Set(str);
+}
+
+const Set Set:: operator-(const Set& set) const //разность множеств
+{
+	char str[255]{ '\0' };
+	size_t index = 0;
+
+	for (size_t i = 0; i < size; i++)
+	{
+		if (!strchr(set.data, data[i]))
+		{
+			str[index++] = data[i];
+		}
+	}
+
+	return Set(str);
+}
+
+//##############################################################################################################
+
+class Stek {
+private:
+	int size; //размер нашего стека
+	int* data; //динамический массив для стека
+	int top; //верхняя позиция на стеке
+public:
+	Stek(); //конструктор без параметров
+	explicit Stek(int _size) : size(_size), data(new int[size]), top(0) {} //конструктор с параметрами
+	Stek(const Stek& stek) : size(stek.size), data(new int[stek.size]), top(stek.top) { memcpy(data, stek.data, stek.size); } //конструктор копирования
+	~Stek() { delete[]data; } //деструктор
+
+	bool is_empty(const Stek&);
+	bool is_full(const Stek&);
+	void push(Stek&);
+	void pop(Stek&);
+	void stekPrint(const Stek&);
+	void stekMenu(Stek&);
+};
+
+Stek::Stek()
+{
+	while (true)
+	{
+		int _size;
+		std::cout << "\nУкажите желаемый размер стека: ";
+		std::cin >> _size;
+
+		if (_size > 0)
+		{
+			size = _size;
+			break;
+		}
+
+		std::cout << "Неверно указан размер стека!\n";
+	}
+
+	data = new int[size];
+	top = 0;
+}
+
+bool Stek::is_empty(const Stek& stek)
+{
+	if (stek.top == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Stek::is_full(const Stek& stek)
+{
+	if (stek.top == stek.size)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void Stek::push(Stek& stek)
+{
+
+	if (!is_full(stek))
+	{
+		int number;
+		std::cout << "Укажите число для добавления в стек: ";
+		std::cin >> number;
+		stek.data[stek.top] = number;
+		stek.top++;
+	}
+	else
+	{
+		std::cout << "Стек заполнен!\n";
+		return;
+	}
+}
+
+void Stek::pop(Stek& stek)
+{
+	if (!is_empty(stek))
+	{
+		std::cout << "Число, полученное из стека: " << stek.data[stek.top - 1] << "\n";
+		stek.top--;
+		return;
+	}
+	else
+	{
+		std::cout << "Стек пуст!\n";
+		return;
+	}
+}
+
+void Stek::stekMenu(Stek& stek)
+{
+	while (true)
+	{
+		size_t operation;
+		std::cout << "\nВозможные операции:\n1. push\n2. pop\n3. print stek\n4. exit\n\nУкажите номер операции: ";
+		std::cin >> operation;
+
+		switch (operation)
+		{
+		case 1:
+			stek.push(stek);
+			break;
+		case 2:
+			stek.pop(stek);
+			break;
+		case 3:
+			stek.stekPrint(stek);
+			break;
+		case 4:
+			return;
+		default:
+			std::cout << "Выберите правильную команду!\n";
+			break;
+		}
+	}
+}
+
+void Stek::stekPrint(const Stek& stek)
+{
+	if (stek.top == 0)
+	{
+		std::cout << "Стек пуст!\n";
+		return;
+	}
+
+	for (int i = stek.top - 1; i >= 0; i--)
+	{
+		std::cout << "[" << i << "] " << stek.data[i] << "\n";
+	}
+}
