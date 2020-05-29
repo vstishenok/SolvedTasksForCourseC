@@ -1,0 +1,336 @@
+############################################################################# Text2.txt
+
+Minsk 45 1
+Gomel 34 0
+Minsk 32 1
+Mogilev 23 1
+Brest 4 0
+Minsk 2 0
+Minsk 4 1
+Minsk 7 0
+Minsk 64 1
+
+############################################################################# main.cpp
+
+#include<iostream>
+#include<string>
+#include<fstream>
+#include<iomanip>
+
+class Rational {
+public:
+
+	Rational(); //конструктор без параметров
+	Rational(int, int); //конструктор с параметрами
+	Rational(const Rational&); //конструктор копирования
+	~Rational() {}; //деструктор
+	Rational add(const Rational&); //метод сложения
+	Rational mul(const Rational&); //метод произведения
+	Rational div(const Rational&); //метод деления
+	bool equal(const Rational&); //метод стравнения
+	bool greater(const Rational&); //метод стравнения
+	bool less(const Rational&); //метод стравнения
+	void print(); //метод вывода на консоль
+	void reduce(); //метод превращения в правильную дробь
+
+private:
+	int a; //числитель
+	int b; //знаменатель
+};
+
+class Train {
+public:
+	Train() {}; //конструктор без параметров
+	Train(std::string dest, std::string num, bool exp); //конструктор с параметрами
+	Train(const Train&);//конструктор копирования
+	~Train() {}; //деструктор
+	void read(std::istream&);
+	void print();
+	std::string getDes() { return destination; }
+	std::string getNum() { return number; }
+	bool getExp() { return express; }
+
+
+private:
+	std::string destination; //станция
+	std::string number; //номер вагона
+	bool express; //экспресс
+};
+
+int gcd(int, int);
+void menu(Rational&, const Rational&);
+void printList(Train*, size_t);
+void menu(Train*, size_t);
+void printExpressDestitation(Train*, size_t);
+void printDestitation(Train*, size_t);
+
+
+int main()
+{
+	{
+		std::cout << "Task 1\n\n";
+		std::cout << "Fraction 1 (f1)\n";
+		Rational f1;
+		std::cout << "Fraction 2 (f2)\n";
+		Rational f2;
+		menu(f1, f2);
+		std::cout << "\n\n";
+	}
+
+	{
+		std::cout << "Task 2\n\n";
+		size_t size = 0;
+		std::ifstream fin("Text2.txt");
+
+		if (fin) {
+
+			std::string str;
+
+			while (!fin.eof()) { //считаем количество строк для размера массива
+				getline(fin, str);
+				size++;
+			}
+
+			fin.clear();
+			fin.seekg(0);
+			Train* trains = new Train[size]; //создаем массив поездов
+
+			for (size_t i = 0; i < size; i++) { //запись из файла в массив
+				trains[i].read(fin);
+			}
+
+			fin.close();
+			printList(trains, size); //вывод на консоль всех поезводов
+			menu(trains, size);
+			delete[]trains;
+		}
+		else {
+			std::cout << "File not found\n";
+		}
+
+		std::cout << "\n\n";
+
+	}
+
+	system("pause");
+	return 0;
+}
+
+
+
+int gcd(int a, int b) { //метод нахождения НОД
+	while (a != b)
+		(a > b) ? a = a - b : b = b - a;
+	return a;
+}
+
+void Rational::reduce() { //метод сокращения дроби
+	int Gcd = gcd(a, b);
+	a /= Gcd;
+	b /= Gcd;
+}
+
+Rational::Rational() {
+	do {
+		std::cout << "Enter numenator: ";
+		std::cin >> a;
+		std::cout << "Enter denominator: ";
+		std::cin >> b;
+		std::cout << "\n";
+	} while (a == 0 || b == 0);
+}
+
+Rational::Rational(const Rational& r) { //конструктор копирования
+	a = r.a;
+	b = r.b;
+}
+
+Rational::Rational(int _a, int _b) { //конструктор с параметрами
+	a = _a;
+	b = _b;
+}
+
+Rational Rational::add(const Rational& obj) { //метод сложения
+	Rational sum(a * obj.b + b * obj.a, b * obj.b);
+	sum.reduce();
+	return sum;
+}
+
+Rational Rational::mul(const Rational& obj) { //метод умножения
+	Rational mul(a * obj.a, b * obj.b);
+	mul.reduce();
+	return mul;
+}
+
+Rational Rational::div(const Rational& obj) { //метод деления
+	Rational div(a * obj.b, b * obj.a);
+	div.reduce();
+	return div;
+}
+
+bool Rational::equal(const Rational& obj) { //метод сравнения
+	return (a * obj.b == obj.a * b) ? true : false;
+}
+
+bool Rational::greater(const Rational& obj) { //метод сравнения
+	return (a * obj.b > obj.a* b) ? true : false;
+}
+
+bool Rational::less(const Rational& obj) { //метод сравнения
+	return (a * obj.b < obj.a * b) ? true : false;
+}
+
+void Rational::print() {
+	std::cout << a << "/" << b << "\n";
+}
+
+void menu(Rational& f1, const Rational& f2) {
+	char c;
+	std::cout << "Commands:\n(s)um\n(m)ul\n(d)iv\n(e)qual\n(g)reater\n(l)es\n(o)ut\n";
+
+	while (true) {
+
+		std::cout << "\nEnter command: ";
+		std::cin >> c;
+
+		switch (c) {
+		case 's': {
+			Rational sum = f1.add(f2);
+			std::cout << "f1 + f2: ";
+			sum.print();
+			break; }
+		case 'm': {
+			Rational mul = f1.mul(f2);
+			std::cout << "f1 * f2: ";
+			mul.print();
+			break; }
+		case 'd': {
+			Rational div = f1.div(f2);
+			std::cout << "f1 / f2: ";
+			div.print();
+			break; }
+		case 'e': {
+			std::cout << "f1 == f2: " << (f1.equal(f2) ? "Yes\n" : "No\n");
+			break; }
+		case 'g': {
+			std::cout << "f1 > f2: " << (f1.greater(f2) ? "Yes\n" : "No\n");
+			break; }
+		case 'l': {
+			std::cout << "f1 < f2: " << (f1.less(f2) ? "Yes\n" : "No\n");
+			break; }
+		case 'o': {
+			std::cout << "Out program\n";
+			return; }
+		default: {
+			std::cout << "Not command\n";
+			break;
+		}
+		}
+	}
+}
+
+void Train::read(std::istream& fin) {
+	fin >> destination >> number >> express;
+}
+
+void Train::print() {
+	std::cout << std::left << std::setw(15) << destination
+		<< std::setw(10) << number << std::setw(10) << express << "\n";
+}
+
+Train::Train(std::string dest, std::string num, bool exp) {
+	destination = dest;
+	number = num;
+	express = exp;
+}
+
+Train::Train(const Train& train) {
+	destination = train.destination;
+	number = train.number;
+	express = train.express;
+}
+
+void printList(Train* trains, size_t size) {
+	std::cout << std::left << std::setw(15) << "Destination" << std::setw(10) << "Number" << std::setw(10) << "Express" << "\n";
+
+	for (size_t i = 0; i < size; i++) {
+		trains[i].print();
+	}
+
+	std::cout << "\n";
+}
+
+void printDestitation(Train* trains, size_t size) {
+	bool flag1 = false, flag2 = false; //flag1 - проверка найдены ли поезда, flag2 - за вывод шапки один раз
+	std::string str;
+	std::cout << "Enter destination: ";
+	std::cin >> str;
+
+	for (size_t i = 0; i < size; i++) {
+		if (trains[i].getDes() == str) {
+			if (flag2 == false) {
+				std::cout << std::left << std::setw(15) << "\nDestination" << std::setw(10) << "Number" << std::setw(10) << "Express" << "\n";
+				flag2 = true;
+			}
+
+			trains[i].print();
+			flag1 = true;
+		}
+	}
+
+	if (flag1 == false) {
+		std::cout << "Not trains\n";
+	}
+}
+
+void printExpressDestitation(Train* trains, size_t size) {
+	bool flag1 = false, flag2 = false; //flag1 - проверка найдены ли поезда, flag2 - за вывод шапки один раз
+	std::string str;
+	std::cout << "Enter destination: ";
+	std::cin >> str;
+
+
+	for (size_t i = 0; i < size; i++) {
+		if (trains[i].getDes() == str && trains[i].getExp() == 1) {
+			if (flag2 == false) {
+				std::cout << std::left << std::setw(15) << "\nDestination" << std::setw(10) << "Number" << std::setw(10) << "Express" << "\n";
+				flag2 = true;
+			}
+
+			trains[i].print();
+			flag1 = true;
+		}
+	}
+
+	if (flag1 == false) {
+		std::cout << "Not trains\n";
+	}
+
+}
+
+void menu(Train* train, size_t size) {
+	char c;
+	std::cout << "Commands:\n(t)rains going to destination\n(e)xpress trains going to destination\n(o)ut\n";
+
+	while (true) {
+
+		std::cout << "\nEnter command: ";
+		std::cin >> c;
+
+		switch (c) {
+		case 't': {
+			printDestitation(train, size);
+			break; }
+		case 'e': {
+			printExpressDestitation(train, size);
+			break; }
+		case 'o': {
+			std::cout << "Out program\n";
+			return; }
+		default: {
+			std::cout << "Not command\n";
+			break;
+		}
+		}
+	}
+}
