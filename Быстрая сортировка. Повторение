@@ -1,0 +1,371 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<cstring>
+#include<ctime>
+
+size_t squareAll = 0, square = 0, simple = 0, size1 = 5; //для 4 задачи
+
+void encryption(char* string, size_t size, size_t num);
+void decryption(char* string, size_t size, size_t num);
+void printArray(int** arr, size_t rows, size_t cols);
+void initArray(int**& arr, size_t rows, size_t cols);
+void check(int**& arr, size_t rows, size_t cols);
+void count(int**& arr, size_t rows, size_t cols);
+void deleteArray(int**& arr, size_t rows, size_t cols);
+
+int main()
+{
+	setlocale(0, "");
+	srand(time(0));
+
+	{
+		std::cout << "Задания 1\n";
+		std::cout << "В строке удалить все слова, содержащие указанную подстроку.\n\n";
+		size_t size = 500, sizew = 50;
+		char* string = new char[size];
+		std::cout << "Введите строку: ";
+		std::cin.getline(string, size);
+		char* word = new char[sizew];
+		std::cout << "Введите слово: ";
+		std::cin.getline(word, sizew);
+		char* string_new = new char[size] {'\0'};
+		char* temp = strtok(string, " ");
+
+		while (temp)
+		{
+			if (strstr(temp, word))
+			{
+				char* punct_temp = strpbrk(temp, "!,-.:;?");
+
+				while (punct_temp)
+				{
+					strncat(string_new, punct_temp, 1);
+					punct_temp = strpbrk(punct_temp + 1, "!,-.:;?");
+				}
+			}
+			else
+			{
+				if (strlen(string_new) != 0) //отвечает за пробел вначале строки
+				{
+					strcat(string_new, " ");
+				}
+
+				strcat(string_new, temp);
+			}
+
+			temp = strtok(nullptr, " ");
+		}
+
+		if (strlen(string_new))
+		{
+			std::cout << "\nОтвет: " << string_new << "\n";
+		}
+		else
+		{
+			std::cout << "\nОтвет: Все слова в строке были удалены\n";
+		}
+
+		std::cout << "\n\n";
+		delete[]string_new;
+		delete[]string;
+		delete[]word;
+	}
+
+	{
+		std::cout << "Задания 2\n";
+		std::cout << "В строке найти подстроку, слова которой упорядочены по алфавиту.\n\n";
+		size_t size = 500, sizew = 50, count = 0;
+		char* string = new char[size]; //строка с предложением
+		char* string_new = new char[size] {'\0'}; //строка для выходного ответа
+		char* word_prev = new char[sizew] {'\0'}; //строка для хранения предыдущего слова
+		std::cout << "Введите строку: ";
+		std::cin.getline(string, size);
+		char* word = strtok(string, " !,-.:;?"); //делим строку на лексемы
+
+		while (word)
+		{
+			if (strlen(word_prev) == 0) //пока у нас одно слово, не с чем сравнивать
+			{
+				strcpy(word_prev, word);
+				word = strtok(nullptr, " !,-.:;?");
+				continue;
+			}
+
+			if (strcmp(word_prev, word) <= 0)
+			{
+				if (strlen(string_new) == 0)
+				{
+					strcat(string_new, word_prev);
+					strcat(string_new, " ");
+					strcat(string_new, word);
+				}
+				else
+				{
+					strcat(string_new, " ");
+					strcat(string_new, word);
+				}
+			}
+			else
+			{
+				if (strlen(string_new))
+				{
+					break;
+				}
+			}
+
+			word_prev = word;
+			word = strtok(nullptr, " !,-.:;?");
+		}
+
+		if (strlen(string_new))
+		{
+			std::cout << "\nОтвет: " << string_new << "\n";
+		}
+		else
+		{
+			std::cout << "\nОтвет: Нет таких подстрок\n";
+		}
+
+		std::cout << "\n\n";
+		delete[]string_new;
+		delete[]string;
+	}
+
+	{
+		std::cout << "Задания 3\n";
+		std::cout << "Реализуйте зашифрование/расшифрование.\nСдвигайте текст на вводимое с клавиатуры число букв.\nДобавьте функцию «дешифрования».\n\n";
+		bool flag = true;
+		size_t size = 500, num;
+		char* string = new char[size] {'\0'};
+		std::cout << "Введите текст для шифрования: ";
+		std::cin.getline(string, size);
+
+		while (flag)
+		{
+			std::cout << "\nВведите число для сдвига символов: ";
+			std::cin >> num;
+			encryption(string, size, num);
+			std::cout << "\nЗашифрованный текст имеет вид: " << string;
+			decryption(string, size, num);
+			std::cout << "\nРасшифрованный текст имеет вид: " << string;
+			std::cout << "\n\nВыполнить шифрование текста с новыми параментрами?\n1. Да\n0. Нет\n\nУкажите вариант ответа: ";
+			std::cin >> flag;
+		}
+
+		std::cout << "\n\n";
+		delete[]string;
+	}
+
+	{
+		std::cout << "Задания 4\n";
+		std::cout << "Садовый участок разбит на квадратные клетки со стороной 1м и имеет размер M*N м2.\nНа участке вскопаны грядки, представляющие собой прямоугольные конфигурации,\nне соприкасающиеся ни по вертикали, ни по горизонтали.\nГрядки, совпадающие по диагонали, считаются разными грядками.\nОпределить общее количество грядок и количество квадратных грядок.\nУчасток представить в виде динамической двумерной матрицы.\nГрядки представить в виде единиц, остальную область в виде нулей.\n\n";
+		int** arr = nullptr;
+		int rows = size1, cols = size1;
+		initArray(arr, rows, cols);
+		std::cout << "Садовый участок имеют вид:\n";
+		printArray(arr, rows, cols);
+		count(arr, rows, cols);
+		std::cout << "Итого:\n - обычных грядок: " << simple;
+		std::cout << "\n - квадратных: " << squareAll;
+		deleteArray(arr, rows, cols);
+		std::cout << "\n\n";
+	}
+
+	system("pause");
+	return 0;
+}
+
+void encryption(char* string, size_t size, size_t num)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		if (isupper(string[i]))
+		{
+			int index = static_cast<int>(string[i]) + num;
+
+			while (index > 90)
+			{
+				index -= 26;
+			}
+
+			string[i] = static_cast<char>(index);
+		}
+		else if (islower(string[i]))
+		{
+			int index = static_cast<int>(string[i]) + num;
+
+			while (index > 122)
+			{
+				index -= 26;
+			}
+
+			string[i] = static_cast<char>(index);
+		}
+	}
+}
+
+void decryption(char* string, size_t size, size_t num)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		if (isupper(string[i]))
+		{
+			int index = static_cast<int>(string[i]) - num;
+
+			while (index < 65)
+			{
+				index += 26;
+			}
+
+			string[i] = static_cast<char>(index);
+		}
+		else if (islower(string[i]))
+		{
+			int index = static_cast<int>(string[i]) - num;
+
+			while (index < 97)
+			{
+				index += 26;
+			}
+
+			string[i] = static_cast<char>(index);
+		}
+	}
+}
+
+void printArray(int** arr, size_t rows, size_t cols)
+{
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+
+			std::cout << arr[i][j] << " ";
+
+		}
+
+		std::cout << "\n";
+	}
+
+	std::cout << "\n";
+}
+
+void initArray(int**& arr, size_t rows, size_t cols)
+{
+	arr = new int* [rows];
+
+	for (int i = 0; i < rows; i++)
+	{
+		arr[i] = new int[cols];
+	}
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+
+			arr[i][j] = rand() % 2;
+		}
+	}
+
+	for (int i = 1; i < rows; i++)
+	{
+		for (int j = 1; j < cols; j++)
+		{
+			if (arr[i - 1][j - 1] != 1)
+			{
+				if (arr[i][j - 1] == 1 && arr[i - 1][j] == 1)
+				{
+					arr[i][j] = 0;
+				}
+				else
+				{
+					arr[i][j] = rand() % 2;
+				}
+			}
+			else
+			{
+				if (arr[i][j - 1] == 0 && arr[i - 1][j] == 0)
+				{
+					arr[i][j] = rand() % 2;
+				}
+				else if (arr[i][j - 1] == 1 && arr[i - 1][j] == 1)
+				{
+					arr[i][j] = 1;
+				}
+				else
+				{
+					arr[i][j] = 0;
+				}
+			}
+		}
+	}
+}
+
+void check(int**& arr, size_t rows, size_t cols)
+{
+	arr[rows][cols] = 2;
+	square++;
+
+	if (arr[rows][cols + 1] == 1)
+	{
+		check(arr, rows, cols + 1);
+	}
+
+	if ((rows + 1) != size1 && arr[rows + 1][cols] == 1)
+	{
+		check(arr, rows + 1, cols);
+	}
+}
+
+void count(int**& arr, size_t rows, size_t cols)
+{
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			square = 0;
+
+			if (arr[i][j] == 1)
+			{
+				check(arr, i, j);
+
+				if (square == 4)
+				{
+					squareAll++;
+				}
+				else
+				{
+					simple++;
+				}
+			}
+		}
+	}
+
+	for (size_t i = 0; i < cols; i++)
+	{
+		if (arr[rows - 1][i] == 1)
+		{
+			simple++;
+
+			while (arr[rows - 1][i] == 1)
+			{
+				if (i + 1 == cols)break;
+				i++;
+			}
+		}
+
+	}
+}
+
+void deleteArray(int**& arr, size_t rows, size_t cols)
+{
+	for (int i = 0; i < rows; i++)
+	{
+		delete[]arr[i];
+	}
+
+	delete[]arr;
+	arr = nullptr;
+}
