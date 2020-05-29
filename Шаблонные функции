@@ -1,0 +1,391 @@
+########################################################################### templates.h
+
+#pragma once
+#include<iostream>
+#include<cmath>
+
+//#################################################### прототипы функций
+
+template<typename Type>
+Type* allocateMemory(Type*, size_t);
+
+template<typename Type>
+void initArray(Type*, size_t);
+
+template<typename Type>
+void printArray(const Type*, size_t);
+
+template<typename Type>
+Type* freeMemory(Type*);
+
+template<typename Type>
+void linearEquation(Type, Type);
+
+template<typename Type>
+void quadraticEquation(Type, Type, Type);
+
+template<typename Type>
+void merge(const Type*, size_t, const Type*, size_t, Type*);
+
+template<typename Type>
+void sort(Type*, size_t, bool (*)(Type, Type));
+
+template<typename Type>
+bool lesser(Type, Type);
+
+template<typename Type>
+bool greater(Type, Type);
+
+template<typename Type>
+void searchMax(const Type*, size_t);
+
+size_t initSize();
+
+//#################################################### реализация функций
+
+template<typename Type>
+Type* allocateMemory(Type* array, size_t size)
+{
+    array = new Type[size];
+    return array;
+}
+
+template<typename Type>
+void initArray(Type* array, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        std::cout << "array[" << i << "] = ";
+        std::cin >> array[i];
+    }
+}
+
+template<typename Type>
+void printArray(const Type* array, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        std::cout << array[i] << " ";
+    }
+    
+    std::cout << "\n";
+}
+
+template<typename Type>
+Type* freeMemory(Type* array)
+{
+    delete[]array;
+    array = nullptr;
+    return array;
+}
+
+template<typename Type>
+void linearEquation(Type a, Type b)
+{
+    std::cout << "Ответ: ";
+    
+    if (a == 0)
+    {
+        if (b == 0)
+        {
+            std::cout << "Бесконечное множество решений\n";
+        }
+        else
+        {
+            std::cout << "Нет решений\n";
+        }
+    }
+    else
+    {
+        std::cout << -b/a << "\n";
+    }
+}
+
+template<typename Type>
+void quadraticEquation(Type a, Type b, Type c)
+{
+    std::cout << "Ответ: ";
+    
+    if((b*b - 4*a*c) > 0)
+    {
+        std::cout << (-1*b+sqrt(b*b-4*a*c))/(2*a) << ", " << (-1*b-sqrt(b*b-4*a*c))/(2*a) << "\n";
+    }
+    else if((b*b - 4*a*c) == 0)
+    {
+        std::cout << (-1*b-sqrt(b*b-4*a*c))/(2*a) << "\n";
+    }
+    else
+    {
+        std::cout << "Нет решений\n";
+    }
+}
+
+template<typename Type>
+void merge(const Type* array1, size_t size1, const Type* array2, size_t size2, Type* array3)
+{
+    int i1 = 0, i2 = 0, i3 = 0;
+    do
+    {
+        if (i1 == size1) //если один из массивов закончился
+        {
+            array3[i3++] = array2[i2++];
+            continue;
+        }
+        else if (i2 == size2)
+        {
+            array3[i3++] = array1[i1++];
+            continue;
+        }
+        
+        if (array1[i1] < array2[i2])
+        {
+            array3[i3++] = array1[i1++];
+        }
+        else
+        {
+            array3[i3++] = array2[i2++];
+        }
+        
+    } while (i1 < size1 || i2 < size2);
+}
+
+template<typename Type>
+void sort(Type* array, size_t size, bool (*cmp) (Type, Type))
+{
+    int i = 0, j = size;
+    int p = array[size / 2];
+    
+    do
+    {
+        while (cmp(array[i], p))
+        {
+            i++;
+        }
+        
+        while (cmp(p, array[j]))
+        {
+            j--;
+        }
+        
+        if (i <= j)
+        {
+            std::swap(array[i], array[j]);
+            i++;
+            j--;
+        }
+        
+    } while (i <= j);
+    
+    if (j > 0)
+    {
+        sort(array, j, cmp);
+    }
+    
+    if (size > i)
+    {
+        sort(array + i, size - i, cmp);
+    }
+}
+
+template<typename Type>
+bool lesser(Type a, Type b)
+{
+    if (a > b)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
+template<typename Type>
+bool greater(Type a, Type b)
+{
+    if (a < b)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
+size_t initSize()
+{
+    size_t size;
+    
+    while (true)
+    {
+        std::cout << "Укажите желаемый размер массива: ";
+        std::cin >> size;
+        
+        if (size > 0)
+        {
+            return size;
+        }
+        
+        std::cout << "Неверно указан размер массива!\n\n";
+    }
+}
+
+template<typename Type>
+void searchMax(const Type* array, size_t size)
+{
+    size_t max_i = 0;
+    Type temp = array[0];
+    
+    for (size_t i = 1; i < size; i++)
+    {
+        if (array[i] > temp)
+        {
+            max_i = i;
+            temp = array[i];
+        }
+    }
+    
+    std::cout << "\nМаксимальный элемент в массиве: array[" << max_i << "] = " << array[max_i] << "\n";
+}
+
+########################################################################### main.cpp
+
+#include "templates.h"
+
+
+int main()
+{
+    setlocale(0, "");
+    
+    {
+        std::cout << "Задание 1\n"
+        << "Написать шаблон функции для динамического массива:\n- выделение памяти\n- освобождение памяти\n- вывода на консоль\n\n";
+        size_t size = initSize();
+        int* array = nullptr;
+        array = allocateMemory(array, size);
+        std::cout << "\nИнициализация массива:\n";
+        initArray(array, size);
+        std::cout << "\nМассив имеет вид:\n";
+        printArray(array, size);
+        array = freeMemory(array);
+        std::cout << "\n\n";
+    }
+    
+    {
+        std::cout << "Задание 2\n"
+        << "Написать перегруженные шаблоны функций для нахождения корней уравнений:\n- линейного\n- квадратичного\n\n";
+        std::cout << "Линейное уравнение a * x + b = 0\n";
+        double a, b, c;
+        std::cout << "Введите здачение a: ";
+        std::cin >> a;
+        std::cout << "Введите здачение b: ";
+        std::cin >> b;
+        linearEquation(a, b);
+        std::cout << "\nКвадратное уравнение a * x2 + b * x + c = 0\n";
+        std::cout << "Введите здачение a: ";
+        std::cin >> a;
+        std::cout << "Введите здачение b: ";
+        std::cin >> b;
+        std::cout << "Введите здачение с: ";
+        std::cin >> c;
+        quadraticEquation(a, b, c);
+        std::cout << "\n\n";
+    }
+    
+    {
+        std::cout << "Задание 3\n"
+        << "Создайте шаблон функции, выполняющей процедуру слияния для двух входных массивов\n"
+        << "Результатом этой операции должен стать отсортированный по возрастанию массив\n\n";
+        size_t size1, size2, size3;
+        
+        std::cout << "Массив 1\n";
+        size1 = initSize();
+        int* array1 = nullptr;
+        array1 = allocateMemory(array1, size1);
+        std::cout << "\nИнициализация массива:\n";
+        initArray(array1, size1);
+        sort(array1, size1-1, &greater); //greater - по возрастанию, lesser - по убыванию
+        std::cout << "\nОтсортированный массив имеет вид:\n";
+        printArray(array1, size1);
+        
+        std::cout << "\n\nМассив 2\n";
+        size2 = initSize();
+        int* array2 = nullptr;
+        array2 = allocateMemory(array2, size2);
+        std::cout << "\nИнициализация массива:\n";
+        initArray(array2, size2);
+        sort(array2, size2-1, &greater); //greater - по возрастанию, lesser - по убыванию
+        std::cout << "\nОтсортированный массив имеет вид:\n";
+        printArray(array2, size2);
+        
+        size3 = size1+size2;
+        int* array3 = nullptr;
+        array3 = allocateMemory(array3, size3);
+        merge(array1, size1, array2, size2, array3);
+        std::cout << "\n\nРезультирующий массив имеет вид:\n";
+        printArray(array3, size3);
+        
+        array1 = freeMemory(array1);
+        array2 = freeMemory(array2);
+        array3 = freeMemory(array3);
+        std::cout << "\n\n";
+    }
+    
+    {
+        std::cout << "Задание 4\n"
+        << "Напишите шаблон функции, которая реализует быструю сортировку\nи принимает в качестве параметра, критерий сортировки.\n\n";
+        size_t size = initSize();
+        int* array = nullptr;
+        array = allocateMemory(array, size);
+        std::cout << "\nИнициализация массива:\n";
+        initArray(array, size);
+        std::cout << "\nМассив имеет вид:\n";
+        printArray(array, size);
+        char ans = 'y';
+        
+        while (ans != 'n')
+        {
+            std::cout << "\nВарианты сортировки:\n1. по возрастанию\n2. по убыванию\n\nВыберите вариант сортировки: ";
+            size_t s;
+            std::cin >> s;
+            
+            if (s == 1)
+            {
+                sort(array, size-1, &greater);
+            }
+            else if(s == 2)
+            {
+                sort(array, size-1, &lesser);
+            }
+            else
+            {
+                std::cout << "Выбран неверный вариант сортировки!\n";
+                continue;
+            }
+            
+            std::cout << "\nОтсортированный массив имеет вид:\n";
+            printArray(array, size);
+            std::cout << "\nВыполнить сортировку еще раз? (y/n): \n";
+            std::cin >> ans;
+        }
+        
+        array = freeMemory(array);
+        std::cout << "\n\n";
+    }
+    
+    {
+        std::cout << "Задание 5\n"
+        << "Напишите шаблон функции, которая осуществляет поиск максимального элемента в массиве.\n"
+        << "Функция возвращает позицию элемента и его значение\n\n";
+        size_t size = initSize();
+        int* array = nullptr;
+        array = allocateMemory(array, size);
+        std::cout << "\nИнициализация массива:\n";
+        initArray(array, size);
+        std::cout << "\nМассив имеет вид:\n";
+        printArray(array, size);
+        searchMax(array, size);
+        array = freeMemory(array);
+        std::cout << "\n\n";
+    }
+    
+    system("pause");
+    return 0;
+}
