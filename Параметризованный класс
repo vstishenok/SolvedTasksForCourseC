@@ -1,0 +1,616 @@
+###################################################################################### скопировать в main.cpp
+
+#include "Vector.cpp"
+
+int main()
+{
+    std::cout << "1. TESTING ON INT TYPE\n\n";
+    {
+        Vector <int> vector;
+        menu(vector);
+        std::cout << "\n\n";
+    }
+
+    std::cout << "2. TESTING ON STRING TYPE\n\n";
+    {
+        Vector <std::string> vector;
+        menu(vector);
+        std::cout << "\n\n";
+    }
+
+    std::cout << "3. TESTING ON СLASS TRAIN\n\n";
+    {
+        Vector <class Train> trains;
+        menu(trains);
+        std::cout << "\n\n";
+    }
+
+    std::cout << "4. TESTING ON СLASS RATIONAL\n\n";
+    {
+        Vector <class Rational> rational;
+        menu(rational);
+        std::cout << "\n\n";
+    }
+    
+    system("pause");
+    return 0;
+}
+
+###################################################################################### скопировать в Vector.h
+
+#pragma once
+#include<iostream>
+#include "Train.h"
+#include "Rational.h"
+
+template <typename Type>
+class Vector
+{
+private:
+    size_t size;
+    size_t capacity;
+    Type* data;
+    
+public:
+    Vector();
+    Vector(size_t);
+    Vector(const Vector<Type>&);
+    ~Vector();
+    
+    bool needMemory();
+    
+    typedef Type* iterator;
+    iterator Begin() { return data; }
+    iterator End() { return data + size; }
+    
+    Vector <Type>& operator=(const Vector<Type>&);
+    Type& operator[](size_t);
+    const Type& operator[](size_t) const;
+    void push_back(const Type&);
+    Type pop_back();
+    void insert(Type, size_t);
+    void erase(size_t);
+    void erase(iterator, iterator);
+    void erase(iterator);
+    iterator find(iterator start, Type element);
+    void print();
+};
+
+template <typename Type>
+void menu(Vector<Type>&);
+
+###################################################################################### скопировать в Vector.cpp
+
+#include "Vector.h"
+
+template <typename Type>
+Vector<Type>:: Vector() //конструктор без параметров
+{
+    size = 0;
+    capacity = 1;
+    data = new Type[1];
+}
+
+template <typename Type>
+Vector<Type>:: Vector(size_t s) //конструктор с параметрами
+{
+    size = s;
+    capacity = s;
+    data = new Type[capacity];
+    
+    for (size_t i = 0; i < s; i++)
+    {
+        data[i] = 0;
+    }
+}
+
+template <typename Type>
+Vector<Type>:: Vector(const Vector<Type>& element) //конструктор с параметрами
+{
+    size = element.size;
+    capacity = element.capacity;
+    delete[]data;
+    data = new Type[capacity];
+    memcpy(data, element.data, sizeof(Type) * capacity);
+}
+
+template <typename Type>
+Vector<Type>:: ~Vector() //деструктор
+{
+    delete[]data;
+}
+
+template<typename Type>
+bool Vector<Type>:: needMemory() //проверка возможности записи данных в вектор
+{
+    if (size + 1 <= capacity)
+    {
+        return false;
+    }
+    
+    return true;
+}
+
+template<typename Type>
+Vector <Type>& Vector<Type>:: operator=(const Vector<Type>& element)
+{
+    size = element.size;
+    capacity = element.capacity;
+    delete[]data;
+    data = new Type[capacity];
+    memcpy(data, element.data, sizeof(Type) * capacity);
+    return *this;
+}
+
+template<typename Type>
+Type& Vector<Type>:: operator[](size_t index)
+{
+    if (index>size)
+    {
+        std::cout << "Error!\n";
+        exit(0);
+    }
+    
+    return data[index];
+}
+
+template<typename Type>
+const Type& Vector<Type>:: operator[](size_t index) const
+{
+    if (index>size)
+    {
+        std::cout << "Error!\n";
+        exit(0);
+    }
+    
+    return data[index];
+}
+
+template<typename Type>
+void Vector<Type>:: push_back(const Type& element)
+{
+    if (needMemory())
+    {
+        capacity *= 2;
+        Type* temp = new Type[capacity];
+        memcpy(temp, data, sizeof(Type) * size);
+        delete[]data;
+        data = temp;
+    }
+    
+    data[size] = element;
+    size++;
+}
+
+template<typename Type>
+Type Vector<Type>:: pop_back()
+{
+    if (size == 0)
+    {
+        std::cout << "Vector empty!\n";
+        Type();
+    }
+    
+    size--;
+    return data[size];
+}
+
+template <typename Type>
+void Vector<Type>:: insert(Type element, size_t index)
+{
+    if (index > size)
+    {
+        std::cout << "Error!\n";
+        return;
+    }
+    
+    if (index == size)
+    {
+        push_back(element);
+        return;
+    }
+    
+    if (needMemory())
+    {
+        capacity *= 2;
+        Type* temp = new Type[capacity];
+        
+        for (size_t i = 0; i < index; i++)
+        {
+            temp[i] = data[i];
+        }
+        
+        temp[index] = element;
+        
+        for (size_t i = index ; i < size; i++)
+        {
+            temp[i+1] = data[i];
+        }
+        
+        delete[]data;
+        data = temp;
+        size++;
+        return;
+    }
+    else
+    {
+        memcpy(Begin() + index + 1, Begin() + index, sizeof(Type) * (size - index));
+        data[index] = element;
+        size++;
+    }
+}
+
+template <typename Type>
+void Vector<Type>:: erase(size_t index)
+{
+    if (index >= size)
+    {
+        std::cout << "Error!\n";
+        return;
+    }
+    
+    memcpy(Begin()+index, Begin()+index+1, sizeof(Type) * (End() - 1 - (Begin() + index)));
+    size--;
+}
+
+template <typename Type>
+void Vector<Type>:: erase(iterator start, iterator end)
+{
+    if (start >= End())
+    {
+        std::cout << "Error!\n";
+        return;
+    }
+    
+    if (end > End())
+    {
+        end = End() - 1;
+    }
+    
+    memcpy(start, end + 1, sizeof(Type) * (End() - 1 - end));
+    size = size - (end - start + 1);
+}
+
+template <typename Type>
+void Vector<Type>:: erase(iterator it)
+{
+    if (it >= End() || it == nullptr)
+    {
+        std::cout << "Error!\n";
+        return;
+    }
+    
+    memcpy(it, it+1, sizeof(Type) * (End() - 1 - it));
+    size--;
+}
+
+template <typename Type>
+void Vector<Type>:: print()
+{
+    if (size == 0)
+    {
+        std::cout << "Vector is empty!\n";
+        return;
+    }
+    std::cout << "Vector has form:\n";
+    for (iterator i = Begin(); i < End(); i++)
+    {
+        std::cout << *i << " ";
+    }
+    
+    std::cout << "\n";
+}
+
+template <typename Type>
+typename Vector<Type>:: iterator Vector<Type>:: find(Vector<Type>:: iterator start, Type element)
+{
+    for (iterator end = End(); start < end; start++)
+    {
+        if (*start == element)
+        {
+            return start;
+        }
+    }
+    
+    return nullptr;
+}
+
+template <typename Type>
+void menu(Vector<Type>& vector)
+{
+    while (true)
+    {
+        size_t op;
+        std::cout << "Possible operations:\n"
+        << "1. push back\n"
+        << "2. insert\n"
+        << "3. pop back\n"
+        << "4. erase (position)\n"
+        << "5. erase (position start, position finish)\n"
+        << "6. erase (element)\n"
+        << "7. print vector\n"
+        << "8. exit\n\n"
+        << "Choose operation: ";
+        std::cin >> op;
+        std::cout << "\n";
+        
+        switch (op)
+        {
+            case 1:
+            {
+                Type element;
+                std::cout << "Enter element: ";
+                std::cin >> element;
+                vector.push_back(element);
+                break;
+            }
+            case 2:
+            {
+                Type element;
+                std::cout << "Enter element: ";
+                std::cin >> element;
+                size_t index;
+                std::cout << "Enter index: ";
+                std::cin >> index;
+                vector.insert(element, index);
+                break;
+            }
+            case 3:
+            {
+                vector.pop_back();
+                break;
+            }
+            case 4:
+            {
+                size_t index;
+                std::cout << "Enter index: ";
+                std::cin >> index;
+                vector.erase(index);
+                break;
+            }
+            case 5:
+            {
+                size_t start, finish;
+                std::cout << "Enter start index: ";
+                std::cin >> start;
+                std::cout << "Enter finish index: ";
+                std::cin >> finish;
+                vector.erase(vector.Begin()+start, vector.Begin()+finish);
+                break;
+            }
+            case 6:
+            {
+                Type element;
+                std::cout << "Enter element: ";
+                std::cin >> element;
+                vector.erase(vector.find(vector.Begin(), element));
+                break;
+            }
+            case 7:
+            {
+                vector.print();
+                break;
+            }
+            case 8:
+            {
+                return;
+            }
+            default:
+            {
+                std::cout << "Operation selected incorrectly!\n";
+                break;
+            }
+        }
+        
+        std::cout << "\n";
+    }
+}
+
+###################################################################################### скопировать в Train.h
+
+#pragma once
+#include<iostream>
+#include<iomanip>
+#include<fstream>
+
+class Train
+{
+private:
+    std::string destination; //станция
+    std::string number; //номер вагона
+    bool express; //экспресс
+    
+public:
+    Train() {}; //конструктор без параметров
+    Train(std::string, std::string, bool);
+    Train(const Train&);//конструктор копирования
+    ~Train() {}; //деструктор
+    
+    void read(std::istream&);
+    void print();
+    std::string getDes() { return destination; }
+    std::string getNum() { return number; }
+    bool getExp() { return express; }
+    bool operator==(const Train&) const;
+    friend std::ostream& operator<<(std::ostream&, const Train&);
+    friend std::istream& operator>>(std::istream&, Train&);
+    
+};
+
+###################################################################################### скопировать в Train.cpp
+
+#include "Train.h"
+
+Train:: Train(std::string dest, std::string num, bool exp)
+{
+    destination = dest;
+    number = num;
+    express = exp;
+}
+
+Train::Train(const Train& train)
+{
+    destination = train.destination;
+    number = train.number;
+    express = train.express;
+}
+
+void Train::read(std::istream& fin)
+{
+    fin >> destination >> number >> express;
+}
+
+void Train:: print()
+{
+    std::cout << std::left << std::setw(10) << destination << std::setw(7) << number << std::setw(1) << express << "\n";
+}
+
+bool Train:: operator==(const Train& train) const
+{
+    return ((destination == train.destination) && (number == train.number) && (express == train.express))? true : false;
+}
+
+std::ostream& operator<<(std::ostream& out, const Train& train)
+{
+    out << "\n" << std::left << "Destination: " << std::setw(10) << train.destination << "Number: " << std::setw(7) << train.number << "Express: " << std::setw(1) << train.express;
+    return out;
+}
+
+std::istream& operator>>(std::istream& in, Train& train)
+{
+    std::cout << "\n- Destination: ";
+    in >> train.destination;
+    std::cout << "- Number: ";
+    in >> train.number;
+    
+    
+    while (true)
+    {
+        std::cout << "- Express (0/1): ";
+        size_t exp;
+        in >> exp;
+        
+        if (exp == 0 || exp == 1)
+        {
+            train.express = exp;
+            break;
+        }
+        
+        std::cout << "Error number express!\n\n";
+    }
+    
+    return in;
+}
+
+###################################################################################### скопировать в Rational.h
+
+#pragma once
+#include<iostream>
+
+class Rational {
+public:
+    
+    Rational(){} //конструктор без параметров
+    Rational(int, int); //конструктор с параметрами
+    Rational(const Rational&); //конструктор копирования
+    ~Rational() {}; //деструктор
+    Rational add(const Rational&); //метод сложения
+    Rational mul(const Rational&); //метод произведения
+    Rational div(const Rational&); //метод деления
+    bool equal(const Rational&); //метод стравнения
+    bool greater(const Rational&); //метод стравнения
+    bool less(const Rational&); //метод стравнения
+    void print(); //метод вывода на консоль
+    void reduce(); //метод превращения в правильную дробь
+    bool operator==(const Rational&) const;
+    friend std::ostream& operator<<(std::ostream&, const Rational&);
+    friend std::istream& operator>>(std::istream&, Rational&);
+    
+private:
+    int a; //числитель
+    int b; //знаменатель
+};
+
+int gcd(int, int);
+
+
+###################################################################################### скопировать в Rational.cpp
+
+#include "Rational.h"
+
+Rational::Rational(const Rational& r) { //конструктор копирования
+    a = r.a;
+    b = r.b;
+}
+
+Rational::Rational(int _a, int _b) { //конструктор с параметрами
+    a = _a;
+    b = _b;
+}
+
+Rational Rational::add(const Rational& obj) { //метод сложения
+    Rational sum(a * obj.b + b * obj.a, b * obj.b);
+    sum.reduce();
+    return sum;
+}
+
+Rational Rational::mul(const Rational& obj) { //метод умножения
+    Rational mul(a * obj.a, b * obj.b);
+    mul.reduce();
+    return mul;
+}
+
+Rational Rational::div(const Rational& obj) { //метод деления
+    Rational div(a * obj.b, b * obj.a);
+    div.reduce();
+    return div;
+}
+
+bool Rational::equal(const Rational& obj) { //метод сравнения
+    return (a * obj.b == obj.a * b) ? true : false;
+}
+
+bool Rational::greater(const Rational& obj) { //метод сравнения
+    return (a * obj.b > obj.a* b) ? true : false;
+}
+
+bool Rational::less(const Rational& obj) { //метод сравнения
+    return (a * obj.b < obj.a * b) ? true : false;
+}
+
+void Rational::print() {
+    std::cout << a << "/" << b << "\n";
+}
+
+void Rational::reduce() { //метод сокращения дроби
+    int Gcd = gcd(a, b);
+    a /= Gcd;
+    b /= Gcd;
+}
+
+int gcd(int a, int b) { //метод нахождения НОД
+    while (a != b)
+        (a > b) ? a = a - b : b = b - a;
+    return a;
+}
+
+std::ostream& operator<<(std::ostream& out, const Rational& rational)
+{
+    out << rational.a << "/" << rational.b << " ";
+    return out;
+}
+
+std::istream& operator>>(std::istream& in, Rational& rational)
+{
+    std::cout << "\nNumerator: ";
+    in >> rational.a;
+    std::cout << "Denumerator: ";
+    in >> rational.b;
+    rational.reduce();
+    return in;
+}
+
+bool Rational:: operator==(const Rational& rational) const
+{
+    return ((a == rational.a) && (b == rational.b))? true : false;
+}
