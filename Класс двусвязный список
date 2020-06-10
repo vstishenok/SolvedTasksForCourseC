@@ -1,0 +1,1060 @@
+###################################################################
+################################################################### скопировать в BY.txt
+###################################################################
+
+BY02AKBB3600001 BY Stishenok 1500.43 01 02 2002 10
+BY02AKBB3600002 RU Ivanov 500.40 7 06 2011 8
+BY02AKBB3600003 USD Petrov 3500.43 23 11 2013 4
+BY02AKBB3600004 BY Harlamov 5400.34 9 09 2019 10
+BY02AKBB3600005 RU Pirakov 700.54 19 03 2015 8
+BY02AKBB3600006 BY Kormich 6900.34 1 2 2002 10
+BY02AKBB3600007 USD Stishenok 400.34 3 11 2020 4
+
+###################################################################
+################################################################### скопировать в main.cpp
+###################################################################
+
+//входные параметры
+//
+//если хотите тестить c типом int - установите флаг #define INT
+//если хотите тестить c задачу с банком - установите флаг #define BANK
+
+#define BANK // <----- флаг устанавливать здесь
+
+#include "Bank.cpp"
+
+int main()
+{
+    
+#ifdef INT
+    {
+        std::cout << "Task 1.\nCheck list operation (int type)\n\n";
+        List<int> list;
+        menu(list);
+    }
+#endif
+    
+#ifdef BANK
+    {
+        std::cout << "Task 2.\nBank account\n\n";
+        List<Acc> list;
+        std::ifstream in("BY.txt");
+        in >> list;
+        menu(list);
+        in.close();
+    }
+#endif
+    
+    system("pause");
+    return 0;
+}
+
+###################################################################
+################################################################### скопировать в Bank.h
+###################################################################
+
+#pragma once
+#include<iostream>
+#include<fstream>
+#include<cmath>
+#include<iomanip>
+
+template<typename Type>
+class List //лист
+{
+public:
+    
+    class Node //узел
+    {
+    public:
+        Type data; //данные
+        Node* prev; //указатель на предыдущий элемент
+        Node* next; //указатель на следующий элемент
+        Node() = default;
+        Node(const Type& temp_data, Node* temp_prev = nullptr, Node* temp_next = nullptr) : data(temp_data), prev(temp_prev), next(temp_next){}
+        Node(const Node& node): data(node.data), prev(nullptr), next(nullptr){}
+        ~Node() = default;
+    };
+    
+private:
+    size_t size; //количество узлов в листе
+    Node* head; //указатель на голову
+    Node* tail; //указатель на хвост
+public:
+    List(): size(0), head(nullptr), tail(nullptr) {}
+    List(const List<Type>&);
+    ~List();
+    void push_back(const Type&); //добавление элемента в конец списка
+    void push_front(const Type&); //добавление элемента в начало списка
+    Type pop_back(); //удаление элемента в конце спика
+    Type pop_front(); //удаление элемента в начале списка
+    void insert(const Type&, size_t); //вставка элемента на позицию
+    void insert(const Type&, size_t, size_t); //вставка нескольких элементов на позицию
+    void replace(Type&, const Type&); //замена элемента по поиску
+    void replace(size_t, const Type&); //замена элемента по индексу
+    Type erase(size_t); //удаление элемента по индексу
+    Type& operator[](size_t);
+    const Type& operator[](size_t) const;
+    
+    class Iterator
+    {
+    private:
+        Node* ptr;
+    public:
+        Iterator() = default;
+        Iterator(Node* temp_ptr) : ptr(temp_ptr) {}
+        ~Iterator() = default;
+        Iterator& operator++(); //префиксная форма инкремента
+        Iterator& operator++(int); //постфиксная форма инкремента
+        Iterator& operator--(); //префиксная форма декремента
+        Iterator& operator--(int); //постфиксная форма декремента
+        Iterator& operator+(int); //переход на позицию +int
+        Iterator& operator-(int); //переход на позицию -int
+        Type& operator*() const { return ptr->data; } //разыменование
+        Iterator* operator->();
+        bool operator==(const Iterator&) const;
+        bool operator!=(const Iterator&) const;
+    };
+    
+    void find(const Type&);
+    void erase(Iterator, Iterator);
+    Iterator begin() { return Iterator(head); }
+    Iterator end() { return Iterator(tail->next); }
+    
+    friend std::ifstream& operator>>(std::ifstream& in, List<Type>& list) //перезагрузка >> 
+    {
+        if (!in)
+        {
+            std::cout << "File error!\n";
+            return in;
+        }
+        
+        while (!in.eof())
+        {
+            Type data;
+            in >> data;
+            list.push_back(data);
+        }
+        
+        return in;
+    }
+    
+    friend std::ostream& operator<<(std::ostream& out, List<Type>& list) //перегрузка << для вывода листа на конколь
+    {
+        std::cout << "List has form:\n";
+        
+        if (list.size == 0)
+        {
+            out << "List is empty!\n";
+            return out;
+        }
+        
+        for (auto i = list.begin(); i != list.end(); i++)
+        {
+            out << " " << *i;
+        }
+        
+        std::cout << "\n";
+        return out;
+    }
+    
+    friend std::ofstream& operator<<(std::ofstream& out, List<Type>& list) //перегрузка << для сохранения листа в файл
+    {
+        if (list.size == 0)
+        {
+            out << "List is empty!\n";
+            return out;
+        }
+        
+        for (auto i = list.begin(); i != list.end(); i++)
+        {
+            out << *i;
+        }
+        
+        std::cout << "\n";
+        return out;
+    }
+};
+
+class Acc
+{
+public:
+    std::string number;
+    std::string code;
+    std::string surname;
+    double amount;
+    size_t day;
+    size_t month;
+    size_t year;
+    size_t rate;
+    
+    Acc() = default;
+    Acc(std::string _number): number(_number),code("nocode"),surname("noname"),amount(0), day(0), month(0),year(0),rate(0) {} //конструктор для поиска по номеру
+    Acc(size_t _day, size_t _month, size_t _year):number("nonumber"), code("nocode"), surname("noname"), amount(0), day(_day), month(_month), year(_year), rate(0) {} //конструктор для поиска по дате
+    
+    Acc& operator=(std::string _fio) //для поиска по фамилии
+    {
+        surname = _fio;
+        return *this;
+    }
+    
+    Acc(std::string _number, std::string _code, std::string _surname, unsigned long long _amount, size_t _day, size_t _month, size_t _year, size_t _rate)
+    {
+        number = _number;
+        code = _code;
+        surname = _surname;
+        amount = _amount;
+        day = _day;
+        month = _month;
+        year = _year;
+        rate = _rate;
+    }
+    
+    Acc(const Acc& acc)
+    {
+        number = acc.number;
+        code = acc.code;
+        surname = acc.surname;
+        amount = acc.amount;
+        day = acc.day;
+        month = acc.month;
+        year = acc.year;
+        rate = acc.rate;
+    }
+    
+    ~Acc() = default;
+    
+    friend std::ifstream& operator>>(std::ifstream& in, Acc&acc) //перегрузка >> для записи в лист из файла
+    {
+        in >> acc.number >> acc.code >> acc.surname >> acc.amount >> acc.day >> acc.month >> acc.year >> acc.rate;
+        return in;
+    }
+    
+    friend std::istream& operator>>(std::istream& in, Acc&acc) //перегрузка >> для заполнения элемента с консоли
+    {
+        bool flag = false;
+        std::string number = "BY02AKBB36", temp;
+        size_t code;
+        
+        while (true)
+        {
+            std::cout << "\nEnter number (BY02AKBB36 XXXXX): ";
+            std::cin >> acc.number;
+            
+            if (acc.number.length() == 5)
+            {
+                acc.number = number + acc.number;
+                break;
+            }
+            
+            std::cout << "Error number!\n";
+        }
+        
+        while (true)
+        {
+            std::cout << "\nCode:\n1. BY\n2. RU\n3. USD\n4. EUR\n\nEnter code: ";
+            std::cin >> code;
+            
+            switch (code)
+            {
+                case 1:
+                {
+                    acc.code = "BY";
+                    acc.rate = 10;
+                    flag = true;
+                    break;
+                }
+                case 2:
+                {
+                    acc.code = "RU";
+                    acc.rate = 8;
+                    flag = true;
+                    break;
+                }
+                case 3:
+                {
+                    acc.code = "USD";
+                    acc.rate = 4;
+                    flag = true;
+                    break;
+                }
+                case 4:
+                {
+                    acc.code = "EUR";
+                    acc.rate = 2;
+                    flag = true;
+                    break;
+                }
+                default:
+                {
+                    std::cout << "Error code!\n";
+                }
+            }
+            
+            if (flag)
+            {
+                break;
+            }
+        }
+        
+        std::cout << "\nEnter surname: ";
+        std::cin >> acc.surname;
+        
+        while (true)
+        {
+            std::cout << "\nEnter amount: ";
+            std::cin >> acc.amount;
+            acc.amount = round(acc.amount*100)/100;
+            
+            if (acc.amount > 0)
+            {
+                break;
+            }
+            
+            std::cout << "Error amount!\n";
+        }
+        
+        while(true)
+        {
+            std::cout << "\nEnter day: ";
+            std::cin >> acc.day;
+            std::cout << "Enter month: ";
+            std::cin >> acc.month;
+            std::cout << "Enter year: ";
+            std::cin >> acc.year;
+            
+            if (acc.check_date(acc))
+            {
+                break;
+            }
+            
+            std::cout << "Error data!\n";
+        }
+        
+        return in;
+    }
+    
+    friend std::ostream& operator<<(std::ostream& out, Acc&acc) //перегрузка << для вывода данных узла на консоль
+    {
+        out  << std::left << std::setw(18) << acc.number << std::setw(6) << acc.code << std::setw(12) << acc.surname << std::setw(15) << std::fixed << std::setprecision(2)<< acc.amount << std::setw(3)  << acc.day << std::setw(3) <<acc.month << std::setw(7) << acc.year << std::setw(5) << acc.rate << "\n";
+        return out;
+    }
+    
+    friend std::ofstream& operator<<(std::ofstream& out, Acc&acc) //перегрузка << для записи узла в файл
+    {
+        out  << acc.number << " " << acc.code << " " << acc.surname << " " << acc.amount << " "  << acc.day << " " <<acc.month << " " << acc.year << " " << acc.rate << "\n";
+        return out;
+    }
+    
+    bool operator==(const Acc& acc)const
+    {
+        return  acc.number == number || acc.surname == surname|| (acc.day == day && acc.month == month&&acc.year == year) ? true : false;
+    }
+    
+    bool operator!=(const Acc& acc) const
+    {
+        return (number != acc.number || code != acc.code || surname != acc.surname || amount != acc.amount || day != acc.day || month != acc.month || year != acc.year || rate != acc.rate) ? true : false;
+    }
+    
+    bool check_date(const Acc& acc) //метод для проверки корректности введенной даты
+    {
+        size_t days_month[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+        
+        if ((acc.year < 1900) || (acc.year > 2100))
+        {
+            return false;
+        }
+        
+        if (acc.year % 4 == 0) //если год высокосный
+        {
+            days_month[2] = 29;
+        }
+        
+        if ((acc.month < 1) || (acc.month > 12 ))
+        {
+            return false;
+        }
+        
+        if ((acc.day < 1) || (acc.day > days_month[acc.month]))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+};
+
+template<typename Type>
+void menu(List<Type>&);
+
+###################################################################
+################################################################### скопировать в Bank.cpp
+###################################################################
+
+#include "Bank.h"
+
+template <typename Type>
+List<Type>:: List(const List<Type>& list)
+{
+    head = tail = nullptr;
+    size = 0;
+    Node* pos = list.head;
+    
+    while (pos!= nullptr)
+    {
+        push_back(pos->data);
+        pos = pos->next;
+    }
+}
+
+template <typename Type>
+List<Type>:: ~List()
+{
+    while (size != 0)
+    {
+        pop_back();
+    }
+}
+
+template <typename Type>
+void List<Type>:: push_back(const Type& temp_data)
+{
+    Node* temp = new Node(temp_data, tail, nullptr);
+    
+    if (size == 0)
+    {
+        head = temp;
+    }
+    else
+    {
+        tail->next = temp;
+    }
+    
+    tail = temp;
+    size++;
+}
+
+template <typename Type>
+void List<Type>:: push_front(const Type& temp_data)
+{
+    Node* temp = new Node(temp_data, nullptr, head);
+    
+    if (size == 0)
+    {
+        tail = temp;
+    }
+    else
+    {
+        head->prev = temp;
+    }
+    
+    head = temp;
+    size++;
+}
+
+template<typename Type>
+Type List<Type>:: pop_back()
+{
+    Node* temp = tail;
+    Type value;
+    
+    if (size == 0)
+    {
+        std::cout << "List is empty!\n";
+        return Type();
+    }
+    
+    if (size == 1)
+    {
+        tail = head = nullptr;
+    }
+    else
+    {
+        tail = tail->prev;
+        tail->next = nullptr;
+    }
+    
+    value = temp->data;
+    delete temp;
+    size--;
+    return value;
+}
+
+template<typename Type>
+Type List<Type>::pop_front()
+{
+    Node* temp = head;
+    Type value;
+    
+    if (size == 0)
+    {
+        std::cout << "List is empty!\n";
+        return Type();
+    }
+    
+    if (size == 1)
+    {
+        tail = head = nullptr;
+    }
+    else
+    {
+        head = head->next;
+        head->prev = nullptr;
+    }
+    
+    value = temp->data;
+    delete temp;
+    size--;
+    return value;
+}
+
+template<typename Type>
+void List<Type>:: insert(const Type& temp_data, size_t index)
+{
+    if (index > size)
+    {
+        std::cout << "Error index! Insert cannot be done!\n";
+        return;
+    }
+    
+    if (index == 0)
+    {
+        push_front(temp_data);
+        return;
+    }
+    
+    if (index == size)
+    {
+        push_back(temp_data);
+        return;
+    }
+    
+    Node* pos = head;
+    size_t count = 0;
+    
+    while (count != index) //поиск нужной позиции
+    {
+        pos = pos->next;
+        count++;
+    }
+    
+    Node* temp = new Node(temp_data, pos->prev, pos);
+    (pos->prev)->next = temp;
+    pos->prev = temp;
+    size++;
+}
+
+template<typename Type>
+void List<Type>:: insert(const Type& temp_data, size_t index, size_t count)
+{
+    while (count != 0)
+    {
+        insert(temp_data, index);
+        count--;
+    }
+}
+
+template<typename Type>
+void List<Type>:: replace(Type& temp_data, const Type& new_data)
+{
+    if (size == 0)
+    {
+        std::cout << "List is empty!\n";
+        return;
+    }
+    
+    Node* pos = head;
+    
+    while (pos != nullptr)
+    {
+        if (pos->data == temp_data)
+        {
+            pos->data = new_data;
+            return;
+        }
+        
+        pos = pos->next;
+    }
+    
+    std::cout << "Error! No such data in list!\n";
+}
+
+template<typename Type>
+void List<Type>:: replace(size_t index, const Type& new_data)
+{
+    if (size == 0)
+    {
+        std::cout << "List is empty!\n";
+        return;
+    }
+    
+    if (index > size)
+    {
+        std::cout << "Error index! Replace cannot be done!\n";
+        return;
+    }
+    
+    erase(index);
+    insert(new_data, index);
+}
+
+template<typename Type>
+Type& List<Type>:: operator[](size_t index)
+{
+    if (index >= size)
+    {
+        std::cout << "Wrong index!\n";
+        Type();
+    }
+    
+    Node* pos = head;
+    size_t count = 0;
+    
+    while (count < index)
+    {
+        pos = pos->next;
+        count++;
+    }
+    
+    return pos->data;
+}
+
+template<typename Type>
+const Type& List<Type>:: operator[](size_t index) const
+{
+    if (index >= size)
+    {
+        std::cout << "Wrong index!\n";
+        Type();
+    }
+    
+    Node* pos = head;
+    size_t count = 0;
+    
+    while (count < index)
+    {
+        pos = pos->next;
+        count++;
+    }
+    
+    return pos->data;
+}
+
+template<typename Type>
+Type List<Type>:: erase(size_t index)
+{
+    if (index >= size)
+    {
+        std::cout << "Wrong index!\n";
+        return Type();
+    }
+    
+    if (index == 0)
+    {
+        return pop_front();
+    }
+    
+    if (index == size - 1)
+    {
+        return pop_back();
+    }
+    
+    Node* pos = head;
+    size_t count = 0;
+    
+    while (count < index)
+    {
+        pos = pos->next;
+        count++;
+    }
+    
+    Type temp = pos->data;
+    (pos->prev)->next = pos->next;
+    (pos->next)->prev = pos->prev;
+    delete pos;
+    size--;
+    return temp;
+}
+
+template <typename Type>
+void List<Type>:: erase(Iterator start, Iterator finish)
+{
+    if (start == nullptr)
+    {
+        std::cout << "Wrong index!\n";
+        return;
+    }
+    
+    size_t index = 0;
+    Iterator cur = head;
+    
+    while(cur != start) //находим начальный элемент, подлежащий удалению
+    {
+        cur++;
+        index++;
+    }
+    
+    if (start == finish) //если нужно удалить только один элемент
+    {
+        erase(index);
+        return;
+    }
+    
+    ++finish; //чтобы удалить finish включительно
+    
+    while (cur != finish && cur != nullptr) //удаляем пока не finish или конец списка
+    {
+        ++cur;
+        erase(index);
+    }
+}
+
+template <typename Type>
+void List<Type>::find(const Type& element)
+{
+    List<Type> temp_list;
+    Node* cur = head;
+    size_t count = 0;
+    
+    while ( cur != nullptr)
+    {
+        if (cur->data == element)
+        {
+            temp_list.push_front(cur->data);
+            count++;
+        }
+        
+        cur = cur->next;
+    }
+    
+    if (count == 0)
+    {
+        std::cout << "Error! No data on such accounts\n";
+        return;
+    }
+    
+    std::cout << temp_list;
+    std::cout << "Save data to file?\n1. Yes\n2. No\n\nEnter number: ";
+    size_t save;
+    std::string name;
+    std::cin >> save;
+    
+    if (save == 1)
+    {
+        while (true)
+        {
+            std::cout << "Enter name file: ";
+            std::cin >> name;
+            
+            if (name.length() != 0)
+            {
+                name += ".txt";
+                break;
+            }
+            
+            std::cout << "Error name file!\n";
+        }
+        
+        std::ofstream out (name);
+        out << temp_list;
+        std::cout << "Save completed in file " << name << "\n";
+        out.close();
+    }
+}
+
+template <typename Type>
+bool List<Type>::Iterator:: operator==(const List<Type>::Iterator& temp) const
+{
+    return ptr == temp.ptr;
+}
+
+template <typename Type>
+bool List<Type>::Iterator:: operator!=(const List<Type>::Iterator& temp) const
+{
+    return ptr != temp.ptr;
+}
+
+template <typename Type>
+typename List<Type>:: Iterator& List<Type>::Iterator:: operator++()
+{
+    if (ptr == nullptr)
+    {
+        return *this;
+    }
+    
+    ptr = ptr->next;
+    return *this;
+}
+
+template <typename Type>
+typename List<Type>:: Iterator& List<Type>::Iterator:: operator++(int)
+{
+    operator++();
+    return *(this - 1);
+}
+
+template <typename Type>
+typename List<Type>:: Iterator& List<Type>::Iterator:: operator--()
+{
+    if (ptr == nullptr)
+    {
+        return *this;
+    }
+    
+    ptr = ptr->prev;
+    return *this;
+}
+
+template <typename Type>
+typename List<Type>:: Iterator& List<Type>::Iterator:: operator--(int)
+{
+    operator--();
+    return *(this + 1);
+}
+
+template <typename Type>
+typename List<Type>:: Iterator& List<Type>::Iterator:: operator+(int count)
+{
+    while(count)
+    {
+        operator++();
+        count--;
+    }
+    
+    return *this;
+}
+
+template <typename Type>
+typename List<Type>:: Iterator& List<Type>::Iterator:: operator-(int count)
+{
+    while(count)
+    {
+        operator--();
+        count--;
+    }
+    
+    return *this;
+}
+
+template <typename Type>
+typename List<Type>::Iterator* List<Type>::Iterator:: operator->()
+{
+    return this;
+}
+
+template <typename Type>
+void menu(List<Type>& list)
+{
+    while (true)
+    {
+        std::cout << list;
+        size_t operation;
+        std::cout << "\nPossible operations:\n"
+        << "1. push back (data)\n"
+        << "2. push front (data)\n"
+        << "3. pop back\n"
+        << "4. pop front\n"
+        << "5. insert (data, index)\n"
+        << "6. insert (data, index, count)\n"
+        << "7. replace (data)\n"
+        << "8. replace (index, data)\n"
+        << "9. erase (index)\n"
+        << "10. erase (start index, end index)\n"
+        << "11. search and save file\n"
+        << "12. exit program\n"
+        << "Choose operation: ";
+        std::cin >> operation;
+        std::cout << "\n";
+        
+        switch (operation)
+        {
+            case 1:
+            {
+                Type element;
+                std::cout << "Enter element: ";
+                std::cin >> element;
+                list.push_back(element);
+                break;
+            }
+            case 2:
+            {
+                Type element;
+                std::cout << "Enter element: ";
+                std::cin >> element;
+                list.push_front(element);
+                break;
+            }
+            case 3:
+            {
+                list.pop_back();
+                break;
+            }
+            case 4:
+            {
+                list.pop_front();
+                break;
+            }
+            case 5:
+            {
+                Type element;
+                std::cout << "Enter element: ";
+                std::cin >> element;
+                size_t index;
+                std::cout << "Enter index: ";
+                std::cin >> index;
+                list.insert(element, index);
+                break;
+            }
+            case 6:
+            {
+                Type element;
+                std::cout << "Enter element: ";
+                std::cin >> element;
+                size_t index, count;
+                std::cout << "Enter index: ";
+                std::cin >> index;
+                std::cout << "Enter count: ";
+                std::cin >> count;
+                list.insert(element, index, count);
+                break;
+            }
+            case 7:
+            {
+                Type search_element, new_element;
+                std::cout << "Enter search element: ";
+                std::cin >> search_element;
+                std::cout << "Enter new element: ";
+                std::cin >> new_element;
+                list.replace(search_element, new_element);
+                break;
+            }
+            case 8:
+            {
+                Type new_element;
+                size_t index;
+                std::cout << "Enter index: ";
+                std::cin >> index;
+                std::cout << "Enter new element: ";
+                std::cin >> new_element;
+                list.replace(index, new_element);
+                break;
+            }
+            case 9:
+            {
+                size_t index;
+                std::cout << "Enter index: ";
+                std::cin >> index;
+                list.erase(index);
+                break;
+            }
+            case 10:
+            {
+                int start, finish;
+                std::cout << "Enter start index: ";
+                std::cin >> start;
+                std::cout << "Enter end index: ";
+                std::cin >> finish;
+                list.erase(list.begin() + start, list.begin() + finish);
+                break;
+            }
+            case 11:
+            {
+#ifdef BANK //если используется класс Acc
+                
+                while (true)
+                {
+                    std::cout << "Operations:\n"
+                    << "1. Find number account\n"
+                    << "2. Find by date\n"
+                    << "3. Find by surname\n\nEnter operation: ";
+                    int choice;
+                    bool flag = false;
+                    std::cin >> choice;
+                    
+                    switch (choice)
+                    {
+                        case 1:
+                        {
+                            std::cout << "\nEnter number account: ";
+                            std::string temp_number;
+                            std::cin >> temp_number;
+                            Type acc(temp_number);
+                            std::cout << "\n";
+                            list.find(acc);
+                            flag = true;
+                            break;
+                        }
+                        case 2:
+                        {
+                            Acc acc(0, 0, 0);
+                            
+                            while(true)
+                            {
+                                std::cout << "\nEnter day: ";
+                                std::cin >> acc.day;
+                                std::cout << "Enter month: ";
+                                std::cin >> acc.month;
+                                std::cout << "Enter year: ";
+                                std::cin >> acc.year;
+                                
+                                if (acc.check_date(acc))
+                                {
+                                    flag = true;
+                                    std::cout << "\n";
+                                    list.find(acc);
+                                    break;
+                                }
+                                
+                                std::cout << "Error data!\n";
+                            }
+                            
+                            break;
+                        }
+                        case 3:
+                        {
+                            std::string surname;
+                            std::cout << "Enter surname: ";
+                            std::cin >> surname;
+                            Acc acc;
+                            acc.surname = surname;
+                            std::cout << "\n";
+                            list.find(acc);
+                            flag = true;
+                            break;
+                        }
+                        default:
+                        {
+                            std::cout << "Operation selected incorrectly!\n";
+                        }
+                    }
+                    
+                    if (flag == true)
+                    {
+                        break;
+                    }
+                }
+#endif
+                
+#ifdef INT //если используется INT
+                
+                Type element;
+                std::cout << "Enter element: ";
+                std::cin >> element;
+                list.find(element);
+                
+#endif
+                break;
+            }
+            case 12:
+            {
+                return;
+            }
+            default:
+            {
+                std::cout << "Operation selected incorrectly!\n";
+            }
+        }
+        
+        std::cout << "\n";
+    }
+}
